@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+  movie_service:
+    env_file:
+      - .env
+    build:
+      context: ./movie_service
+      dockerfile: movies.dockerfile
+    ports:
+      - ${MOVIES_PORT}:80
