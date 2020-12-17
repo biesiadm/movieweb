@@ -4,8 +4,31 @@ services:
   movie_service:
     env_file:
       - .env
+      - movie.env
     build:
       context: ./movie_service
       dockerfile: movies.dockerfile
     ports:
       - ${MOVIES_PORT}:80
+    depends_on:
+      - movie_db
+    volumes:
+      - ./movie_service/app:/app
+############################
+#   JUST FOR DEVELOPMENT   #
+    command:
+      - /start-reload.sh
+############################
+
+  movie_db:
+    image: postgres:13
+    env_file:
+      - movie.env
+    volumes:
+      - db-data-movie:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+
+
+volumes:
+  db-data-movie:

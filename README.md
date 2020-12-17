@@ -5,6 +5,11 @@
 ```
 docker-compose build
 ```
+### run migration
+```
+docker-compose run movie_service alembic revision --autogenerate
+```
+
 ### run
 ```
 docker-compose up
