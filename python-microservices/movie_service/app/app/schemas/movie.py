@@ -5,6 +5,13 @@ from pydantic import BaseModel
 
 class MovieBase(BaseModel):
     title: str
+    director: str
+    year: int
+    country: str
+    budget: Optional[int] = None
+    box_office: Optional[int] = None
+    category: str
+    original_language: Optional[str] = None
 
 
 class MovieCreate(MovieBase):

@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 
 from app import crud, schemas
-from app.db import base
 
 
 # make sure all SQL Alchemy models are imported (app.db.base) before initializing DB
@@ -10,14 +9,17 @@ from app.db import base
 
 
 def init_db(db: Session) -> None:
-    # Tables should be created with Alembic migrations
-    # But if you don't want to use migrations, create
-    # the tables un-commenting the next line
-    # Base.metadata.create_all(bind=engine)
-
     movie = crud.movie.get(db, id=1)
+
     if not movie:
         movie_in = schemas.MovieCreate(
-            title='TEST'
+            title='TEST',
+            director='TEST_DIR',
+            year=1234,
+            country='TEST_POLAND',
+            budget=2137,
+            box_office=42069,
+            category='TEST_CAT'
         )
+
         movie = crud.movie.create(db, obj_in=movie_in)  # noqa: F841
