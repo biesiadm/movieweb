@@ -2,7 +2,7 @@ from typing import List, Any
 
 from app import schemas, crud
 from app.api import deps
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 router = APIRouter()
@@ -26,6 +26,21 @@ def create_movie(
         movie_in: schemas.MovieCreate
 ) -> Any:
     movie = crud.movie.create(db, obj_in=movie_in)
+
+    return movie
+
+
+@router.get("/{movie_id}", response_model=schemas.Movie)
+def read_movie_by_id(
+        movie_id: int,
+        db: Session = Depends(deps.get_db)
+) -> Any:
+    movie = crud.movie.get(db, id=movie_id)
+
+    if not movie:
+        raise HTTPException(
+            status_code=404, detail="Movie with this id does not exist"
+        )
 
     return movie
 
