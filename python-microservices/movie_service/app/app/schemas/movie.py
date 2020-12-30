@@ -1,6 +1,7 @@
 from typing import Optional
 
 from pydantic import BaseModel
+from pydantic.types import UUID
 
 
 class MovieBase(BaseModel):
@@ -8,10 +9,7 @@ class MovieBase(BaseModel):
     director: str
     year: int
     country: str
-    budget: Optional[int] = None
-    box_office: Optional[int] = None
     category: str
-    original_language: Optional[str] = None
 
 
 class MovieCreate(MovieBase):
@@ -23,7 +21,7 @@ class MovieUpdate(MovieBase):
 
 
 class Movie(MovieBase):
-    id: int
+    id: UUID
 
     class Config:
         orm_mode = True

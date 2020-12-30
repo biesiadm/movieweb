@@ -9,7 +9,7 @@ from app import crud, schemas
 
 
 def init_db(db: Session) -> None:
-    movie = crud.movie.get(db, id=1)
+    movie = crud.movie.get_by_title(db, title='TEST')
 
     if not movie:
         movie_in = schemas.MovieCreate(
@@ -17,8 +17,6 @@ def init_db(db: Session) -> None:
             director='TEST_DIR',
             year=1234,
             country='TEST_POLAND',
-            budget=2137,
-            box_office=42069,
             category='TEST_CAT'
         )
 
