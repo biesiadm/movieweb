@@ -1,18 +1,12 @@
-import React, {Component} from 'react'
+import {Component} from 'react'
 import {Route, Switch} from 'react-router-dom'
-import axios from 'axios'
 
 import NotFound from './components/NotFound';
 
-class App extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {}
-  }
+class App extends Component<{}, {}> {
 
   render() {
-    return (
-      <div className='App container'>
+    return <div className='app container'>
         <Switch>
           <Route exact path='/'>
             <div className="container text-center">
@@ -24,7 +18,6 @@ class App extends Component {
           </Route>
         </Switch>
       </div>
-    )
   }
 }
 
