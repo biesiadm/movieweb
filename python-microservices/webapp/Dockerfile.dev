@@ -2,9 +2,13 @@ FROM node:14-alpine
 WORKDIR /usr/src/app
 
 # NPM
-RUN npm install -g serve cra-build-watch --silent
+RUN npm install -g serve --silent
 ADD package*.json ./
 RUN npm install --silent
+
+# JDK for @openapitools/openapi-generator-cli
+# TODO(kantoniak): Write a two-stage build to drop openjdk11
+RUN apk add openjdk11
 
 # Environment variables
 ENV NODE_ENV=development
@@ -15,4 +19,5 @@ ADD . ./
 # Startup
 EXPOSE 8080
 RUN npm run build
+RUN npm run build-api-model
 CMD nohup /bin/sh -c "npm run dev-watch &" && serve -s build -l 8080
