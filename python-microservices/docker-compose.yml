@@ -29,6 +29,14 @@ services:
     ports:
       - 5432:5432
 
+  webapp:
+    build: webapp/
+    env_file:
+      - .env
+      - webapp.env
+    ports:
+      - ${WEBAPP_PORT}:8080
+
 
 volumes:
   db-data-movie:
