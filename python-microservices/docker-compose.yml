@@ -29,14 +29,14 @@ services:
     ports:
       - 5432:5432
 
-#  webapp:
-#    depends_on:
-#      - movie_service
-#    build: webapp/
-#    env_file:
-#      - .env
-#    ports:
-#      - ${WEBAPP_PORT}:8080
+  webapp:
+    depends_on:
+      - movie_service
+    build: webapp/
+    env_file:
+      - .env
+    ports:
+      - ${WEBAPP_PORT}:8080
 
 volumes:
   db-data-movie:
