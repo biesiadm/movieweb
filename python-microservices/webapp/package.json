@@ -25,7 +25,7 @@
         "start": "react-scripts start",
         "dev-watch": "cra-build-watch",
         "build": "react-scripts build",
-        "build-api-model": "openapi-generator-cli generate -g typescript-axios -i api.json -o src/api-model/",
+        "build-api-model": "openapi-generator-cli generate -g typescript-axios -i api-public.json -o src/api/public/",
         "test": "react-scripts test --env=jsdom",
         "eject": "react-scripts eject"
       }

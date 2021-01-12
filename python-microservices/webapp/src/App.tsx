@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Route, Switch } from 'react-router-dom'
 import { AxiosResponse } from 'axios'
 import PublicAPI from './PublicAPI'
-import { Movie } from './api-model/api'
+import { Movie } from './api/public/api'
 
 import NotFound from './components/NotFound';
 
@@ -21,7 +21,7 @@ class App extends Component<AppProps, EmptyState> {
     super(props)
 
     // Make a sample call
-    PublicAPI.readMoviesMoviesGet()
+    PublicAPI.moviesGet()
       .then((response: AxiosResponse<Movie[]>) => {
         console.log(response.data);
       })
