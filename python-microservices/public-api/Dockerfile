@@ -14,6 +14,6 @@ ADD . ./
 
 # Startup
 EXPOSE 8080
-RUN npm run generate-movie-api
+RUN npm run generate-movie-api-client
 RUN npm run build
 CMD npm run start

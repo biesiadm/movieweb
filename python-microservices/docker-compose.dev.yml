@@ -40,6 +40,7 @@ services:
     ports:
       - ${PUBLIC_API_PORT}:8080
     volumes:
+      - ./public-api/generated:/usr/src/app/generated
       - ./public-api/src:/usr/src/app/src
 
   webapp:
