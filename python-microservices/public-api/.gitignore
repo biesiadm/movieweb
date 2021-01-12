@@ -1,0 +1,3 @@
+# API model
+src/api/*
+!src/api/movie/.gitkeep

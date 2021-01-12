@@ -29,6 +29,19 @@ services:
     ports:
       - 5432:5432
 
+  public-api:
+    depends_on:
+      - movie_service
+    build:
+      context: public-api/
+      dockerfile: Dockerfile.dev
+    env_file:
+      - .env
+    ports:
+      - ${PUBLIC_API_PORT}:8080
+    volumes:
+      - ./public-api/src:/usr/src/app/src
+
   webapp:
     depends_on:
       - movie_service
