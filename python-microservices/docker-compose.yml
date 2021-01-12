@@ -30,6 +30,8 @@ services:
       - 5432:5432
 
   webapp:
+    depends_on:
+      - movie_service
     build: webapp/
     env_file:
       - .env
