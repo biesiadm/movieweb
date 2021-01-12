@@ -2,8 +2,6 @@
 
 set -e
 
-cd ..
-
 # shut down containers and remove volumes
 docker-compose down -v --remove-orphans
 
