@@ -3,27 +3,28 @@ import { Link, NavLink, Route, Switch } from 'react-router-dom'
 import { AxiosResponse } from 'axios'
 import PublicAPI from './PublicAPI'
 import { Movie } from './api/public/api'
+import MovieCard from './components/MovieCard'
 
 import NotFound from './components/NotFound';
 
-type AppProps = {
-    movies: Movie[]
+type EmptyProps = Record<string, never>
+
+type AppState = {
+  movies: Movie[]
 }
 
-type EmptyState = Record<string, never>
+class App extends Component<EmptyProps, AppState> {
 
-class App extends Component<AppProps, EmptyState> {
-  static defaultProps = {
-    movies: []
-  }
-
-  constructor(props: AppProps) {
-    super(props)
+  constructor(props: EmptyProps) {
+    super(props);
+    this.state = {
+      movies: []
+    };
 
     // Make a sample call
     PublicAPI.moviesGet()
       .then((response: AxiosResponse<Movie[]>) => {
-        console.log(response.data);
+        this.setState({movies: response.data})
       })
       .catch((err: unknown) => {
         console.log(err);
@@ -64,6 +65,13 @@ class App extends Component<AppProps, EmptyState> {
                 <Route exact path='/movies'>
                   <section className="container">
                     <h1>Movies</h1>
+                    <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-4 pt-3">
+                      {this.state.movies.map((movie, i) => {
+                        return <div key={movie.id} className="col-sm">
+                                <MovieCard movie={movie} />
+                              </div>
+                      })}
+                    </div>
                   </section>
                 </Route>
                 <Route>
