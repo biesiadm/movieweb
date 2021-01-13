@@ -1,9 +1,11 @@
 import express from 'express';
+import cors from 'cors';
 import OpenapiSpec from './openapi';
 import MoviesRouter from './services/movies';
 import swaggerUi from 'swagger-ui-express';
 
 const app = express();
+app.use(cors());
 
 // Routes
 app.use('/movies', MoviesRouter);
