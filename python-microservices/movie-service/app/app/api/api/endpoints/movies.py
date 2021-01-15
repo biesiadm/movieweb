@@ -1,4 +1,5 @@
 from typing import List, Any
+from uuid import UUID
 
 from app import schemas, crud
 from app.api import deps
@@ -19,20 +20,9 @@ def read_movies(
     return movies
 
 
-@router.post("/", response_model=schemas.Movie)
-def create_movie(
-        *,
-        db: Session = Depends(deps.get_db),
-        movie_in: schemas.MovieCreate
-) -> Any:
-    movie = crud.movie.create(db, obj_in=movie_in)
-
-    return movie
-
-
 @router.get("/{movie_id}", response_model=schemas.Movie)
 def read_movie_by_id(
-        movie_id: int,
+        movie_id: UUID,
         db: Session = Depends(deps.get_db)
 ) -> Any:
     movie = crud.movie.get(db, id=movie_id)
@@ -46,7 +36,7 @@ def read_movie_by_id(
     return movie
 
 
-@router.get("/title", response_model=List[schemas.Movie])
+@router.get("/title/{title}", response_model=List[schemas.Movie])
 def read_movies_by_title(
         title: str,
         db: Session = Depends(deps.get_db)
@@ -56,7 +46,7 @@ def read_movies_by_title(
     return movies
 
 
-@router.get("/director", response_model=List[schemas.Movie])
+@router.get("/director/{director}", response_model=List[schemas.Movie])
 def read_movies_by_director(
         director: str,
         db: Session = Depends(deps.get_db)
@@ -66,8 +56,8 @@ def read_movies_by_director(
     return movies
 
 
-@router.get("/category", response_model=List[schemas.Movie])
-def read_movies_by_director(
+@router.get("/category/{category}", response_model=List[schemas.Movie])
+def read_movies_by_category(
         category: str,
         db: Session = Depends(deps.get_db)
 ) -> Any:
@@ -76,8 +66,8 @@ def read_movies_by_director(
     return movies
 
 
-@router.get("/country", response_model=List[schemas.Movie])
-def read_movies_by_director(
+@router.get("/country/{country}", response_model=List[schemas.Movie])
+def read_movies_by_country(
         country: str,
         db: Session = Depends(deps.get_db)
 ) -> Any:
