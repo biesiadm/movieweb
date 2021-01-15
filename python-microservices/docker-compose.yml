@@ -27,6 +27,23 @@ services:
     ports:
       - 5432:5432
 
+  user-service:
+    env_file:
+      - .env
+      - user.env
+      build:
+        context: user-service
+        dockerfile: users.dockerfile
+      ports:
+        - ${USERS_PORT}:80
+      volumes:
+        - ./user-service/app:/app
+      ############################
+      #   JUST FOR DEVELOPMENT   #
+      command:
+        - /start-reload.sh
+    ############################
+
   public-api:
     depends_on:
       - movie-service
