@@ -24,8 +24,7 @@ services:
       - movie.env
     volumes:
       - db-data-movie:/var/lib/postgresql/data/
-    ports:
-      - 5432:5432
+
 
   user-service:
     env_file:
@@ -50,8 +49,6 @@ services:
       - user.env
     volumes:
       - db-data-user:/var/lib/postgresql/data/
-    ports:
-      - 5432:5432
 
   public-api:
     depends_on:
