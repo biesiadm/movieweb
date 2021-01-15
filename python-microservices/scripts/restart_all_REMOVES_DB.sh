@@ -5,7 +5,7 @@ set -e
 # shut down containers and remove volumes
 docker-compose down -v --remove-orphans
 
-./scripts/restart-user.sh
+./user-service/scripts/restart-user.sh
 
 docker-compose up
 #
