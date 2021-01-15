@@ -1,6 +1,14 @@
 from app import schemas
+from app.core.config import settings
+
 
 users = [
+    schemas.UserCreate(
+        email=settings.ADMIN_EMAIL,
+        name=settings.ADMIN_NAME,
+        password=settings.ADMIN_PASSWORD,
+        is_superuser=True
+    ),
     schemas.UserCreate(
         email="janek.test@wp.pl",
         name="Janek",
