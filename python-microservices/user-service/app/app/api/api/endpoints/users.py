@@ -9,12 +9,16 @@ from sqlalchemy.orm import Session
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas.User])
-def read_movies(
-        db: Session = Depends(deps.get_db),
-        skip: int = 0,
-        limit: int = 100
-) -> Any:
-    users = crud.user.get_multi(db, skip=skip, limit=limit)
+@router.get("/")
+def hello_world() -> Any:
+    return {"Hello": "world"}
 
-    return users
+# @router.get("/", response_model=List[schemas.User])
+# def read_movies(
+#         db: Session = Depends(deps.get_db),
+#         skip: int = 0,
+#         limit: int = 100
+# ) -> Any:
+#     users = crud.user.get_multi(db, skip=skip, limit=limit)
+#
+#     return users
