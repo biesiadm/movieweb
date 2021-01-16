@@ -10,6 +10,10 @@ html, body, body>div {
     font-family: 'Nunito', var(--bs-font-sans-serif);
 }
 
+.bg-subtle {
+    background-color: #F2F4F5;
+}
+
 .btn-primary,
 .btn-primary:hover,
 .btn-primary:active,
@@ -24,4 +28,10 @@ html, body, body>div {
 .navbar-dark a.navbar-brand {
     font-family: 'Nunito', var(--bs-font-sans-serif);
     color: #F0A96E;
+}
+
+.btn-group-xs > .btn, .btn-xs {
+    padding: .25rem .5rem;
+    font-size: .750rem;
+    border-radius: .2rem;
 }
