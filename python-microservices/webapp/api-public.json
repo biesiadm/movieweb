@@ -8,6 +8,7 @@
   "paths": {
     "/movies": {
       "get": {
+        "operationId": "getMovies",
         "summary": "Retrieve a list of movies",
         "responses": {
           "200": {
@@ -38,6 +39,7 @@
     },
     "/movies/{id}": {
       "get": {
+        "operationId": "getMovieById",
         "summary": "Get movie by ID",
         "parameters": [
           {

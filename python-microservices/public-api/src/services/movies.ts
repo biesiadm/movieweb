@@ -65,6 +65,7 @@ interface PublicMovie extends Movie {
  * @swagger
  * /movies:
  *   get:
+ *     operationId: getMovies
  *     summary: Retrieve a list of movies
  *     responses:
  *       200:
@@ -119,6 +120,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
  * @swagger
  * /movies/{id}:
  *   get:
+ *     operationId: getMovieById
  *     summary: Get movie by ID
  *     parameters:
  *       - in: path

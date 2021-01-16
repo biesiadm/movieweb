@@ -20,7 +20,7 @@ class MovieListPage extends Component<EmptyProps, State> {
     super(props);
 
     // Make a sample call
-    PublicAPI.moviesGet()
+    PublicAPI.getMovies()
       .then((response: AxiosResponse<Movie[]>) => {
         this.setState({ movies: response.data });
       })
