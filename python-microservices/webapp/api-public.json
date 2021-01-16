@@ -75,31 +75,38 @@
       },
       "Movie": {
         "type": "object",
+        "required": [
+          "id",
+          "title",
+          "slug",
+          "poster_url"
+        ],
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
           "title": {
-            "title": "Title",
             "type": "string"
           },
+          "slug": {
+            "type": "string"
+          },
+          "poster_url": {
+            "type": "string",
+            "format": "url"
+          },
           "director": {
-            "title": "Director",
             "type": "string"
           },
           "year": {
-            "title": "Year",
             "type": "integer"
           },
           "country": {
-            "title": "Country",
             "type": "string"
           },
           "category": {
-            "title": "Category",
             "type": "string"
-          },
-          "id": {
-            "title": "Id",
-            "type": "string",
-            "format": "uuid"
           }
         }
       }
