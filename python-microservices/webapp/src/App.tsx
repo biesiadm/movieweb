@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { Link, NavLink, Route, Switch } from 'react-router-dom'
 import { GenericNotFoundPage } from './pages/ErrorPage'
-import MovieListPage from './pages/MovieListPage';
 
 import { LoadingScreen, ErrorScreen } from './components/Screen';
+import MovieListPage from './pages/MovieListPage';
+import MovieDetailsPage from './pages/MovieDetailsPage';
 
 type EmptyProps = Record<string, never>
 type EmptyState = Record<string, never>
@@ -42,6 +43,7 @@ class App extends Component<EmptyProps, EmptyState> {
                   </section>
                 </Route>
                 <Route exact path='/movies' component={MovieListPage} />
+                <Route exact path='/movies/:slug_id' component={MovieDetailsPage} />
                 <Route exact path='/loading' component={LoadingScreen} />
                 <Route exact path='/error'>
                   <ErrorScreen className="bg-subtle" />

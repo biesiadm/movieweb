@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
-interface Props extends RouteComponentProps<any> {
+interface Props {
   header: string,
   message: string
 }
@@ -16,15 +16,18 @@ class ErrorPage extends Component<Props, EmptyState> {
   };
 
   render(): React.ReactNode {
+    const history = this.props.history;
     const header = this.props.header;
     const message = this.props.message;
     return <div className='text-center'>
             <h1 className="display-1">{header}</h1>
             <p className="lead">{message}</p>
-            <button onClick={this.props.history.goBack} type="button" className="btn btn-primary mt-3 py-2 px-3">Go back</button>
+            <button onClick={history.goBack} type="button" className="btn btn-primary mt-3 py-2 px-3">Go back</button>
           </div>
   }
 }
+
+withRouter(ErrorPage);
 
 class GenericNotFoundPage extends ErrorPage {
   public static defaultProps = {
