@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 
-type Props = {
+interface Props extends RouteComponentProps<any> {
   header: string,
   message: string
 }

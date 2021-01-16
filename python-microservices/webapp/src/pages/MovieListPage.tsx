@@ -34,7 +34,7 @@ class MovieListPage extends Component<EmptyProps, State> {
     return <section className="container">
             <h1>Movies</h1>
             <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-4 pt-3">
-              {movies.map((movie) => {
+              {movies.map((movie: Movie) => {
                 return <div key={movie.id} className="col-sm">
                         <MovieCard movie={movie} />
                       </div>;
