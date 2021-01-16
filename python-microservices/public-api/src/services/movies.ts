@@ -104,12 +104,12 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
             return next();
         })
         .catch((reason: any) => {
-            if (reason.response!.status === 422) {
+            if ([422, 404].includes(reason.response!.status)) {
                 res.status(reason.response.status).json(reason.response.data);
                 return next();
             } else {
                 console.log(reason);
-                reason.status(500).send();
+                res.status(500).send();
                 return next(reason);
             }
         });
@@ -179,12 +179,12 @@ router.get("/:id", (req: express.Request, res: express.Response, next: express.N
             return next();
         })
         .catch((reason: any) => {
-            if (reason.response!.status === 422) {
+            if ([422, 404].includes(reason.response!.status)) {
                 res.status(reason.response.status).json(reason.response.data);
                 return next();
             } else {
                 console.log(reason);
-                reason.status(500).send();
+                res.status(500).send();
                 return next(reason);
             }
         });
