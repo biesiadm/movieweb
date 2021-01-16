@@ -1,8 +1,9 @@
 import axios, { AxiosResponse } from 'axios';
 import express from 'express';
 import slugify from 'slugify';
+import { validate as validateUuid } from 'uuid';
 import { axiosInstance } from './../config';
-import { Movie, MoviesApiFactory } from './../api/movie/api';
+import { HTTPValidationError, Movie, MoviesApiFactory, ValidationError } from './../api/movie/api';
 import { Configuration } from './../api/movie/configuration';
 
 const router = express.Router();
@@ -98,6 +99,80 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
             return <AxiosResponse<PublicMovie[]>>axiosResponse;
         })
         .then((axiosResponse: AxiosResponse<PublicMovie[]>) => {
+            res.status(axiosResponse.status).json(axiosResponse.data);
+            return next();
+        })
+        .catch((reason: any) => {
+            if (reason.response!.status === 422) {
+                res.status(reason.response.status).json(reason.response.data);
+                return next();
+            } else {
+                console.log(reason);
+                reason.status(500).send();
+                return next(reason);
+            }
+        });
+    return res;
+});
+
+/**
+ * @swagger
+ * /movies/{id}:
+ *   get:
+ *     summary: Get movie by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         required: true
+ *         description: Movie ID as UUID v4
+ *     responses:
+ *       200:
+ *         description: Movie details.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Movie"
+ *       422:
+ *         description: Validation error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/HTTPValidationError"
+ *
+ */
+router.get("/:id", (req: express.Request, res: express.Response, next: express.NextFunction) => {
+
+    // Parameter validation
+    const id: string = req.params.id;
+    if (!validateUuid(id)) {
+        const err: HTTPValidationError = {
+            detail: [
+                {
+                    loc: ["path", "id"],
+                    msg: "Parameter {id} is not a valid UUID.",
+                    type: "type_error.uuid"
+                }
+            ]
+        };
+        res.status(422).json(err);
+        return next(err);
+    }
+
+    api.readMovieByIdMoviesMovieIdGet(id)
+        .then((axiosResponse: AxiosResponse<Movie>) => {
+            let newResponse: AxiosResponse<Partial<PublicMovie>> = axiosResponse;
+            newResponse.data.poster_url = 'https://fwcdn.pl/fpo/10/39/1039/7517880.3.jpg';
+            newResponse.data.slug = slugify(axiosResponse.data.title, {
+                lower: true,
+                strict: true,
+                locale: 'en'
+            });
+            return <AxiosResponse<PublicMovie>>newResponse;
+        })
+        .then((axiosResponse: AxiosResponse<PublicMovie>) => {
             res.status(axiosResponse.status).json(axiosResponse.data);
             return next();
         })

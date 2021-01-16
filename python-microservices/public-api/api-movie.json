@@ -60,45 +60,6 @@
               }
             }
           }
-        },
-        "post": {
-          "tags": [
-            "movies"
-          ],
-          "summary": "Create Movie",
-          "operationId": "create_movie_movies__post",
-          "requestBody": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MovieCreate"
-                }
-              }
-            },
-            "required": true
-          },
-          "responses": {
-            "200": {
-              "description": "Successful Response",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Movie"
-                  }
-                }
-              }
-            },
-            "422": {
-              "description": "Validation Error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/HTTPValidationError"
-                  }
-                }
-              }
-            }
-          }
         }
       },
       "/movies/{movie_id}": {
@@ -113,7 +74,8 @@
               "required": true,
               "schema": {
                 "title": "Movie Id",
-                "type": "integer"
+                "type": "string",
+                "format": "uuid"
               },
               "name": "movie_id",
               "in": "path"
@@ -143,13 +105,13 @@
           }
         }
       },
-      "/movies/title": {
+      "/movies/title/{title}": {
         "get": {
           "tags": [
             "movies"
           ],
           "summary": "Read Movies By Title",
-          "operationId": "read_movies_by_title_movies_title_get",
+          "operationId": "read_movies_by_title_movies_title__title__get",
           "parameters": [
             {
               "required": true,
@@ -158,7 +120,7 @@
                 "type": "string"
               },
               "name": "title",
-              "in": "query"
+              "in": "path"
             }
           ],
           "responses": {
@@ -167,7 +129,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "title": "Response Read Movies By Title Movies Title Get",
+                    "title": "Response Read Movies By Title Movies Title  Title  Get",
                     "type": "array",
                     "items": {
                       "$ref": "#/components/schemas/Movie"
@@ -189,13 +151,13 @@
           }
         }
       },
-      "/movies/director": {
+      "/movies/director/{director}": {
         "get": {
           "tags": [
             "movies"
           ],
           "summary": "Read Movies By Director",
-          "operationId": "read_movies_by_director_movies_director_get",
+          "operationId": "read_movies_by_director_movies_director__director__get",
           "parameters": [
             {
               "required": true,
@@ -204,7 +166,7 @@
                 "type": "string"
               },
               "name": "director",
-              "in": "query"
+              "in": "path"
             }
           ],
           "responses": {
@@ -213,7 +175,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "title": "Response Read Movies By Director Movies Director Get",
+                    "title": "Response Read Movies By Director Movies Director  Director  Get",
                     "type": "array",
                     "items": {
                       "$ref": "#/components/schemas/Movie"
@@ -235,13 +197,13 @@
           }
         }
       },
-      "/movies/category": {
+      "/movies/category/{category}": {
         "get": {
           "tags": [
             "movies"
           ],
-          "summary": "Read Movies By Director",
-          "operationId": "read_movies_by_director_movies_category_get",
+          "summary": "Read Movies By Category",
+          "operationId": "read_movies_by_category_movies_category__category__get",
           "parameters": [
             {
               "required": true,
@@ -250,7 +212,7 @@
                 "type": "string"
               },
               "name": "category",
-              "in": "query"
+              "in": "path"
             }
           ],
           "responses": {
@@ -259,7 +221,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "title": "Response Read Movies By Director Movies Category Get",
+                    "title": "Response Read Movies By Category Movies Category  Category  Get",
                     "type": "array",
                     "items": {
                       "$ref": "#/components/schemas/Movie"
@@ -281,13 +243,13 @@
           }
         }
       },
-      "/movies/country": {
+      "/movies/country/{country}": {
         "get": {
           "tags": [
             "movies"
           ],
-          "summary": "Read Movies By Director",
-          "operationId": "read_movies_by_director_movies_country_get",
+          "summary": "Read Movies By Country",
+          "operationId": "read_movies_by_country_movies_country__country__get",
           "parameters": [
             {
               "required": true,
@@ -296,7 +258,7 @@
                 "type": "string"
               },
               "name": "country",
-              "in": "query"
+              "in": "path"
             }
           ],
           "responses": {
@@ -305,7 +267,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "title": "Response Read Movies By Director Movies Country Get",
+                    "title": "Response Read Movies By Country Movies Country  Country  Get",
                     "type": "array",
                     "items": {
                       "$ref": "#/components/schemas/Movie"
