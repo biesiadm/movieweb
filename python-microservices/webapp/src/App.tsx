@@ -4,8 +4,7 @@ import { AxiosResponse } from 'axios'
 import PublicAPI from './PublicAPI'
 import { Movie } from './api/public/api'
 import MovieCard from './components/MovieCard'
-
-import NotFound from './components/NotFound';
+import { GenericNotFoundPage } from './pages/ErrorPage'
 
 type EmptyProps = Record<string, never>
 
@@ -74,9 +73,7 @@ class App extends Component<EmptyProps, AppState> {
                     </div>
                   </section>
                 </Route>
-                <Route>
-                  <NotFound />
-                </Route>
+                <Route component={GenericNotFoundPage} />
               </Switch>
               </main>
               <footer className="text-muted py-5">
