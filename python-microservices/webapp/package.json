@@ -23,7 +23,7 @@
       },
       "scripts": {
         "start": "react-scripts start",
-        "dev-watch": "cra-build-watch",
+        "dev-watch": "cra-build-watch --public-path \"/\"",
         "build": "react-scripts build",
         "build-api-model": "openapi-generator-cli generate -g typescript-axios -i api-public.json -o src/api/public/",
         "test": "react-scripts test --env=jsdom",

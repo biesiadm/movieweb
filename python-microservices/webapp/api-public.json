@@ -8,6 +8,7 @@
   "paths": {
     "/movies": {
       "get": {
+        "operationId": "getMovies",
         "summary": "Retrieve a list of movies",
         "responses": {
           "200": {
@@ -19,6 +20,46 @@
                   "items": {
                     "$ref": "#/components/schemas/Movie"
                   }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/movies/{id}": {
+      "get": {
+        "operationId": "getMovieById",
+        "summary": "Get movie by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "description": "Movie ID as UUID v4"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movie details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Movie"
                 }
               }
             }
