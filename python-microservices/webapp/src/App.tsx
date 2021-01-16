@@ -1,34 +1,12 @@
 import React, { Component } from 'react'
 import { Link, NavLink, Route, Switch } from 'react-router-dom'
-import { AxiosResponse } from 'axios'
-import PublicAPI from './PublicAPI'
-import { Movie } from './api/public/api'
-import MovieCard from './components/MovieCard'
 import { GenericNotFoundPage } from './pages/ErrorPage'
+import MovieListPage from './pages/MovieListPage';
 
 type EmptyProps = Record<string, never>
+type EmptyState = Record<string, never>
 
-type AppState = {
-  movies: Movie[]
-}
-
-class App extends Component<EmptyProps, AppState> {
-
-  constructor(props: EmptyProps) {
-    super(props);
-    this.state = {
-      movies: []
-    };
-
-    // Make a sample call
-    PublicAPI.moviesGet()
-      .then((response: AxiosResponse<Movie[]>) => {
-        this.setState({movies: response.data})
-      })
-      .catch((err: unknown) => {
-        console.log(err);
-      });
-  }
+class App extends Component<EmptyProps, EmptyState> {
 
   render(): React.ReactNode {
     return  <div className="d-flex flex-column">
@@ -61,18 +39,7 @@ class App extends Component<EmptyProps, AppState> {
                     <h1>Movieweb</h1>
                   </section>
                 </Route>
-                <Route exact path='/movies'>
-                  <section className="container">
-                    <h1>Movies</h1>
-                    <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-4 pt-3">
-                      {this.state.movies.map((movie, i) => {
-                        return <div key={movie.id} className="col-sm">
-                                <MovieCard movie={movie} />
-                              </div>
-                      })}
-                    </div>
-                  </section>
-                </Route>
+                <Route exact path='/movies' component={MovieListPage} />
                 <Route component={GenericNotFoundPage} />
               </Switch>
               </main>
