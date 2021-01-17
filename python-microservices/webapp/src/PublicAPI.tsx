@@ -8,6 +8,6 @@ const axiosInstance: AxiosInstance = axios.create({
 
 export default DefaultApiFactory(
   new Configuration(),
-  process.env.REACT_APP_API_URL,
+  'http://localhost:8081',
   axiosInstance
 );

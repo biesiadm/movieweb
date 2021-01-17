@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component, ReactNode } from 'react';
 
 type InfoScreenProps = {
   className: string,
-  children: JSX.Element[]
+  children: ReactNode
 }
 type EmptyState = Record<string, never>
 

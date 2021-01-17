@@ -1,12 +1,13 @@
 import React, { Component, Fragment } from 'react';
-import { useParams } from 'react-router-dom';
-import { AxiosResponse } from 'axios'
+import { RouteComponentProps } from 'react-router-dom';
+import { AxiosResponse } from 'axios';
+import { validate as validateUuid } from 'uuid';
 import PublicAPI from '../PublicAPI'
 import { Movie } from '../api/public/api'
-import ErrorPage from './ErrorPage';
+import Error from '../components/Error';
 import InfoScreen, { LoadingScreen } from '../components/Screen';
 
-type EmptyProps = Record<string, never>
+type EmptyProps = RouteComponentProps<any>
 
 type State = {
   movie: Movie | null,
@@ -16,7 +17,7 @@ type State = {
 
 class MovieDetailsPage extends Component<EmptyProps, State> {
 
-  state = {
+  state: State = {
     movie: null,
     loading: true,
     error: null
@@ -57,13 +58,16 @@ class MovieDetailsPage extends Component<EmptyProps, State> {
   }
 
   getUuidFromSlugId(slug_id:string): string | null {
-    let parts:string[] = slug_id.split(/\s*\-\s*/g);
+    let parts:string[] = slug_id.split(/\s*-\s*/g);
     parts = parts.slice(Math.max(parts.length - 5, 0));
     if (parts.length != 5) {
       return null;
     }
 
-    let uuid:string = parts.join('-');
+    const uuid:string = parts.join('-');
+    if (!validateUuid(uuid)) {
+      return null;
+    }
 
     return uuid;
   }
@@ -71,7 +75,13 @@ class MovieDetailsPage extends Component<EmptyProps, State> {
   render(): React.ReactNode {
 
     if (this.state.error != null) {
-      return <ErrorPage message="Movie not found" history={this.props.history}/>;
+      const errorHandler = () => { this.props.history.goBack(); };
+      errorHandler.bind(this);
+      const errorCallback = {
+        label: 'Go back',
+        callback: errorHandler
+      }
+      return <Error message="Movie not found" callback={errorCallback} />;
     }
 
     if (this.state.loading) {

@@ -1,10 +1,12 @@
 import express from 'express';
 import cors from 'cors';
+import morgan from 'morgan';
 import OpenapiSpec from './openapi';
 import MoviesRouter from './services/movies';
 import swaggerUi from 'swagger-ui-express';
 
 const app = express();
+app.use(morgan('combined'));
 app.use(cors());
 
 // Routes
