@@ -9,7 +9,7 @@ import { Configuration } from './../api/movie/configuration';
 const router = express.Router();
 const api = MoviesApiFactory(
     new Configuration(),
-    "http://movie-service:80",
+    "http://movies:80",
     axiosInstance
 );
 

@@ -1,35 +1,35 @@
 version: '3.7'
 
 services:
-  movie-service:
+  movies:
     env_file:
       - .env
       - movie.env
     build:
-      context: movie-service
+      context: movies
       dockerfile: movies.dockerfile
     ports:
       - ${MOVIES_PORT}:80
     volumes:
-      - ./movie-service/app:/app
+      - ./movies/app:/app
 ############################
 #   JUST FOR DEVELOPMENT   #
     command:
       - /start-reload.sh
 ############################
 
-  movie-db:
+  movies-db:
     image: postgres:13
     env_file:
       - movie.env
     volumes:
-      - db-data-movie:/var/lib/postgresql/data/
+      - movies-db-data:/var/lib/postgresql/data/
     ports:
       - 5432:5432
 
   public-api:
     depends_on:
-      - movie-service
+      - movies
     build:
       context: public-api/
       dockerfile: Dockerfile.dev
@@ -56,4 +56,4 @@ services:
 
 
 volumes:
-  db-data-movie:
+  movies-db-data:
