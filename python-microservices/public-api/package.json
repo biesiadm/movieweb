@@ -26,8 +26,8 @@
       "nodemon": "^2.0.7"
     },
     "scripts": {
-      "generate-movie-api-client": "openapi-generator-cli generate -g typescript-axios -i api-movie.json -o src/api/movie/",
-      "generate-public-api-schema": "swagger-jsdoc -d openapi-definition.json src/openapi.ts src/services/*.ts -o generated/openapi.json",
+      "generate-api-client-movies": "openapi-generator-cli generate -g typescript-axios -i apis/movies.json -o src/api/movies/",
+      "generate-api-schema-public": "swagger-jsdoc -d openapi-definition.json src/openapi.ts src/services/*.ts -o generated/openapi.json",
       "build": "tsc --project ./",
       "start": "ts-node src/index.ts",
       "start-dev": "nodemon src/index.ts"

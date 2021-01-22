@@ -18,7 +18,6 @@ ADD . ./
 
 # Startup
 EXPOSE 8080
-RUN npm run build-api-model
+RUN npm run generate-api-client-public
 RUN npm run build
-CMD ./setup-env.sh && \
-    serve -s build -l 8080
+CMD serve -s build -l 8080

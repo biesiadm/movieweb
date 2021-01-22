@@ -3,8 +3,8 @@ import express from 'express';
 import slugify from 'slugify';
 import { validate as validateUuid } from 'uuid';
 import { axiosInstance } from './../config';
-import { HTTPValidationError, Movie, MoviesApiFactory, ValidationError } from './../api/movie/api';
-import { Configuration } from './../api/movie/configuration';
+import { HTTPValidationError, Movie, MoviesApiFactory, ValidationError } from './../api/movies/api';
+import { Configuration } from './../api/movies/configuration';
 
 const router = express.Router();
 const api = MoviesApiFactory(

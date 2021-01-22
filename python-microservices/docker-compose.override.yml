@@ -22,6 +22,7 @@ services:
       context: public-api/
       dockerfile: Dockerfile.dev
     volumes:
+      - ./public-api/apis:/usr/src/app/apis
       - ./public-api/generated:/usr/src/app/generated
       - ./public-api/src:/usr/src/app/src
 
@@ -30,5 +31,6 @@ services:
       context: webapp/
       dockerfile: Dockerfile.dev
     volumes:
+      - ./webapp/apis:/usr/src/app/apis
       - ./webapp/public:/usr/src/app/public
       - ./webapp/src:/usr/src/app/src

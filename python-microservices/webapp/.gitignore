@@ -1,3 +1,6 @@
 # API model
 src/api/public/*
 !src/api/public/.gitkeep
+
+# Typescript
+*.d.ts
