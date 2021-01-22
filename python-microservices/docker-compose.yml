@@ -2,69 +2,47 @@ version: '3.7'
 
 services:
   movies:
+    depends_on:
+      - movies-db
+    build: movies/
     env_file:
       - .env
       - movies.env
-    build:
-      context: movies
-      dockerfile: movies.dockerfile
-    ports:
-      - ${MOVIES_PORT}:80
-    volumes:
-      - ./movies/app:/app
-############################
-#   JUST FOR DEVELOPMENT   #
-    command:
-      - /start-reload.sh
-############################
 
   movies-db:
-    image: postgres:13
-    env_file:
-      - movies.env
+    image: postgres:13-alpine
+    env_file: movies.env
     volumes:
       - movies-db-data:/var/lib/postgresql/data/
 
-
   users:
+    depends_on:
+      - users-db
+    build: users/
     env_file:
       - .env
       - users.env
-    build:
-      context: users
-      dockerfile: users.dockerfile
-    ports:
-      - ${USERS_PORT}:80
-    volumes:
-      - ./users/app:/app
-    ############################
-    #   JUST FOR DEVELOPMENT   #
-    command:
-      - /start-reload.sh
-  ############################
 
   users-db:
-    image: postgres:13
-    env_file:
-      - users.env
+    image: postgres:13-alpine
+    env_file: users.env
     volumes:
       - users-db-data:/var/lib/postgresql/data/
 
   public-api:
     depends_on:
       - movies
+      - users
     build: public-api/
-    env_file:
-      - .env
+    env_file: .env
     ports:
       - ${PUBLIC_API_PORT}:8080
 
   webapp:
     depends_on:
-      - movies
+      - public-api
     build: webapp/
-    env_file:
-      - .env
+    env_file: .env
     ports:
       - ${WEBAPP_PORT}:8080
 
