@@ -1,0 +1,11 @@
+# Repository
+README.md
+
+# Docker files
+.dockerignore
+Dockerfile
+Dockerfile.dev
+
+# NPM files
+node_modules
+npm-debug.log

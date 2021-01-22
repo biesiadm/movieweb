@@ -7,7 +7,7 @@ docker-compose build
 ```
 ### run migration
 ```
-docker-compose run movie-service alembic revision --autogenerate
+docker-compose run movies alembic revision --autogenerate
 ```
 
 ### run
