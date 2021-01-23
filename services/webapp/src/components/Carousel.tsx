@@ -24,7 +24,7 @@ class Carousel extends Component<Props, State> {
             <h2 className="text-white-50 small mb-0">Latest movies</h2>
             <div className="carousel-inner">
               {movies.map((movie: Movie, index: number) => {
-                let slideClasses = "carousel-item py-5";
+                let slideClasses = "carousel-item py-4 py-lg-5";
                 if (index == 1) {
                   slideClasses += " active";
                 }
@@ -38,12 +38,12 @@ class Carousel extends Component<Props, State> {
                         <div className="row gx-5">
                           <div className="col-md-3">
                             <Link to={url}>
-                              <img src={movie.poster_url} className="rounded w-100 carousel-featured-poster" alt="{movie.title} poster" />
+                              <img src={movie.poster_url} className="rounded w-100 featured-poster" alt="{movie.title} poster" />
                             </Link>
                           </div>
                           <div className="col-md-9">
                             <div className="pt-3 px-3 px-md-0">
-                              <h3 className="display-3 text-white carousel-featured-title">{movie.title}</h3>
+                              <h3 className="display-3 text-white featured-title">{movie.title}</h3>
                               <p className="display-6 text-light">{movie.director}</p>
                               <p className="display-6 text-light">{movie.country}, {movie.year}</p>
                               <p className="mt-4"><Link to={url} className="btn btn-primary btn-lg">Details</Link></p>

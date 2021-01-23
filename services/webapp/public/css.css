@@ -49,12 +49,13 @@ html, body, body>div {
     z-index: 10000;
 }
 
-.carousel-featured > .carousel-inner {
+.carousel-featured > .carousel-inner, .extra-5 {
+    position: relative;
     width: calc(100% + 6rem);
     left: -3rem;
 }
 
-.carousel-featured > .carousel-inner > .carousel-item {
+.carousel-featured > .carousel-inner > .carousel-item, .extra-5-padded {
     padding-left: 3rem;
     padding-right: 3rem;
 }
@@ -65,15 +66,15 @@ html, body, body>div {
         text-align: center;
     }
 
-    .carousel-featured > .carousel-inner {
+    .carousel-featured > .carousel-inner, .featured-center {
         text-align: center;
     }
 
-    .carousel-featured-poster {
+    .featured-poster {
         max-width: 50vw !important;
     }
 
-    .carousel-featured-title {
+    .featured-title {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
