@@ -32,7 +32,7 @@ class Error extends Component<Props, EmptyState> {
       button = <button onClick={callback} type="button" className="btn btn-primary mt-3 py-2 px-3">{buttonLabel}</button>;
     }
 
-    return <div className='text-center'>
+    return <div className="text-center pt-5">
             <h1 className="display-1">{header}</h1>
             <p className="lead">{message}</p>
             {button}

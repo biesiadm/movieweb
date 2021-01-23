@@ -205,7 +205,8 @@
           "id",
           "title",
           "slug",
-          "poster_url"
+          "poster_url",
+          "background_url"
         ],
         "properties": {
           "id": {
@@ -219,6 +220,10 @@
             "type": "string"
           },
           "poster_url": {
+            "type": "string",
+            "format": "url"
+          },
+          "background_url": {
             "type": "string",
             "format": "url"
           },

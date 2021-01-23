@@ -81,35 +81,49 @@ class MovieDetailsPage extends Component<Props, State> {
     }
 
     if (this.state.movie !== null) {
-
       const movie: Movie = this.state.movie;
-      return <section className="container">
-              <div className="row mb-2">
-                <div className="col-xl-8 mb-3 container">
-                  <div className="bg-white row">
-                    <img src={movie.poster_url} alt="{movie.title} poster" className="col-md-4" />
-                    <div className="col-md-8 py-5 px-5">
-                      <h2>{movie.title}</h2>
-                      <h3 className="text-muted">{movie.director}</h3>
-                      <p className="mt-3"><span className="text-muted">Category:</span> {movie.category}</p>
-                      <p><span className="text-muted">Country:</span> {movie.country}</p>
-                      <p><span className="text-muted">Year:</span> {movie.year}</p>
+      const featuredStyle = {
+        backgroundImage: "linear-gradient(90deg, rgba(20,23,26,1) 0%, rgba(20,23,26,0.8) 8rem, rgba(20,23,26,0.8) calc(100% - 8rem), rgba(20,23,26,1) 100%), url(" + movie.background_url + ")",
+        backgroundSize: "cover",
+        backgroundPosition: "top center"
+      };
+      return <div>
+              <section className="bg-darker movie-page-header">
+                <div className="container">
+                  <div className="py-4 py-lg-5 extra-5" style={featuredStyle}>
+                    <div className="row extra-5-padded">
+                      <div className="col-xl-8 mr-5">
+                        <div className="row gx-5">
+                          <div className="col-md-3 col-xl-4 featured-center">
+                            <img src={movie.poster_url} className="rounded w-100 featured-poster" alt="{movie.title} poster" />
+                          </div>
+                          <div className="col-md-9 col-xl-8">
+                            <div className="pt-3 text-light">
+                              <h3 className="display-6 text-white featured-title">{movie.title}</h3>
+                              <h4 className="text-light">{movie.director}</h4>
+                              <p className="mt-4"><span className="text-muted">Category:</span> {movie.category}</p>
+                              <p><span className="text-muted">Country:</span> {movie.country}</p>
+                              <p><span className="text-muted">Year:</span> {movie.year}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="col-xl-4 pt-4 pt-lg-5 pt-xl-0 ps-xl-5">
+                        <InfoScreen className="bg-subtle h-100 py-0">
+                          Your rating block
+                        </InfoScreen>
+                      </div>
                     </div>
                   </div>
                 </div>
-
-                <div className="col-xl-4 mb-3">
-                  <InfoScreen className="bg-subtle h-100 py-0">
-                    Your rating block
-                  </InfoScreen>
-                </div>
-              </div>
-
-              <h2 className="my-3">Recent user ratings</h2>
-              <InfoScreen className="bg-subtle h-100 py-0">
-                User ratings block
-              </InfoScreen>
-            </section>;
+              </section>
+              <section className="container pt-4">
+                <h2 className="my-3">Recent user ratings</h2>
+                <InfoScreen className="bg-subtle h-100 py-0">
+                  User ratings block
+                </InfoScreen>
+              </section>
+            </div>;
 
     } else { // this.state.error != null
 
