@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { AxiosResponse } from 'axios';
 import { validate as validateUuid } from 'uuid';
@@ -7,7 +7,9 @@ import { Movie } from '../api/public/api'
 import Error from '../components/Error';
 import InfoScreen, { LoadingScreen } from '../components/Screen';
 
-type EmptyProps = RouteComponentProps<any>
+type Props = RouteComponentProps<{
+  slug_id: string
+}>
 
 type State = {
   movie: Movie | null,
@@ -15,7 +17,7 @@ type State = {
   error: unknown | null
 }
 
-class MovieDetailsPage extends Component<EmptyProps, State> {
+class MovieDetailsPage extends Component<Props, State> {
 
   state: State = {
     movie: null,
@@ -23,7 +25,7 @@ class MovieDetailsPage extends Component<EmptyProps, State> {
     error: null
   };
 
-  constructor(props: EmptyProps) {
+  constructor(props: Props) {
     super(props);
     this.render.bind(this);
 
@@ -74,7 +76,43 @@ class MovieDetailsPage extends Component<EmptyProps, State> {
 
   render(): React.ReactNode {
 
-    if (this.state.error != null) {
+    if (this.state.loading) {
+      return <LoadingScreen message="Fetching movie..." />;
+    }
+
+    if (this.state.movie !== null) {
+
+      const movie: Movie = this.state.movie;
+      return <section className="container">
+              <div className="row mb-2">
+                <div className="col-xl-8 mb-3 container">
+                  <div className="bg-white row">
+                    <img src={movie.poster_url} alt="{movie.title} poster" className="col-md-4" />
+                    <div className="col-md-8 py-5 px-5">
+                      <h2>{movie.title}</h2>
+                      <h3 className="text-muted">{movie.director}</h3>
+                      <p className="mt-3"><span className="text-muted">Category:</span> {movie.category}</p>
+                      <p><span className="text-muted">Country:</span> {movie.country}</p>
+                      <p><span className="text-muted">Year:</span> {movie.year}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-xl-4 mb-3">
+                  <InfoScreen className="bg-subtle h-100 py-0">
+                    Your rating block
+                  </InfoScreen>
+                </div>
+              </div>
+
+              <h2 className="my-3">Recent user ratings</h2>
+              <InfoScreen className="bg-subtle h-100 py-0">
+                User ratings block
+              </InfoScreen>
+            </section>;
+
+    } else { // this.state.error != null
+
       const errorHandler = () => { this.props.history.goBack(); };
       errorHandler.bind(this);
       const errorCallback = {
@@ -83,39 +121,6 @@ class MovieDetailsPage extends Component<EmptyProps, State> {
       }
       return <Error message="Movie not found" callback={errorCallback} />;
     }
-
-    if (this.state.loading) {
-      return <LoadingScreen message="Fetching movie..." />;
-    }
-
-    const movie: Movie = this.state.movie!;
-    return <section className="container">
-            <div className="row mb-2">
-              <div className="col-xl-8 mb-3 container">
-                <div className="bg-white row">
-                  <img src={movie.poster_url} alt="{movie.title} poster" className="col-md-4" />
-                  <div className="col-md-8 py-5 px-5">
-                    <h2>{movie.title}</h2>
-                    <h3 className="text-muted">{movie.director}</h3>
-                    <p className="mt-3"><span className="text-muted">Category:</span> {movie.category}</p>
-                    <p><span className="text-muted">Country:</span> {movie.country}</p>
-                    <p><span className="text-muted">Year:</span> {movie.year}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-xl-4 mb-3">
-                <InfoScreen className="bg-subtle h-100 py-0">
-                  Your rating block
-                </InfoScreen>
-              </div>
-            </div>
-
-            <h2 className="my-3">Recent user ratings</h2>
-            <InfoScreen className="bg-subtle h-100 py-0">
-              User ratings block
-            </InfoScreen>
-          </section>;
   }
 }
 

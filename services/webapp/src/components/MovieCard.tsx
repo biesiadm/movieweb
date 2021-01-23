@@ -32,7 +32,7 @@ class MovieCard extends Component<Props, State> {
   }
 
   // Update details URL when props change
-  handleChange = () => {
+  handleChange = (): void => {
     this.setState(this.computeState());
   };
 
