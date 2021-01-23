@@ -1,4 +1,4 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8-slim
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
 
 WORKDIR /app/
 
@@ -6,7 +6,6 @@ WORKDIR /app/
 ENV PYTHONDONTWRITEBYTECODE=1
 
 # Install Poetry
-RUN apt-get update -qq && apt-get install curl -y -qq
 RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=/opt/poetry python && \
     cd /usr/local/bin && \
     ln -s /opt/poetry/bin/poetry && \
