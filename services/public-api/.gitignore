@@ -1,3 +1,5 @@
 # API model
 src/api/movies/*
 !src/api/movies/.gitkeep
+src/api/users/*
+!src/api/users/.gitkeep
