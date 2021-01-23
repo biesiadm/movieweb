@@ -10,8 +10,6 @@ class Settings(BaseSettings):
 
     DATABASE_URL: AnyUrl
 
-    SECRET_KEY: str
-
     class Config:
         case_sensitive = True
 

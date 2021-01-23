@@ -34,11 +34,11 @@ services:
       - ./public-api/generated:/usr/src/app/generated
       - ./public-api/src:/usr/src/app/src
 
-#  webapp:
-#    build:
-#      context: webapp/
-#      dockerfile: Dockerfile.dev
-#    volumes:
-#      - ./webapp/apis:/usr/src/app/apis
-#      - ./webapp/public:/usr/src/app/public
-#      - ./webapp/src:/usr/src/app/src
+  webapp:
+    build:
+      context: webapp/
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./webapp/apis:/usr/src/app/apis
+      - ./webapp/public:/usr/src/app/public
+      - ./webapp/src:/usr/src/app/src
