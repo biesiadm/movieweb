@@ -1,9 +1,9 @@
-import axios, { AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import express from 'express';
 import slugify from 'slugify';
 import { validate as validateUuid } from 'uuid';
 import { axiosInstance } from './../config';
-import { HTTPValidationError, Movie, MoviesApiFactory, ValidationError } from './../api/movies/api';
+import { HTTPValidationError, Movie, MoviesApiFactory } from './../api/movies/api';
 import { Configuration } from './../api/movies/configuration';
 
 const router = express.Router();

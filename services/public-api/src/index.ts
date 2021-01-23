@@ -3,6 +3,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import OpenapiSpec from './openapi';
 import MoviesRouter from './services/movies';
+import UsersRouter from './services/users';
 import swaggerUi from 'swagger-ui-express';
 
 const app = express();
@@ -11,6 +12,7 @@ app.use(cors());
 
 // Routes
 app.use('/movies', MoviesRouter);
+app.use('/users', UsersRouter);
 
 // OpenAPI support
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(OpenapiSpec));

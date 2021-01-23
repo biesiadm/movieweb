@@ -6,7 +6,6 @@ ADD package*.json ./
 RUN npm install --silent
 
 # JDK for @openapitools/openapi-generator-cli
-# TODO(kantoniak): Write a two-stage build to drop openjdk11
 RUN apk add openjdk11
 
 # Files
