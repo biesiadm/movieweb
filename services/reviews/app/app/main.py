@@ -7,7 +7,7 @@ from app.core.config import settings
 from app.api.api.api import api_router
 
 app = FastAPI(title=settings.SERVICE_NAME,
-              openapi_url=f"{settings.API_USERS}/openapi.json")
+              openapi_url=f"{settings.API_REVIEWS}/openapi.json")
 
 # CORS setup
 origins = [
@@ -23,4 +23,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(api_router, prefix=settings.API_USERS)
+app.include_router(api_router, prefix=settings.API_REVIEWS)

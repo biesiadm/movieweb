@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
@@ -21,6 +22,7 @@ class ReviewUpdate(ReviewBase):
 
 class Review(ReviewBase):
     id: UUID
+    created: datetime
 
     class Config:
         orm_mode = True
