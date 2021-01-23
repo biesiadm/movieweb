@@ -24,3 +24,11 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+
+
+class UserWeb(BaseModel):
+    id: UUID
+    name: str
+
+    class Config:
+        orm_mode = True

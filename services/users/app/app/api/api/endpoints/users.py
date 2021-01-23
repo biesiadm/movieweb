@@ -10,12 +10,11 @@ from sqlalchemy.orm import Session
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas.User])
+@router.get("/", response_model=List[schemas.UserWeb])
 def read_users(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Retrieve users.
@@ -35,20 +34,13 @@ def read_user_me(
     return current_user
 
 
-@router.get("/{user_id}", response_model=schemas.User)
+@router.get("/{user_id}", response_model=schemas.UserWeb)
 def read_user_by_id(
     user_id: UUID,
-    current_user: models.User = Depends(deps.get_current_active_user),
     db: Session = Depends(deps.get_db),
 ) -> Any:
     """
     Get a specific user by id.
     """
-    # user = crud.user.get(db=db, id=user_id)
-    # if user == current_user:
-    #     return user
-    # if not crud.user.is_superuser(current_user):
-    #     raise HTTPException(
-    #         status_code=400, detail="The user doesn't have enough privileges"
-    #     )
+    user = crud.user.get(db=db, id=user_id)
     return user
