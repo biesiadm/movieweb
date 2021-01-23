@@ -19,7 +19,7 @@ class ErrorPage extends Component<Props, EmptyState> {
     const history = this.props.history;
     const header = this.props.header;
     const message = this.props.message;
-    return <div className='text-center'>
+    return <div className="text-center pt-5">
             <h1 className="display-1">{header}</h1>
             <p className="lead">{message}</p>
             <button onClick={history.goBack} type="button" className="btn btn-primary mt-3 py-2 px-3">Go back</button>

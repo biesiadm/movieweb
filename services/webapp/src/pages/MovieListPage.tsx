@@ -31,7 +31,7 @@ class MovieListPage extends Component<EmptyProps, State> {
 
   render(): React.ReactNode {
     const movies = this.state.movies;
-    return <section className="container">
+    return <section className="container pt-5">
             <h1>Movies</h1>
             <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-4 pt-3">
               {movies.map((movie: Movie) => {

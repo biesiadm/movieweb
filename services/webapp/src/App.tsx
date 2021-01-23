@@ -36,7 +36,7 @@ class App extends Component<EmptyProps, EmptyState> {
                   </nav>
                 </div>
               </header>
-              <main className="py-5 bg-light col">
+              <main className="pb-5 bg-light col">
               <Switch>
                 <Route exact path='/' component={PublicHomepage} />
                 <Route exact path='/movies' component={MovieListPage} />
