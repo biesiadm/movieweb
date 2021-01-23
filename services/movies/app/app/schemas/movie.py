@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, AnyUrl
 from uuid import UUID
 
@@ -5,6 +7,7 @@ from uuid import UUID
 class MovieBase(BaseModel):
     title: str
     poster_url: AnyUrl
+    background_url: Optional[AnyUrl]
     director: str
     year: int
     country: str

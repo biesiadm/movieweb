@@ -4,6 +4,7 @@ movies = [
     schemas.MovieCreate(
         title='Pulp Fiction',
         poster_url='https://fwcdn.pl/fpo/10/39/1039/7517880.3.jpg',
+        background_url='https://fwcdn.pl/fph/10/39/1039/161852.1.jpg',
         director='Quentin Tarantino',
         year=1994,
         country='USA',
