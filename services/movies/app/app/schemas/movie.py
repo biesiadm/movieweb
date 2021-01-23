@@ -1,9 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, AnyUrl
 from uuid import UUID
 
 
 class MovieBase(BaseModel):
     title: str
+    poster_url: AnyUrl
     director: str
     year: int
     country: str

@@ -54,13 +54,13 @@ services:
     ports:
       - ${PUBLIC_API_PORT}:8080
 
-#  webapp:
-#    depends_on:
-#      - public-api
-#    build: webapp/
-#    env_file: .env
-#    ports:
-#      - ${WEBAPP_PORT}:8080
+  webapp:
+    depends_on:
+      - public-api
+    build: webapp/
+    env_file: .env
+    ports:
+      - ${WEBAPP_PORT}:8080
 
 volumes:
   movies-db-data:

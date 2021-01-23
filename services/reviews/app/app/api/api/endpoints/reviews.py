@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 router = APIRouter()
 
 
-@router.get("/{movie_id}/reviews", response_model=List[schemas.Review])
+@router.get("/movie/{movie_id}/reviews", response_model=List[schemas.Review])
 def read_reviews(
         movie_id: UUID,
         db: Session = Depends(deps.get_db),
@@ -23,6 +23,19 @@ def read_reviews(
     reviews = crud.review.get_by_movie(db, movie_id=movie_id, skip=skip, limit=limit)
     return reviews
 
+
+@router.get("/user/{user_id}/reviews", response_model=List[schemas.Review])
+def read_reviews(
+        user_id: UUID,
+        db: Session = Depends(deps.get_db),
+        skip: int = 0,
+        limit: int = 100,
+) -> Any:
+    """
+    Retrieve reviews by movie.
+    """
+    reviews = crud.review.get_by_user(db, user_id=user_id, skip=skip, limit=limit)
+    return reviews
 
 @router.post("/new", response_model=schemas.Review)
 def add_review(
