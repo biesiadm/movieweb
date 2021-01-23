@@ -101,8 +101,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
         .then((axiosResponse: AxiosResponse<Movie[]>) => {
             axiosResponse.data = axiosResponse.data.map((movie: Movie) => {
                 let result: Partial<PublicMovie> = movie;
-                result.poster_url = 'https://fwcdn.pl/fpo/10/39/1039/7517880.3.jpg';
-                result.background_url = 'https://fwcdn.pl/fph/10/39/1039/161852.1.jpg';
+                // result.background_url = 'https://fwcdn.pl/fph/10/39/1039/161852.1.jpg';
                 result.slug = slugify(movie.title, {
                     lower: true,
                     strict: true,
@@ -170,8 +169,7 @@ router.get("/:id", (req: express.Request, res: express.Response, next: express.N
     api.readMovieByIdMoviesMovieIdGet(id)
         .then((axiosResponse: AxiosResponse<Movie>) => {
             let newResponse: AxiosResponse<Partial<PublicMovie>> = axiosResponse;
-            newResponse.data.poster_url = 'https://fwcdn.pl/fpo/10/39/1039/7517880.3.jpg';
-            newResponse.data.background_url = 'https://fwcdn.pl/fph/10/39/1039/161852.1.jpg';
+            // newResponse.data.background_url = 'https://fwcdn.pl/fph/10/39/1039/161852.1.jpg';
             newResponse.data.slug = slugify(axiosResponse.data.title, {
                 lower: true,
                 strict: true,

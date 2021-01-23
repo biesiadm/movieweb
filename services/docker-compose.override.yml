@@ -17,6 +17,14 @@ services:
     volumes:
       - ./users/app:/app
 
+  reviews:
+    ports:
+      - ${REVIEWS_PORT}:80
+    command:
+      - /start-reload.sh
+    volumes:
+      - ./reviews/app:/app
+
   public-api:
     build:
       context: public-api/

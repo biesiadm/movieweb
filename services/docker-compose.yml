@@ -29,6 +29,22 @@ services:
     volumes:
       - users-db-data:/var/lib/postgresql/data/
 
+
+  reviews:
+    depends_on:
+      - reviews-db
+    build: reviews/
+    env_file:
+      - .env
+      - reviews.env
+
+  reviews-db:
+    image: postgres:13-alpine
+    env_file: reviews.env
+    volumes:
+      - reviews-db-data:/var/lib/postgresql/data/
+
+
   public-api:
     depends_on:
       - movies
@@ -49,3 +65,4 @@ services:
 volumes:
   movies-db-data:
   users-db-data:
+  reviews-db-data:
