@@ -8,5 +8,6 @@ docker-compose down -v --remove-orphans
 
 users/scripts/restart.sh
 movies/scripts/restart.sh
+reviews/scripts/restart.sh
 
 docker-compose up

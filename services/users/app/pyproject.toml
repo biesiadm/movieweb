@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "user-service"
+name = "users"
 version = "0.1.0"
 description = ""
 authors = ["Krzysztof Antoniak", "Mateusz Biesiadowski"]
