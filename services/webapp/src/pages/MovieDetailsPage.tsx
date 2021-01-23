@@ -83,7 +83,7 @@ class MovieDetailsPage extends Component<Props, State> {
     if (this.state.movie !== null) {
 
       const movie: Movie = this.state.movie;
-      return <section className="container">
+      return <section className="container pt-5">
               <div className="row mb-2">
                 <div className="col-xl-8 mb-3 container">
                   <div className="bg-white row">

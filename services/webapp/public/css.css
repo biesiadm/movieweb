@@ -35,3 +35,63 @@ html, body, body>div {
     font-size: .750rem;
     border-radius: .2rem;
 }
+
+/* Carousel */
+.bg-darker {
+    background-color: #14171A !important;
+}
+
+.carousel-featured > h2 {
+    box-sizing: content-box;
+    text-transform: uppercase;
+    position: absolute;
+    top: 1.5rem;
+    z-index: 10000;
+}
+
+.carousel-featured > .carousel-inner {
+    width: calc(100% + 6rem);
+    left: -3rem;
+}
+
+.carousel-featured > .carousel-inner > .carousel-item {
+    padding-left: 3rem;
+    padding-right: 3rem;
+}
+
+@media (max-width: 767px) {
+    .carousel-featured > h2 {
+        width: calc(100% - 2rem);
+        text-align: center;
+    }
+
+    .carousel-featured > .carousel-inner {
+        text-align: center;
+    }
+
+    .carousel-featured-poster {
+        max-width: 50vw !important;
+    }
+
+    .carousel-featured-title {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+.carousel-control-prev, .carousel-control-next {
+    background: #F0A96E;
+    opacity: 1;
+    top: calc(50% - 2em);
+    height: 2em;
+    width: 2em;
+    border-radius: 10em;
+    padding: 0.5em 0.55em 0.5em 0.45em;
+    left: -0.25em;
+}
+
+.carousel-control-next {
+    left: calc(100% - 2rem + 0.25em);
+    padding: 0.5em 0.45em 0.5em 0.55em;
+}

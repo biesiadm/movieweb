@@ -25,6 +25,7 @@ const api = MoviesApiFactory(
  *         - title
  *         - slug
  *         - poster_url
+ *         - background_url
  *       properties:
  *         id:
  *           type: "string"
@@ -34,6 +35,9 @@ const api = MoviesApiFactory(
  *         slug:
  *           type: "string"
  *         poster_url:
+ *           type: "string"
+ *           format: "url"
+ *         background_url:
  *           type: "string"
  *           format: "url"
  *         director:
@@ -50,16 +54,23 @@ interface PublicMovie extends Movie {
     /**
      *
      * @type {string}
-     * @memberof Movie
+     * @memberof PublicMovie
      */
     slug: string;
 
     /**
      *
      * @type {string}
-     * @memberof Movie
+     * @memberof PublicMovie
      */
     poster_url: string;
+
+    /**
+     *
+     * @type {string}
+     * @memberof PublicMovie
+     */
+    background_url: string;
 }
 
 /**
@@ -91,6 +102,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
             axiosResponse.data = axiosResponse.data.map((movie: Movie) => {
                 let result: Partial<PublicMovie> = movie;
                 result.poster_url = 'https://fwcdn.pl/fpo/10/39/1039/7517880.3.jpg';
+                result.background_url = 'https://fwcdn.pl/fph/10/39/1039/161852.1.jpg';
                 result.slug = slugify(movie.title, {
                     lower: true,
                     strict: true,
@@ -159,6 +171,7 @@ router.get("/:id", (req: express.Request, res: express.Response, next: express.N
         .then((axiosResponse: AxiosResponse<Movie>) => {
             let newResponse: AxiosResponse<Partial<PublicMovie>> = axiosResponse;
             newResponse.data.poster_url = 'https://fwcdn.pl/fpo/10/39/1039/7517880.3.jpg';
+            newResponse.data.background_url = 'https://fwcdn.pl/fph/10/39/1039/161852.1.jpg';
             newResponse.data.slug = slugify(axiosResponse.data.title, {
                 lower: true,
                 strict: true,
