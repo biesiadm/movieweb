@@ -18,10 +18,6 @@ class Carousel extends Component<Props, State> {
   }
 
   render(): React.ReactNode {
-    const backgrounds = [
-      'https://fwcdn.pl/fph/10/39/1039/161852.1.jpg', // Pulp Fiction
-      'https://fwcdn.pl/fph/32/00/33200/174751.1.jpg' // Kill Bill
-    ];
     const id = this.props.id;
     const movies = this.props.movies;
     return <div id={id} className="carousel carousel-dark slide carousel-fade carousel-featured container" data-bs-ride="carousel">
@@ -33,11 +29,10 @@ class Carousel extends Component<Props, State> {
                   slideClasses += " active";
                 }
                 const url = new URL(BASE_URL + '/movies/' + movie.slug + '-' + movie.id);
-                const bgImage = backgrounds[index % 2];
                 const slideStyle = {
-                  backgroundImage: "linear-gradient(90deg, rgba(20,23,26,1) 0%, rgba(20,23,26,0.8) 8rem, rgba(20,23,26,0.8) calc(100% - 8rem), rgba(20,23,26,1) 100%), url(" + bgImage + ")",
+                  backgroundImage: "linear-gradient(90deg, rgba(20,23,26,1) 0%, rgba(20,23,26,0.8) 8rem, rgba(20,23,26,0.8) calc(100% - 8rem), rgba(20,23,26,1) 100%), url(" + movie.background_url + ")",
                   backgroundSize: "cover",
-                  backgroundPosition: "center center"
+                  backgroundPosition: "top center"
                 };
                 return <div key={movie.id} className={slideClasses} style={slideStyle}>
                         <div className="row gx-5">
