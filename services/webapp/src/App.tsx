@@ -5,6 +5,7 @@ import { GenericNotFoundPage } from './pages/ErrorPage'
 import { LoadingScreen, ErrorScreen } from './components/Screen';
 import MovieListPage from './pages/MovieListPage';
 import MovieDetailsPage from './pages/MovieDetailsPage';
+import PublicHomepage from './pages/PublicHomepage';
 
 type EmptyProps = Record<string, never>
 type EmptyState = Record<string, never>
@@ -37,11 +38,7 @@ class App extends Component<EmptyProps, EmptyState> {
               </header>
               <main className="py-5 bg-light col">
               <Switch>
-                <Route exact path='/'>
-                  <section className="container">
-                    <h1>Movieweb</h1>
-                  </section>
-                </Route>
+                <Route exact path='/' component={PublicHomepage} />
                 <Route exact path='/movies' component={MovieListPage} />
                 <Route exact path='/movies/:slug_id' component={MovieDetailsPage} />
                 <Route exact path='/loading' component={LoadingScreen} />
