@@ -1,7 +1,8 @@
-import { AxiosPromise, AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import express from 'express';
 import { validate as validateUuid } from 'uuid';
 import { axiosInstance } from '../config';
+import { buildErrorPassthrough } from './../utils';
 import { HTTPValidationError, User, UsersApiFactory } from '../api/users/api';
 import { Configuration } from '../api/users/configuration';
 
@@ -103,16 +104,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
                 res.status(200).json(users);
                 return next();
             })
-            .catch((reason: any) => {
-                if ([401, 404, 422].includes(reason.response!.status)) {
-                    res.status(reason.response.status).json(reason.response.data);
-                    return next();
-                } else {
-                    console.log(reason);
-                    res.status(500).send();
-                    return next(reason);
-                }
-            });
+            .catch(buildErrorPassthrough([401, 404, 422], res, next));
         return res;
     }
 
@@ -130,16 +122,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
             res.status(axiosResponse.status).json(axiosResponse.data);
             return next();
         })
-        .catch((reason: any) => {
-            if ([401, 404, 422].includes(reason.response!.status)) {
-                res.status(reason.response.status).json(reason.response.data);
-                return next();
-            } else {
-                console.log(reason);
-                res.status(500).send();
-                return next(reason);
-            }
-        });
+        .catch(buildErrorPassthrough([401, 404, 422], res, next));
     return res;
 });
 
@@ -200,16 +183,7 @@ router.get("/:id", (req: express.Request, res: express.Response, next: express.N
             res.status(axiosResponse.status).json(axiosResponse.data);
             return next();
         })
-        .catch((reason: any) => {
-            if ([422, 404].includes(reason.response!.status)) {
-                res.status(reason.response.status).json(reason.response.data);
-                return next();
-            } else {
-                console.log(reason);
-                res.status(500).send();
-                return next(reason);
-            }
-        });
+        .catch(buildErrorPassthrough([404, 422], res, next));
     return res;
 });
 

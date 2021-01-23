@@ -3,6 +3,7 @@ import express from 'express';
 import slugify from 'slugify';
 import { validate as validateUuid } from 'uuid';
 import { axiosInstance } from './../config';
+import { buildErrorPassthrough } from './../utils';
 import { HTTPValidationError, Movie, MoviesApiFactory } from './../api/movies/api';
 import { Configuration } from './../api/movies/configuration';
 
@@ -103,16 +104,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
             res.status(axiosResponse.status).json(axiosResponse.data);
             return next();
         })
-        .catch((reason: any) => {
-            if ([422, 404].includes(reason.response!.status)) {
-                res.status(reason.response.status).json(reason.response.data);
-                return next();
-            } else {
-                console.log(reason);
-                res.status(500).send();
-                return next(reason);
-            }
-        });
+        .catch(buildErrorPassthrough([404, 422], res, next));
     return res;
 });
 
@@ -178,16 +170,7 @@ router.get("/:id", (req: express.Request, res: express.Response, next: express.N
             res.status(axiosResponse.status).json(axiosResponse.data);
             return next();
         })
-        .catch((reason: any) => {
-            if ([422, 404].includes(reason.response!.status)) {
-                res.status(reason.response.status).json(reason.response.data);
-                return next();
-            } else {
-                console.log(reason);
-                res.status(500).send();
-                return next(reason);
-            }
-        });
+        .catch(buildErrorPassthrough([404, 422], res, next));
     return res;
 });
 
