@@ -6,6 +6,7 @@ import { axiosInstance } from './../config';
 import { buildErrorPassthrough } from './../utils';
 import { HTTPValidationError, Movie, MoviesApiFactory } from './../api/movies/api';
 import { Configuration } from './../api/movies/configuration';
+import { handlePagination, buildSortingHandler } from '../openapi';
 
 const router = express.Router();
 const api = MoviesApiFactory(
@@ -64,6 +65,30 @@ interface PublicMovie extends Movie {
  *   get:
  *     operationId: getMovies
  *     summary: Retrieve a list of movies
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           $ref: "#/components/schemas/ArgLimit"
+ *         required: false
+ *       - in: query
+ *         name: skip
+ *         schema:
+ *           $ref: "#/components/schemas/ArgSkip"
+ *         required: false
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *           enum: [year, avg_rating, rating_count]
+ *         required: false
+ *         description: Sorting criteria.
+ *       - in: query
+ *         name: sort_dir
+ *         schema:
+ *           $ref: "#/components/schemas/ArgSortDir"
+ *         required: false
+ *         description: Sorting direction. Used only when "sort" is defined.
  *     responses:
  *       200:
  *         description: List of movies.
@@ -81,8 +106,16 @@ interface PublicMovie extends Movie {
  *               $ref: "#/components/schemas/HTTPValidationError"
  *
  */
+router.get("/", handlePagination);
+router.get("/", buildSortingHandler(['year', 'avg_rating', 'rating_count']));
 router.get("/", (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    api.readMoviesMoviesGet()
+
+    const ratingBasedSorts = ['avg_rating', 'rating_count'];
+    if (req.sorting?.by && ratingBasedSorts.includes(req.sorting.by)) {
+        // TODO(kantoniak): Fetch ids from movie service and then get movie details
+    }
+
+    api.readMoviesMoviesGet(req.pagination!.skip, req.pagination!.limit)
         .then((axiosResponse: AxiosResponse<Movie[]>) => {
             axiosResponse.data = axiosResponse.data.map((movie: Movie) => {
                 let result: Partial<PublicMovie> = movie;
