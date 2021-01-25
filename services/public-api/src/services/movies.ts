@@ -6,7 +6,7 @@ import { axiosInstance } from './../config';
 import { buildErrorPassthrough } from './../utils';
 import { HTTPValidationError, Movie, MoviesApiFactory } from './../api/movies/api';
 import { Configuration } from './../api/movies/configuration';
-import { handlePagination } from '../openapi';
+import { handlePagination, buildSortingHandler } from '../openapi';
 
 const router = express.Router();
 const api = MoviesApiFactory(
@@ -107,7 +107,14 @@ interface PublicMovie extends Movie {
  *
  */
 router.get("/", handlePagination);
+router.get("/", buildSortingHandler(['year', 'avg_rating', 'rating_count']));
 router.get("/", (req: express.Request, res: express.Response, next: express.NextFunction) => {
+
+    const ratingBasedSorts = ['avg_rating', 'rating_count'];
+    if (req.sorting?.by && ratingBasedSorts.includes(req.sorting.by)) {
+        // TODO(kantoniak): Fetch ids from movie service and then get movie details
+    }
+
     api.readMoviesMoviesGet(req.pagination!.skip, req.pagination!.limit)
         .then((axiosResponse: AxiosResponse<Movie[]>) => {
             axiosResponse.data = axiosResponse.data.map((movie: Movie) => {

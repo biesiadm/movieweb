@@ -61,6 +61,25 @@ function handlePagination(req: express.Request, res: express.Response, next: exp
     next();
 }
 
+// Adds sorting to request
+enum SortDir {
+    Ascending = 'asc',
+    Descending = 'desc'
+}
+
+type SortingInfo = {
+    by: string,
+    dir: SortDir
+}
+
+declare global {
+    namespace Express {
+        interface Request {
+            sorting?: SortingInfo
+        }
+    }
+}
+
 /**
  * @swagger
  * components:
@@ -69,6 +88,42 @@ function handlePagination(req: express.Request, res: express.Response, next: exp
  *       type: string
  *       enum: [asc, desc]
  *       default: "asc"
+ */
+function buildSortingHandler(sortBy: string[], defaultCriteria?: string) {
+    return (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        // Defaults
+        let sorting = {
+            by: defaultCriteria,
+            dir: SortDir.Ascending
+        };
+
+        if (req.query.sort !== undefined) {
+            if (sortBy.includes(<string>req.query.sort)) {
+                sorting.by = <string>req.query.sort;
+            }
+        }
+
+        if (req.query.sort_dir !== undefined) {
+            const sort_dir = <string>req.query.sort_dir;
+            if (sort_dir == SortDir.Ascending) {
+                sorting.dir = SortDir.Ascending;
+            } else if (sort_dir == SortDir.Descending) {
+                sorting.dir = SortDir.Descending;
+            }
+        }
+
+        if (sorting.by !== undefined) {
+            req.sorting = <SortingInfo>sorting;
+        }
+
+        next();
+    }
+}
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
  *     ValidationError:
  *       title: "ValidationError"
  *       type: "object"
@@ -95,4 +150,4 @@ function handlePagination(req: express.Request, res: express.Response, next: exp
  *             $ref: "#/components/schemas/ValidationError"
  */
 
-export { handlePagination };
+export { handlePagination, buildSortingHandler };
