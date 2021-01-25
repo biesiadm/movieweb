@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { ArrowRightCircleFill } from 'react-bootstrap-icons';
+import { Link } from 'react-router-dom';
 import { AxiosResponse } from 'axios';
 import PublicAPI from '../PublicAPI';
 import { ArgSortDir, Movie } from '../api/public/api';
@@ -54,7 +56,12 @@ class PublicHomepage extends Component<Props, State> {
               <Carousel id="homepageCarousel" movies={latest} />
             </section>
             <section className="container">
-              <h2 className="mb-4">Top rated</h2>
+              <h2 className="mb-4 heading-with-btn">
+                Top rated
+                <Link to="/movies" className="text-decoration-none">
+                  <span className="badge badge-btn">All movies <ArrowRightCircleFill className="ms-2" color="#F0A96E" /></span>
+                </Link>
+              </h2>
               <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-4 preview-grid">
                 {best.map((movie: Movie) => {
                   return <div key={movie.id} className="col-sm">
@@ -62,7 +69,12 @@ class PublicHomepage extends Component<Props, State> {
                         </div>;
                 })}
               </div>
-              <h2 className="mt-5 mb-4">Most popular</h2>
+              <h2 className="mt-5 mb-4 heading-with-btn">
+                Most popular
+                <Link to="/movies" className="text-decoration-none">
+                  <span className="badge badge-btn">All movies <ArrowRightCircleFill className="ms-2" color="#F0A96E" /></span>
+                </Link>
+              </h2>
               <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-4 preview-grid">
                 {mostPopular.map((movie: Movie) => {
                   return <div key={movie.id} className="col-sm">

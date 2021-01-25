@@ -129,3 +129,22 @@ html, body, body>div {
     left: calc(100% - 2rem + 0.25em);
     padding: 0.5em 0.45em 0.5em 0.55em;
 }
+
+/* Buttons */
+.heading-with-btn {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.badge-btn {
+    display: flex;
+    height: 100%;
+    border-radius: 50rem;
+    font-size: 0.5em;
+    align-items: center;
+    color: #F0A96E;
+    background-color: #212529;
+    padding-left: 0.95em;
+    padding-right: 0.75em;
+}
