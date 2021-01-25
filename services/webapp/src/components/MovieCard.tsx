@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Movie } from '../api/public/api';
 import { BASE_URL } from '../config';
+import Poster from './Poster';
 
 type Props = {
   movie: Movie
@@ -38,13 +39,11 @@ class MovieCard extends Component<Props, State> {
 
   render(): React.ReactNode {
     const movie = this.props.movie;
-    const url = this.state.details_url.pathname;
-    return <div className="card shadow-sm">
+    const url = this.state.details_url;
+    return <div className="card shadow-sm overflow-hidden">
             <div className="row g-0">
               <div className="col-md-4">
-                <Link to={url}>
-                  <img src={movie.poster_url} className="card-img-top" alt="{movie.title} poster" />
-                </Link>
+                <Poster movie={movie} url={url} className="card-img-top" />
               </div>
               <div className="col-md-8">
                 <div className="card-body">

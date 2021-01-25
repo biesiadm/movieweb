@@ -5,6 +5,7 @@ import { validate as validateUuid } from 'uuid';
 import PublicAPI from '../PublicAPI'
 import { Movie } from '../api/public/api'
 import Error from '../components/Error';
+import Poster from '../components/Poster';
 import InfoScreen, { LoadingScreen } from '../components/Screen';
 
 type Props = RouteComponentProps<{
@@ -95,7 +96,7 @@ class MovieDetailsPage extends Component<Props, State> {
                       <div className="col-xl-8 mr-5">
                         <div className="row gx-5">
                           <div className="col-md-3 col-xl-4 featured-center">
-                            <img src={movie.poster_url} className="rounded w-100 featured-poster" alt="{movie.title} poster" />
+                            <Poster movie={movie} className="featured-poster rounded" />
                           </div>
                           <div className="col-md-9 col-xl-8">
                             <div className="pt-3 text-light">
