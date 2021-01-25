@@ -25,7 +25,7 @@ class Carousel extends Component<Props, State> {
             <h2 className="text-white-50 small mb-0">Latest movies</h2>
             <div className="carousel-inner">
               {movies.map((movie: Movie, index: number) => {
-                let slideClasses = "carousel-item py-4 py-lg-5";
+                let slideClasses = "carousel-item pt-5 pb-4 pb-lg-5";
                 if (index == 1) {
                   slideClasses += " active";
                 }
