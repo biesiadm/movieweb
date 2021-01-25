@@ -48,6 +48,25 @@ html, body, body>div {
     padding-top: 142.5%
 }
 
+/* Grid */
+@media (max-width: 575px) {
+    .preview-grid > :nth-child(n+3) {
+        display: none;
+    }
+}
+
+@media (max-width: 991px) {
+    .preview-grid > :nth-child(n+5) {
+        display: none;
+    }
+}
+
+@media (max-width: 1399px) {
+    .preview-grid > :nth-child(n+7) {
+        display: none;
+    }
+}
+
 /* Carousel */
 .bg-darker {
     background-color: #14171A !important;
@@ -84,6 +103,8 @@ html, body, body>div {
 
     .featured-poster {
         max-width: 50vw !important;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .featured-title {

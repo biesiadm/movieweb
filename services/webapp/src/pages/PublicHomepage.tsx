@@ -55,7 +55,7 @@ class PublicHomepage extends Component<Props, State> {
             </section>
             <section className="container">
               <h2 className="mb-4">Top rated</h2>
-              <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-4">
+              <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-4 preview-grid">
                 {best.map((movie: Movie) => {
                   return <div key={movie.id} className="col-sm">
                           <MovieCard movie={movie} />
@@ -63,7 +63,7 @@ class PublicHomepage extends Component<Props, State> {
                 })}
               </div>
               <h2 className="mt-5 mb-4">Most popular</h2>
-              <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-4">
+              <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-4 preview-grid">
                 {mostPopular.map((movie: Movie) => {
                   return <div key={movie.id} className="col-sm">
                           <MovieCard movie={movie} />
