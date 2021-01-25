@@ -13,5 +13,6 @@ ADD . ./
 
 # Startup
 EXPOSE 8080
+RUN chmod +x dev-pre-start.sh
 CMD ./dev-pre-start.sh && \
     npm run start-dev
