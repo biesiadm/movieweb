@@ -5,6 +5,7 @@ import { axiosInstance } from '../config';
 import { buildErrorPassthrough } from './../utils';
 import { HTTPValidationError, User, UsersApiFactory } from '../api/users/api';
 import { Configuration } from '../api/users/configuration';
+import { handlePagination } from '../openapi';
 
 const router = express.Router();
 const api = UsersApiFactory(
@@ -93,10 +94,12 @@ interface PublicUser extends User {
  *             schema:
  *               $ref: "#/components/schemas/HTTPValidationError"
  */
+router.get("/", handlePagination);
 router.get("/", (req: express.Request, res: express.Response, next: express.NextFunction) => {
 
     // TODO: Pass logins to the service instead of handling them here. Temporarily
     // logins are treated as IDs.
+    // TODO(kantoniak): Handle pagination in this case
     if (req.query.login !== undefined) {
         let loginList: any[] = [];
         if (Array.isArray(req.query.login)) {
@@ -119,7 +122,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
     }
 
     // Fetch all users
-    api.readUsersApiUsersGet()
+    api.readUsersApiUsersGet(req.pagination!.skip, req.pagination!.limit)
         .then((axiosResponse: AxiosResponse<User[]>) => {
             axiosResponse.data = axiosResponse.data.map((movie: User) => {
                 let result: Partial<PublicUser> = movie;

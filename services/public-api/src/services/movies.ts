@@ -6,6 +6,7 @@ import { axiosInstance } from './../config';
 import { buildErrorPassthrough } from './../utils';
 import { HTTPValidationError, Movie, MoviesApiFactory } from './../api/movies/api';
 import { Configuration } from './../api/movies/configuration';
+import { handlePagination } from '../openapi';
 
 const router = express.Router();
 const api = MoviesApiFactory(
@@ -105,8 +106,9 @@ interface PublicMovie extends Movie {
  *               $ref: "#/components/schemas/HTTPValidationError"
  *
  */
+router.get("/", handlePagination);
 router.get("/", (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    api.readMoviesMoviesGet()
+    api.readMoviesMoviesGet(req.pagination!.skip, req.pagination!.limit)
         .then((axiosResponse: AxiosResponse<Movie[]>) => {
             axiosResponse.data = axiosResponse.data.map((movie: Movie) => {
                 let result: Partial<PublicMovie> = movie;
