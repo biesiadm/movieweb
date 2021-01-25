@@ -29,11 +29,14 @@ class Carousel extends Component<Props, State> {
                   slideClasses += " active";
                 }
                 const url = new URL(BASE_URL + '/movies/' + movie.slug + '-' + movie.id);
-                const slideStyle = {
-                  backgroundImage: "linear-gradient(90deg, rgba(20,23,26,1) 0%, rgba(20,23,26,0.8) 8rem, rgba(20,23,26,0.8) calc(100% - 8rem), rgba(20,23,26,1) 100%), url(" + movie.background_url + ")",
-                  backgroundSize: "cover",
-                  backgroundPosition: "top center"
-                };
+                let slideStyle = {};
+                if (movie.background_url) {
+                  slideStyle = {
+                    backgroundImage: "linear-gradient(90deg, rgba(20,23,26,1) 0%, rgba(20,23,26,0.8) 8rem, rgba(20,23,26,0.8) calc(100% - 8rem), rgba(20,23,26,1) 100%), url(" + movie.background_url + ")",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center center"
+                  };
+                }
                 return <div key={movie.id} className={slideClasses} style={slideStyle}>
                         <div className="row gx-5">
                           <div className="col-md-3">

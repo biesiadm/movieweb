@@ -85,7 +85,7 @@ class MovieDetailsPage extends Component<Props, State> {
       const featuredStyle = {
         backgroundImage: "linear-gradient(90deg, rgba(20,23,26,1) 0%, rgba(20,23,26,0.8) 8rem, rgba(20,23,26,0.8) calc(100% - 8rem), rgba(20,23,26,1) 100%), url(" + movie.background_url + ")",
         backgroundSize: "cover",
-        backgroundPosition: "top center"
+        backgroundPosition: "center center"
       };
       return <div>
               <section className="bg-darker movie-page-header">
