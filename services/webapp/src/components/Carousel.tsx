@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Movie } from '../api/public/api';
 import { BASE_URL } from '../config';
+import Poster from './Poster';
 
 type Props = {
   id: string
@@ -29,24 +30,25 @@ class Carousel extends Component<Props, State> {
                   slideClasses += " active";
                 }
                 const url = new URL(BASE_URL + '/movies/' + movie.slug + '-' + movie.id);
-                const slideStyle = {
-                  backgroundImage: "linear-gradient(90deg, rgba(20,23,26,1) 0%, rgba(20,23,26,0.8) 8rem, rgba(20,23,26,0.8) calc(100% - 8rem), rgba(20,23,26,1) 100%), url(" + movie.background_url + ")",
-                  backgroundSize: "cover",
-                  backgroundPosition: "top center"
-                };
+                let slideStyle = {};
+                if (movie.background_url) {
+                  slideStyle = {
+                    backgroundImage: "linear-gradient(90deg, rgba(20,23,26,1) 0%, rgba(20,23,26,0.8) 8rem, rgba(20,23,26,0.8) calc(100% - 8rem), rgba(20,23,26,1) 100%), url(" + movie.background_url + ")",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center center"
+                  };
+                }
                 return <div key={movie.id} className={slideClasses} style={slideStyle}>
                         <div className="row gx-5">
                           <div className="col-md-3">
-                            <Link to={url}>
-                              <img src={movie.poster_url} className="rounded w-100 featured-poster" alt="{movie.title} poster" />
-                            </Link>
+                            <Poster movie={movie} url={url} className="featured-poster rounded" />
                           </div>
                           <div className="col-md-9">
                             <div className="pt-3 px-3 px-md-0">
                               <h3 className="display-3 text-white featured-title">{movie.title}</h3>
                               <p className="display-6 text-light">{movie.director}</p>
                               <p className="display-6 text-light">{movie.country}, {movie.year}</p>
-                              <p className="mt-4"><Link to={url} className="btn btn-primary btn-lg">Details</Link></p>
+                              <p className="mt-4"><Link to={url.pathname} className="btn btn-primary btn-lg">Details</Link></p>
                             </div>
                           </div>
                         </div>

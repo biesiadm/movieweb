@@ -205,8 +205,7 @@
           "id",
           "title",
           "slug",
-          "poster_url",
-          "background_url"
+          "poster_url"
         ],
         "properties": {
           "id": {

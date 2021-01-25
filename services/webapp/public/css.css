@@ -36,6 +36,18 @@ html, body, body>div {
     border-radius: .2rem;
 }
 
+/* Poster */
+.poster {
+    overflow: hidden;
+}
+
+.poster-inner {
+    background-size: cover;
+    background-position: center center;
+    width: 100%;
+    padding-top: 142.5%
+}
+
 /* Carousel */
 .bg-darker {
     background-color: #14171A !important;
