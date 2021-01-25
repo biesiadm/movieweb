@@ -60,6 +60,16 @@ interface PublicUser extends User {
  *     summary: Retrieve a list of users
  *     parameters:
  *       - in: query
+ *         name: limit
+ *         schema:
+ *           $ref: "#/components/schemas/ArgLimit"
+ *         required: false
+ *       - in: query
+ *         name: skip
+ *         schema:
+ *           $ref: "#/components/schemas/ArgSkip"
+ *         required: false
+ *       - in: query
  *         name: login
  *         schema:
  *           type: "array"
