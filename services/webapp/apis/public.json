@@ -222,6 +222,16 @@
   },
   "components": {
     "schemas": {
+      "ArgLimit": {
+        "type": "integer",
+        "minimum": 1,
+        "default": 100
+      },
+      "ArgSkip": {
+        "type": "integer",
+        "minimum": 0,
+        "default": 0
+      },
       "ArgSortDir": {
         "type": "string",
         "enum": [
@@ -229,16 +239,6 @@
           "desc"
         ],
         "default": "asc"
-      },
-      "ArgLimit": {
-        "type": "integer",
-        "minimum": 0,
-        "default": 100
-      },
-      "ArgSkip": {
-        "type": "integer",
-        "minimum": 0,
-        "default": 0
       },
       "ValidationError": {
         "title": "ValidationError",
@@ -321,7 +321,7 @@
           "id",
           "login",
           "name",
-          "email"
+          "avatar_url"
         ],
         "properties": {
           "id": {
@@ -337,6 +337,10 @@
           "email": {
             "type": "string",
             "format": "email"
+          },
+          "avatar_url": {
+            "type": "string",
+            "format": "url"
           },
           "is_active": {
             "type": "boolean",

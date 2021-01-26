@@ -5,6 +5,8 @@ import { GenericNotFoundPage } from './pages/ErrorPage'
 import { LoadingScreen, ErrorScreen } from './components/Screen';
 import MovieListPage from './pages/MovieListPage';
 import MovieDetailsPage from './pages/MovieDetailsPage';
+import UserListPage from './pages/UserListPage';
+import UserDetailsPage from './pages/UserDetailsPage';
 import PublicHomepage from './pages/PublicHomepage';
 
 type EmptyProps = Record<string, never>
@@ -20,17 +22,13 @@ class App extends Component<EmptyProps, EmptyState> {
                   <button className="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#main-menu-collapse" aria-controls="main-menu-collapse" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
                   </button>
-
                   <nav className="navbar-collapse collapse" id="main-menu-collapse">
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                      <li className="nav-item">
-                        <NavLink exact to='/' className="nav-link" aria-current="page">Home</NavLink>
-                      </li>
                       <li className="nav-item">
                         <NavLink to='/movies' className="nav-link" aria-current="page">Movies</NavLink>
                       </li>
                       <li className="nav-item">
-                        <NavLink to='/404' className="nav-link" aria-current="page">404</NavLink>
+                        <NavLink to='/users' className="nav-link" aria-current="page">Users</NavLink>
                       </li>
                     </ul>
                   </nav>
@@ -41,6 +39,9 @@ class App extends Component<EmptyProps, EmptyState> {
                 <Route exact path='/' component={PublicHomepage} />
                 <Route exact path='/movies' component={MovieListPage} />
                 <Route exact path='/movies/:slug_id' component={MovieDetailsPage} />
+                <Route exact path='/users' component={UserListPage} />
+                {/* Key below is a quick fix for going from user page to another user page */}
+                <Route exact key={location.pathname} path='/users/:login' component={UserDetailsPage} />
                 <Route exact path='/loading' component={LoadingScreen} />
                 <Route exact path='/error'>
                   <ErrorScreen className="bg-subtle" />

@@ -321,7 +321,7 @@
           "id",
           "login",
           "name",
-          "email"
+          "avatar_url"
         ],
         "properties": {
           "id": {
@@ -337,6 +337,10 @@
           "email": {
             "type": "string",
             "format": "email"
+          },
+          "avatar_url": {
+            "type": "string",
+            "format": "url"
           },
           "is_active": {
             "type": "boolean",

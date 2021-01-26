@@ -45,7 +45,19 @@ html, body, body>div {
     background-size: cover;
     background-position: center center;
     width: 100%;
-    padding-top: 142.5%
+    padding-top: 142.5%;
+}
+
+/* Avatar */
+.avatar {
+    overflow: hidden;
+}
+
+.avatar-inner {
+    background-size: cover;
+    background-position: center center;
+    width: 100%;
+    padding-top: calc(100% - 10px); /* 5px border */
 }
 
 /* Grid */
@@ -147,4 +159,34 @@ html, body, body>div {
     background-color: #212529;
     padding-left: 0.95em;
     padding-right: 0.75em;
+}
+
+.badge-btn-light {
+    color: #212529;
+    background-color: #F0A96E;
+}
+
+/* User details page */
+@media (min-width: 992px) { /* Large and above */
+    .user-details-page-avatar {
+        height: 9em;
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1399px) { /* XL */
+    .user-details-page-avatar {
+        width: 14.75em;
+    }
+
+    .user-details-page-summary {
+        width: calc(100% - 14.75rem);
+    }
+}
+
+@media (max-width: 767px) { /* XS, SM */
+    .user-details-page-avatar {
+        max-width: 50vw !important;
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
