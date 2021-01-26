@@ -1,5 +1,6 @@
 import { AxiosResponse } from 'axios';
 import express from 'express';
+import md5 from 'md5';
 import { validate as validateUuid } from 'uuid';
 import { axiosInstance } from '../config';
 import { buildErrorPassthrough } from './../utils';
@@ -24,7 +25,7 @@ const api = UsersApiFactory(
  *         - id
  *         - login
  *         - name
- *         - email
+ *         - avatar_url
  *       properties:
  *         id:
  *           type: "string"
@@ -36,6 +37,9 @@ const api = UsersApiFactory(
  *         email:
  *           type: "string"
  *           format: "email"
+ *         avatar_url:
+ *           type: "string"
+ *           format: "url"
  *         is_active:
  *           type: "boolean"
  *           default: true
@@ -51,6 +55,13 @@ interface PublicUser extends User {
      * @memberof PublicUser
      */
     login: string;
+
+    /**
+     *
+     * @type {string}
+     * @memberof PublicUser
+     */
+    avatar_url: string;
 }
 
 /**
@@ -127,6 +138,10 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
             axiosResponse.data = axiosResponse.data.map((movie: User) => {
                 let result: Partial<PublicUser> = movie;
                 result.login = result.id;
+
+                // TODO: There should be an email istead of hash, but we don't have it in public-api.
+                const gravatarHash = md5(result.login!.trim().toLowerCase());
+                result.avatar_url = `https://www.gravatar.com/avatar/${gravatarHash}?d=identicon&s=128&r=g`;
                 return <PublicUser>result;
             });
             return <AxiosResponse<PublicUser[]>>axiosResponse;
