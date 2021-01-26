@@ -6,6 +6,7 @@ import { LoadingScreen, ErrorScreen } from './components/Screen';
 import MovieListPage from './pages/MovieListPage';
 import MovieDetailsPage from './pages/MovieDetailsPage';
 import UserListPage from './pages/UserListPage';
+import UserDetailsPage from './pages/UserDetailsPage';
 import PublicHomepage from './pages/PublicHomepage';
 
 type EmptyProps = Record<string, never>
@@ -39,6 +40,7 @@ class App extends Component<EmptyProps, EmptyState> {
                 <Route exact path='/movies' component={MovieListPage} />
                 <Route exact path='/movies/:slug_id' component={MovieDetailsPage} />
                 <Route exact path='/users' component={UserListPage} />
+                <Route exact path='/users/:login' component={UserDetailsPage} />
                 <Route exact path='/loading' component={LoadingScreen} />
                 <Route exact path='/error'>
                   <ErrorScreen className="bg-subtle" />
