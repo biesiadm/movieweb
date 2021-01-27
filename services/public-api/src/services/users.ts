@@ -3,60 +3,10 @@ import express from 'express';
 import md5 from 'md5';
 import { User } from '../api/users/api';
 import { usersApi } from '../config';
+import { PublicUser } from '../openapi';
 import { buildErrorPassthrough, errorIfIdNotValid, handlePagination } from '../middleware';
 
 const router = express.Router();
-
-/**
- * @swagger
- * components:
- *   schemas:
- *     User:
- *       type: "object"
- *       required:
- *         - id
- *         - login
- *         - name
- *         - avatar_url
- *       properties:
- *         id:
- *           type: "string"
- *           format: "uuid"
- *         login:
- *           type: "string"
- *         name:
- *           type: "string"
- *         email:
- *           type: "string"
- *           format: "email"
- *         avatar_url:
- *           type: "string"
- *           format: "url"
- *         is_active:
- *           type: "boolean"
- *           default: true
- *         is_superuser:
- *           type: "boolean"
- *           default: false
- */
-interface PublicUser extends User {
-
-    // TODO(biesiadm): Move to user API
-    /**
-     *
-     * @type {string}
-     * @memberof PublicUser
-     */
-    login: string;
-
-    // TODO(biesiadm): Move to user API
-    /**
-     *
-     * @type {string}
-     * @memberof PublicUser
-     */
-    avatar_url: string;
-}
 
 /**
  * @swagger
