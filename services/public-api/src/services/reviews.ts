@@ -149,7 +149,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
                             // TODO(kantoniak): Get rid of md5 when we move slugs to service API
                             // There should be an email istead of hash, but we don't have it in public-api.
                             const gravatarHash = md5(user.login!.trim().toLowerCase());
-                            user.avatar_url = `https://www.gravatar.com/avatar/${gravatarHash}?d=identicon&s=128&r=g`;
+                            user.avatar_url = `https://www.gravatar.com/avatar/${gravatarHash}?d=identicon&s=512&r=g`;
                             return <PublicUser>user;
                         });
                     })

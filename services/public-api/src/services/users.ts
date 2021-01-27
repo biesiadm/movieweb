@@ -74,7 +74,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
 
                 // There should be an email istead of hash, but we don't have it in public-api.
                 const gravatarHash = md5(result.login!.trim().toLowerCase());
-                result.avatar_url = `https://www.gravatar.com/avatar/${gravatarHash}?d=identicon&s=128&r=g`;
+                result.avatar_url = `https://www.gravatar.com/avatar/${gravatarHash}?d=identicon&s=512&r=g`;
                 return <PublicUser>result;
             });
             return <AxiosResponse<PublicUser[]>>axiosResponse;
@@ -117,7 +117,7 @@ router.get("/:id", (req: express.Request, res: express.Response, next: express.N
 
             // TODO: There should be an email istead of hash, but we don't have it in public-api.
             const gravatarHash = md5(newResponse.data.login!.trim().toLowerCase());
-            newResponse.data.avatar_url = `https://www.gravatar.com/avatar/${gravatarHash}?d=identicon&s=128&r=g`;
+            newResponse.data.avatar_url = `https://www.gravatar.com/avatar/${gravatarHash}?d=identicon&s=512&r=g`;
             return <AxiosResponse<PublicUser>>newResponse;
         })
         .then((axiosResponse: AxiosResponse<PublicUser>) => {

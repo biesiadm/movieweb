@@ -2,18 +2,19 @@ import React, { Component } from 'react';
 import { ArrowRightCircleFill } from 'react-bootstrap-icons';
 import { Link } from 'react-router-dom';
 import { AxiosResponse } from 'axios';
-import { moviesApi } from '../config';
-import { SortDir, Movie } from '../api/public/api';
+import { moviesApi, reviewsApi } from '../config';
+import { SortDir, Movie, Review } from '../api/public/api';
 import Carousel from '../components/Carousel';
 import MovieCard from '../components/MovieCard';
-import InfoScreen from '../components/Screen';
+import ReviewCard from '../components/ReviewCard';
 
 type Props = Record<string, never>
 
 type State = {
   latestMovies: Movie[],
   topRatedMovies: Movie[],
-  mostPopularMovies: Movie[]
+  mostPopularMovies: Movie[],
+  recentReviews: Review[]
 }
 
 class PublicHomepage extends Component<Props, State> {
@@ -21,7 +22,8 @@ class PublicHomepage extends Component<Props, State> {
   state = {
     latestMovies: [],
     topRatedMovies: [],
-    mostPopularMovies: []
+    mostPopularMovies: [],
+    recentReviews: []
   };
 
   constructor(props: Props) {
@@ -44,12 +46,21 @@ class PublicHomepage extends Component<Props, State> {
       .then((response: AxiosResponse<Movie[]>) => {
         this.setState({ mostPopularMovies: response.data });
       });
+
+    // Latest rating
+    reviewsApi.getReviews(8, 0, 'created', SortDir.Desc)
+      .then((response: AxiosResponse<Review[]>) => {
+        this.setState({
+          recentReviews: response.data
+        });
+      })
   }
 
   render(): React.ReactNode {
     const latest = this.state.latestMovies;
     const best = this.state.topRatedMovies;
     const mostPopular = this.state.mostPopularMovies;
+    const recentReviews = this.state.recentReviews;
     return <div>
             <h1 className="visually-hidden">Movieweb</h1>
             <section className="bg-darker mb-5">
@@ -69,6 +80,14 @@ class PublicHomepage extends Component<Props, State> {
                         </div>;
                 })}
               </div>
+              <h2 className="mt-5 mb-4">Latest reviews</h2>
+              <div className="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xxl-4 g-4 preview-grid">
+                {recentReviews.map((review: Review) => {
+                  return <div key={review.id} className="col-sm">
+                          <ReviewCard review={review} />
+                        </div>;
+                })}
+              </div>
               <h2 className="mt-5 mb-4 heading-with-btn">
                 Most popular
                 <Link to="/movies" className="text-decoration-none">
@@ -82,10 +101,6 @@ class PublicHomepage extends Component<Props, State> {
                         </div>;
                 })}
               </div>
-              <h2 className="mt-5 mb-4">Latest ratings</h2>
-              <InfoScreen className="bg-subtle h-100 py-0">
-                User ratings block
-              </InfoScreen>
             </section>
           </div>;
   }
