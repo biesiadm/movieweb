@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { AxiosResponse } from 'axios'
 import { BASE_URL } from '../config';
-import PublicAPI from '../PublicAPI'
+import { usersApi } from '../config'
 import { User } from '../api/public/api'
 
 type EmptyProps = Record<string, never>
@@ -21,7 +21,7 @@ class UserListPage extends Component<EmptyProps, State> {
     super(props);
 
     // Make a sample call
-    PublicAPI.getUsers()
+    usersApi.getUsers()
       .then((response: AxiosResponse<User[]>) => {
         this.setState({ users: response.data });
       })

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { AxiosResponse } from 'axios'
-import PublicAPI from '../PublicAPI'
+import { moviesApi } from '../config'
 import { Movie } from '../api/public/api'
 import MovieCard from '../components/MovieCard'
 
@@ -20,7 +20,7 @@ class MovieListPage extends Component<EmptyProps, State> {
     super(props);
 
     // Make a sample call
-    PublicAPI.getMovies()
+    moviesApi.getMovies()
       .then((response: AxiosResponse<Movie[]>) => {
         this.setState({ movies: response.data });
       })

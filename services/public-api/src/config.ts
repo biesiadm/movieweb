@@ -12,7 +12,7 @@ const axiosInstance: AxiosInstance = axios.create({
 
 const moviesApi = MoviesApiFactory(
   new MoviesApiConfiguration(),
-  "http://reviews:80",
+  "http://movies:80",
   axiosInstance
 );
 

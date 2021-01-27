@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
-import { Link, NavLink, Route, Switch } from 'react-router-dom'
-import { GenericNotFoundPage } from './pages/ErrorPage'
+import React, { Component } from 'react';
+import { Link, NavLink, Route, Switch } from 'react-router-dom';
+import { GenericNotFoundPage } from './pages/ErrorPage';
 
 import { LoadingScreen, ErrorScreen } from './components/Screen';
 import MovieListPage from './pages/MovieListPage';

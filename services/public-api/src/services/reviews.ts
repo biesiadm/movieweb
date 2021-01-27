@@ -33,6 +33,8 @@ const handleReviewSorting = buildSortingHandler(['created', 'rating']);
  *           type: "integer"
  *           minimum: 1
  *           maximum: 10
+ *         comment:
+ *           type: "string"
  *         created:
  *           type: "string"
  *           format: "date-time"
