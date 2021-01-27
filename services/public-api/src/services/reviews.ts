@@ -1,18 +1,11 @@
 import { AxiosResponse } from 'axios';
 import express from 'express';
-import { validate as validateUuid } from 'uuid';
-import { axiosInstance } from '../config';
-import { buildErrorPassthrough } from '../utils';
-import { HTTPValidationError, Review, ReviewsApiFactory } from '../api/reviews/api';
-import { Configuration } from '../api/movies/configuration';
-import { handlePagination, buildSortingHandler } from '../openapi';
+import { Review } from '../api/reviews/api';
+import { reviewsApi } from '../config';
+import { buildSortingHandler, buildErrorPassthrough, errorIfIdNotValid, handlePagination } from '../middleware';
 
 const router = express.Router();
-const api = ReviewsApiFactory(
-    new Configuration(),
-    "http://reviews:80",
-    axiosInstance
-);
+const handleReviewSorting = buildSortingHandler(['created', 'rating']);
 
 /**
  * @swagger
@@ -93,7 +86,7 @@ const api = ReviewsApiFactory(
  *
  */
 router.get("/", handlePagination);
-router.get("/", buildSortingHandler(['created', 'rating']));
+router.get("/", handleReviewSorting);
 router.get("/", (req: express.Request, res: express.Response, next: express.NextFunction) => {
 
     // TODO(biesiadm): Handle /reviews/
@@ -101,7 +94,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
     // TODO(kantoniak): Load reviews for all movies
     // This ID changes with every restart of reviews service
     const movie_id = '339e96d9-6e9c-4ad3-be67-976321a95a48';
-    api.readReviewsApiReviewsMovieMovieIdReviewsGet(movie_id, req.pagination!.skip, req.pagination!.limit)
+    reviewsApi.readReviewsApiReviewsMovieMovieIdReviewsGet(movie_id, req.pagination!.skip, req.pagination!.limit)
         .then((axiosResponse: AxiosResponse<Review[]>) => {
             res.status(axiosResponse.status).json(axiosResponse.data);
             return next();
@@ -165,29 +158,14 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
  *
  */
 const movieRouter = express.Router({ mergeParams: true });
+movieRouter.get("/", errorIfIdNotValid);
 movieRouter.get("/", handlePagination);
-movieRouter.get("/", buildSortingHandler(['created', 'rating']));
+movieRouter.get("/", handleReviewSorting);
 movieRouter.get("/", (req: express.Request, res: express.Response, next: express.NextFunction) => {
 
-    // Parameter validation
-    // TODO(kantoniak): This is a common operation
-    const id: string = req.params.id;
-    if (!validateUuid(id)) {
-        const err: HTTPValidationError = {
-            detail: [
-                {
-                    loc: ["path", "id"],
-                    msg: "Parameter {id} is not a valid UUID.",
-                    type: "type_error.uuid"
-                }
-            ]
-        };
-        res.status(422).json(err);
-        return next(err);
-    }
-
     // TODO(biesiadm): Handle sorting in reviews API
-    api.readReviewsApiReviewsMovieMovieIdReviewsGet(id, req.pagination!.skip, req.pagination!.limit)
+    const movie_id: string = req.params.id;
+    reviewsApi.readReviewsApiReviewsMovieMovieIdReviewsGet(movie_id, req.pagination!.skip, req.pagination!.limit)
         .then((axiosResponse: AxiosResponse<Review[]>) => {
             res.status(axiosResponse.status).json(axiosResponse.data);
             return next();
@@ -251,29 +229,14 @@ movieRouter.get("/", (req: express.Request, res: express.Response, next: express
  *
  */
 const userRouter = express.Router({ mergeParams: true });
+userRouter.get("/", errorIfIdNotValid);
 userRouter.get("/", handlePagination);
-userRouter.get("/", buildSortingHandler(['created', 'rating']));
+userRouter.get("/", handleReviewSorting);
 userRouter.get("/", (req: express.Request, res: express.Response, next: express.NextFunction) => {
 
-    // Parameter validation
-    // TODO(kantoniak): This is a common operation
-    const id: string = req.params.id;
-    if (!validateUuid(id)) {
-        const err: HTTPValidationError = {
-            detail: [
-                {
-                    loc: ["path", "id"],
-                    msg: "Parameter {id} is not a valid UUID.",
-                    type: "type_error.uuid"
-                }
-            ]
-        };
-        res.status(422).json(err);
-        return next(err);
-    }
-
     // TODO(biesiadm): Handle sorting in reviews API
-    api.readReviewsApiReviewsUserUserIdReviewsGet(id, req.pagination!.skip, req.pagination!.limit)
+    const user_id: string = req.params.id;
+    reviewsApi.readReviewsApiReviewsUserUserIdReviewsGet(user_id, req.pagination!.skip, req.pagination!.limit)
         .then((axiosResponse: AxiosResponse<Review[]>) => {
             res.status(axiosResponse.status).json(axiosResponse.data);
             return next();

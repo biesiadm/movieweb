@@ -1,19 +1,11 @@
 import { AxiosResponse } from 'axios';
 import express from 'express';
 import md5 from 'md5';
-import { validate as validateUuid } from 'uuid';
-import { axiosInstance } from '../config';
-import { buildErrorPassthrough } from './../utils';
-import { HTTPValidationError, User, UsersApiFactory } from '../api/users/api';
-import { Configuration } from '../api/users/configuration';
-import { handlePagination } from '../openapi';
+import { User } from '../api/users/api';
+import { usersApi } from '../config';
+import { buildErrorPassthrough, errorIfIdNotValid, handlePagination } from '../middleware';
 
 const router = express.Router();
-const api = UsersApiFactory(
-    new Configuration(),
-    "http://users:80",
-    axiosInstance
-);
 
 /**
  * @swagger
@@ -49,6 +41,7 @@ const api = UsersApiFactory(
  */
 interface PublicUser extends User {
 
+    // TODO(biesiadm): Move to user API
     /**
      *
      * @type {string}
@@ -56,6 +49,7 @@ interface PublicUser extends User {
      */
     login: string;
 
+    // TODO(biesiadm): Move to user API
     /**
      *
      * @type {string}
@@ -120,7 +114,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
         }
 
         Promise
-            .all(loginList.map(api.readUserByIdApiUsersUserIdGet))
+            .all(loginList.map(usersApi.readUserByIdApiUsersUserIdGet))
             .then((responses): User[] => {
                 return responses.map((response) => response.data);
             })
@@ -133,13 +127,13 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
     }
 
     // Fetch all users
-    api.readUsersApiUsersGet(req.pagination!.skip, req.pagination!.limit)
+    usersApi.readUsersApiUsersGet(req.pagination!.skip, req.pagination!.limit)
         .then((axiosResponse: AxiosResponse<User[]>) => {
             axiosResponse.data = axiosResponse.data.map((movie: User) => {
                 let result: Partial<PublicUser> = movie;
                 result.login = result.id;
 
-                // TODO: There should be an email istead of hash, but we don't have it in public-api.
+                // There should be an email istead of hash, but we don't have it in public-api.
                 const gravatarHash = md5(result.login!.trim().toLowerCase());
                 result.avatar_url = `https://www.gravatar.com/avatar/${gravatarHash}?d=identicon&s=128&r=g`;
                 return <PublicUser>result;
@@ -181,27 +175,12 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/HTTPValidationError"
- *
  */
+router.get("/:id", errorIfIdNotValid);
 router.get("/:id", (req: express.Request, res: express.Response, next: express.NextFunction) => {
 
-    // Parameter validation
-    const id: string = req.params.id;
-    if (!validateUuid(id)) {
-        const err: HTTPValidationError = {
-            detail: [
-                {
-                    loc: ["path", "id"],
-                    msg: "Parameter {id} is not a valid UUID.",
-                    type: "type_error.uuid"
-                }
-            ]
-        };
-        res.status(422).json(err);
-        return next(err);
-    }
-
-    api.readUserByIdApiUsersUserIdGet(id)
+    const user_id: string = req.params.id;
+    usersApi.readUserByIdApiUsersUserIdGet(user_id)
         .then((axiosResponse: AxiosResponse<User>) => {
             let newResponse: AxiosResponse<Partial<PublicUser>> = axiosResponse;
             newResponse.data.login = newResponse.data.id;
