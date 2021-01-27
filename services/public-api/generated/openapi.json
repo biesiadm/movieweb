@@ -12,12 +12,7 @@
         "summary": "Retrieve a list of movies",
         "parameters": [
           {
-            "in": "query",
-            "name": "limit",
-            "schema": {
-              "$ref": "#/components/schemas/ArgLimit"
-            },
-            "required": false
+            "$ref": "#/components/parameters/limit"
           },
           {
             "in": "query",
@@ -189,6 +184,168 @@
         }
       }
     },
+    "/movies/{id}/reviews": {
+      "get": {
+        "operationId": "getMovieReviews",
+        "summary": "Retrieve a list of movie reviews",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "description": "Movie ID as UUID v4"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "$ref": "#/components/schemas/ArgLimit"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "schema": {
+              "$ref": "#/components/schemas/ArgSkip"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "created",
+                "rating"
+              ]
+            },
+            "required": false,
+            "description": "Sorting criteria."
+          },
+          {
+            "in": "query",
+            "name": "sort_dir",
+            "schema": {
+              "$ref": "#/components/schemas/ArgSortDir"
+            },
+            "required": false,
+            "description": "Sorting direction. Used only when \"sort\" is defined."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of ratings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Review"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}/reviews": {
+      "get": {
+        "operationId": "getUserReviews",
+        "summary": "Retrieve a list of reviews by user",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "description": "User ID as UUID v4"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "$ref": "#/components/schemas/ArgLimit"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "schema": {
+              "$ref": "#/components/schemas/ArgSkip"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "created",
+                "rating"
+              ]
+            },
+            "required": false,
+            "description": "Sorting criteria."
+          },
+          {
+            "in": "query",
+            "name": "sort_dir",
+            "schema": {
+              "$ref": "#/components/schemas/ArgSortDir"
+            },
+            "required": false,
+            "description": "Sorting direction. Used only when \"sort\" is defined."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of ratings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Review"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/users": {
       "get": {
         "operationId": "getUsers",
@@ -293,24 +450,6 @@
   },
   "components": {
     "schemas": {
-      "ArgLimit": {
-        "type": "integer",
-        "minimum": 1,
-        "default": 100
-      },
-      "ArgSkip": {
-        "type": "integer",
-        "minimum": 0,
-        "default": 0
-      },
-      "ArgSortDir": {
-        "type": "string",
-        "enum": [
-          "asc",
-          "desc"
-        ],
-        "default": "asc"
-      },
       "ValidationError": {
         "title": "ValidationError",
         "type": "object",

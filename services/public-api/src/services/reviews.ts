@@ -44,17 +44,10 @@ const handleReviewSorting = buildSortingHandler(['created', 'rating']);
  *   get:
  *     operationId: getReviews
  *     summary: Retrieve a list of reviews
+ *     tags: [reviews]
  *     parameters:
- *       - in: query
- *         name: limit
- *         schema:
- *           $ref: "#/components/schemas/ArgLimit"
- *         required: false
- *       - in: query
- *         name: skip
- *         schema:
- *           $ref: "#/components/schemas/ArgSkip"
- *         required: false
+ *       - $ref: '#/components/parameters/limit'
+ *       - $ref: '#/components/parameters/skip'
  *       - in: query
  *         name: sort
  *         schema:
@@ -62,12 +55,7 @@ const handleReviewSorting = buildSortingHandler(['created', 'rating']);
  *           enum: [created, rating]
  *         required: false
  *         description: Sorting criteria.
- *       - in: query
- *         name: sort_dir
- *         schema:
- *           $ref: "#/components/schemas/ArgSortDir"
- *         required: false
- *         description: Sorting direction. Used only when "sort" is defined.
+ *       - $ref: '#/components/parameters/sort_dir'
  *     responses:
  *       200:
  *         description: List of ratings.
@@ -78,11 +66,7 @@ const handleReviewSorting = buildSortingHandler(['created', 'rating']);
  *               items:
  *                 $ref: "#/components/schemas/Review"
  *       422:
- *         description: Validation error.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/HTTPValidationError"
+ *         $ref: '#/components/responses/ValidationError'
  *
  */
 router.get("/", handlePagination);
@@ -109,24 +93,11 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
  *   get:
  *     operationId: getMovieReviews
  *     summary: Retrieve a list of movie reviews
+ *     tags: [movies, reviews]
  *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *           format: uuid
- *         required: true
- *         description: Movie ID as UUID v4
- *       - in: query
- *         name: limit
- *         schema:
- *           $ref: "#/components/schemas/ArgLimit"
- *         required: false
- *       - in: query
- *         name: skip
- *         schema:
- *           $ref: "#/components/schemas/ArgSkip"
- *         required: false
+ *       - $ref: '#/components/parameters/id'
+ *       - $ref: '#/components/parameters/limit'
+ *       - $ref: '#/components/parameters/skip'
  *       - in: query
  *         name: sort
  *         schema:
@@ -134,12 +105,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
  *           enum: [created, rating]
  *         required: false
  *         description: Sorting criteria.
- *       - in: query
- *         name: sort_dir
- *         schema:
- *           $ref: "#/components/schemas/ArgSortDir"
- *         required: false
- *         description: Sorting direction. Used only when "sort" is defined.
+ *       - $ref: '#/components/parameters/sort_dir'
  *     responses:
  *       200:
  *         description: List of ratings.
@@ -150,11 +116,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
  *               items:
  *                 $ref: "#/components/schemas/Review"
  *       422:
- *         description: Validation error.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/HTTPValidationError"
+ *         $ref: '#/components/responses/ValidationError'
  *
  */
 const movieRouter = express.Router({ mergeParams: true });
@@ -180,24 +142,11 @@ movieRouter.get("/", (req: express.Request, res: express.Response, next: express
  *   get:
  *     operationId: getUserReviews
  *     summary: Retrieve a list of reviews by user
+ *     tags: [users, reviews]
  *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *           format: uuid
- *         required: true
- *         description: User ID as UUID v4
- *       - in: query
- *         name: limit
- *         schema:
- *           $ref: "#/components/schemas/ArgLimit"
- *         required: false
- *       - in: query
- *         name: skip
- *         schema:
- *           $ref: "#/components/schemas/ArgSkip"
- *         required: false
+ *       - $ref: '#/components/parameters/id'
+ *       - $ref: '#/components/parameters/limit'
+ *       - $ref: '#/components/parameters/skip'
  *       - in: query
  *         name: sort
  *         schema:
@@ -205,12 +154,7 @@ movieRouter.get("/", (req: express.Request, res: express.Response, next: express
  *           enum: [created, rating]
  *         required: false
  *         description: Sorting criteria.
- *       - in: query
- *         name: sort_dir
- *         schema:
- *           $ref: "#/components/schemas/ArgSortDir"
- *         required: false
- *         description: Sorting direction. Used only when "sort" is defined.
+ *       - $ref: '#/components/parameters/sort_dir'
  *     responses:
  *       200:
  *         description: List of ratings.
@@ -221,11 +165,7 @@ movieRouter.get("/", (req: express.Request, res: express.Response, next: express
  *               items:
  *                 $ref: "#/components/schemas/Review"
  *       422:
- *         description: Validation error.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/HTTPValidationError"
+ *         $ref: '#/components/responses/ValidationError'
  *
  */
 const userRouter = express.Router({ mergeParams: true });

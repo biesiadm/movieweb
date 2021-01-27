@@ -2,6 +2,19 @@ import { NextFunction, Response, Request } from 'express';
 import { validate as validateUuid } from 'uuid';
 import { HTTPValidationError } from './api/movies/api';
 
+/**
+ * @swagger
+ * components:
+ *   parameters:
+ *     id:
+ *       in: path
+ *       name: id
+ *       schema:
+ *         type: string
+ *         format: uuid
+ *       required: true
+ *       description: Object ID as UUID v4
+ */
 function errorIfIdNotValid(req: Request, res: Response, next: NextFunction) {
 
     const id: string = req.params.id;
@@ -38,15 +51,25 @@ declare global {
 /**
  * @swagger
  * components:
- *   schemas:
- *     ArgLimit:
- *       type: integer
- *       minimum: 1
- *       default: 100
- *     ArgSkip:
- *       type: integer
- *       minimum: 0
- *       default: 0
+ *   parameters:
+ *     limit:
+ *       in: query
+ *       name: limit
+ *       schema:
+ *         type: integer
+ *         minimum: 1
+ *         default: 100
+ *       required: false
+ *       description: Maximum number of elements to fetch.
+ *     skip:
+ *       in: query
+ *       name: skip
+ *       schema:
+ *         type: integer
+ *         minimum: 0
+ *         default: 0
+ *       required: false
+ *       description: Offset for selecting sorted items.
  */
 function handlePagination(req: Request, res: Response, next: NextFunction) {
 
@@ -95,8 +118,16 @@ declare global {
 /**
  * @swagger
  * components:
+ *   parameters:
+ *     sort_dir:
+ *       in: query
+ *       name: sort_dir
+ *       schema:
+ *         $ref: "#/components/schemas/SortDir"
+ *       required: false
+ *       description: Sorting direction. Used only when "sort" is defined.
  *   schemas:
- *     ArgSortDir:
+ *     SortDir:
  *       type: string
  *       enum: [asc, desc]
  *       default: "asc"

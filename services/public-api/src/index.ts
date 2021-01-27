@@ -19,7 +19,15 @@ app.use('/users/:id/reviews', UserReviewsRouter);
 app.use('/users', UsersRouter);
 
 // OpenAPI support
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(OpenapiSpec));
+var options = {
+    swaggerOptions: {
+        displayOperationId: true,
+        displayRequestDuration: true,
+        operationsSorter: 'alpha',
+        tagsSorter: 'alpha'
+    }
+};
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(OpenapiSpec, options));
 app.get('/openapi.json', (req: express.Request, res: express.Response) => {
     res.setHeader('Content-Type', 'application/json');
     res.send(OpenapiSpec);

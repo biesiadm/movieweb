@@ -64,17 +64,10 @@ interface PublicUser extends User {
  *   get:
  *     operationId: getUsers
  *     summary: Retrieve a list of users
+ *     tags: [users]
  *     parameters:
- *       - in: query
- *         name: limit
- *         schema:
- *           $ref: "#/components/schemas/ArgLimit"
- *         required: false
- *       - in: query
- *         name: skip
- *         schema:
- *           $ref: "#/components/schemas/ArgSkip"
- *         required: false
+ *       - $ref: '#/components/parameters/limit'
+ *       - $ref: '#/components/parameters/skip'
  *       - in: query
  *         name: login
  *         schema:
@@ -93,11 +86,7 @@ interface PublicUser extends User {
  *               items:
  *                 $ref: "#/components/schemas/User"
  *       422:
- *         description: Validation error.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/HTTPValidationError"
+ *         $ref: '#/components/responses/ValidationError'
  */
 router.get("/", handlePagination);
 router.get("/", (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -154,14 +143,9 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
  *   get:
  *     operationId: getUserById
  *     summary: Get user by ID
+ *     tags: [users]
  *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *           format: uuid
- *         required: true
- *         description: User ID as UUID v4
+ *       - $ref: '#/components/parameters/id'
  *     responses:
  *       200:
  *         description: User details.
@@ -170,11 +154,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
  *             schema:
  *               $ref: "#/components/schemas/User"
  *       422:
- *         description: Validation error.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/HTTPValidationError"
+ *         $ref: '#/components/responses/ValidationError'
  */
 router.get("/:id", errorIfIdNotValid);
 router.get("/:id", (req: express.Request, res: express.Response, next: express.NextFunction) => {

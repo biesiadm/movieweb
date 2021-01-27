@@ -4,6 +4,7 @@ import OpenapiDef from '../openapi-definition.json';
 const OpenapiSpec = swaggerJSDoc({
     swaggerDefinition: OpenapiDef,
     apis: [
+        "src/middleware.{js,ts}",
         "src/openapi.{js,ts}",
         "src/services/*.{js,ts}"
     ]
@@ -13,29 +14,30 @@ export default OpenapiSpec;
 /**
  * @swagger
  * components:
- *   schemas:
+ *   responses:
  *     ValidationError:
- *       title: "ValidationError"
+ *       description: Validation error.
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/ValidationErrorList"
+ *   schemas:
+ *     ValidationErrorList:
+ *       type: "object"
+ *       properties:
+ *         detail:
+ *           type: "array"
+ *           items:
+ *             $ref: "#/components/schemas/ValidationError"
+ *     ValidationError:
  *       type: "object"
  *       properties:
  *         loc:
- *           title: "Location"
  *           type: "array"
  *           items:
  *             type: "string"
  *         msg:
- *           title: "Message"
  *           type: "string"
  *         type:
- *           title: "Error Type"
  *           type: "string"
- *     HTTPValidationError:
- *       title: "HTTPValidationError"
- *       type: "object"
- *       properties:
- *         detail:
- *           title: "Detail"
- *           type: "array"
- *           items:
- *             $ref: "#/components/schemas/ValidationError"
  */
