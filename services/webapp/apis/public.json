@@ -5,27 +5,26 @@
     "description": "Public REST API",
     "version": "1.0.0"
   },
+  "servers": [
+    {
+      "url": "http://localhost:8081",
+      "description": "Development server"
+    }
+  ],
   "paths": {
     "/movies": {
       "get": {
         "operationId": "getMovies",
         "summary": "Retrieve a list of movies",
+        "tags": [
+          "movies"
+        ],
         "parameters": [
           {
-            "in": "query",
-            "name": "limit",
-            "schema": {
-              "$ref": "#/components/schemas/ArgLimit"
-            },
-            "required": false
+            "$ref": "#/components/parameters/limit"
           },
           {
-            "in": "query",
-            "name": "skip",
-            "schema": {
-              "$ref": "#/components/schemas/ArgSkip"
-            },
-            "required": false
+            "$ref": "#/components/parameters/skip"
           },
           {
             "in": "query",
@@ -42,13 +41,7 @@
             "description": "Sorting criteria."
           },
           {
-            "in": "query",
-            "name": "sort_dir",
-            "schema": {
-              "$ref": "#/components/schemas/ArgSortDir"
-            },
-            "required": false,
-            "description": "Sorting direction. Used only when \"sort\" is defined."
+            "$ref": "#/components/parameters/sort_dir"
           }
         ],
         "responses": {
@@ -66,14 +59,7 @@
             }
           },
           "422": {
-            "description": "Validation error.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/ValidationError"
           }
         }
       }
@@ -82,16 +68,12 @@
       "get": {
         "operationId": "getMovieById",
         "summary": "Get movie by ID",
+        "tags": [
+          "movies"
+        ],
         "parameters": [
           {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "required": true,
-            "description": "Movie ID as UUID v4"
+            "$ref": "#/components/parameters/id"
           }
         ],
         "responses": {
@@ -106,14 +88,7 @@
             }
           },
           "422": {
-            "description": "Validation error.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/ValidationError"
           }
         }
       }
@@ -122,22 +97,15 @@
       "get": {
         "operationId": "getReviews",
         "summary": "Retrieve a list of reviews",
+        "tags": [
+          "reviews"
+        ],
         "parameters": [
           {
-            "in": "query",
-            "name": "limit",
-            "schema": {
-              "$ref": "#/components/schemas/ArgLimit"
-            },
-            "required": false
+            "$ref": "#/components/parameters/limit"
           },
           {
-            "in": "query",
-            "name": "skip",
-            "schema": {
-              "$ref": "#/components/schemas/ArgSkip"
-            },
-            "required": false
+            "$ref": "#/components/parameters/skip"
           },
           {
             "in": "query",
@@ -153,13 +121,7 @@
             "description": "Sorting criteria."
           },
           {
-            "in": "query",
-            "name": "sort_dir",
-            "schema": {
-              "$ref": "#/components/schemas/ArgSortDir"
-            },
-            "required": false,
-            "description": "Sorting direction. Used only when \"sort\" is defined."
+            "$ref": "#/components/parameters/sort_dir"
           }
         ],
         "responses": {
@@ -177,14 +139,7 @@
             }
           },
           "422": {
-            "description": "Validation error.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/ValidationError"
           }
         }
       }
@@ -193,32 +148,19 @@
       "get": {
         "operationId": "getMovieReviews",
         "summary": "Retrieve a list of movie reviews",
+        "tags": [
+          "movies",
+          "reviews"
+        ],
         "parameters": [
           {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "required": true,
-            "description": "Movie ID as UUID v4"
+            "$ref": "#/components/parameters/id"
           },
           {
-            "in": "query",
-            "name": "limit",
-            "schema": {
-              "$ref": "#/components/schemas/ArgLimit"
-            },
-            "required": false
+            "$ref": "#/components/parameters/limit"
           },
           {
-            "in": "query",
-            "name": "skip",
-            "schema": {
-              "$ref": "#/components/schemas/ArgSkip"
-            },
-            "required": false
+            "$ref": "#/components/parameters/skip"
           },
           {
             "in": "query",
@@ -234,13 +176,7 @@
             "description": "Sorting criteria."
           },
           {
-            "in": "query",
-            "name": "sort_dir",
-            "schema": {
-              "$ref": "#/components/schemas/ArgSortDir"
-            },
-            "required": false,
-            "description": "Sorting direction. Used only when \"sort\" is defined."
+            "$ref": "#/components/parameters/sort_dir"
           }
         ],
         "responses": {
@@ -258,14 +194,7 @@
             }
           },
           "422": {
-            "description": "Validation error.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/ValidationError"
           }
         }
       }
@@ -274,32 +203,19 @@
       "get": {
         "operationId": "getUserReviews",
         "summary": "Retrieve a list of reviews by user",
+        "tags": [
+          "users",
+          "reviews"
+        ],
         "parameters": [
           {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "required": true,
-            "description": "User ID as UUID v4"
+            "$ref": "#/components/parameters/id"
           },
           {
-            "in": "query",
-            "name": "limit",
-            "schema": {
-              "$ref": "#/components/schemas/ArgLimit"
-            },
-            "required": false
+            "$ref": "#/components/parameters/limit"
           },
           {
-            "in": "query",
-            "name": "skip",
-            "schema": {
-              "$ref": "#/components/schemas/ArgSkip"
-            },
-            "required": false
+            "$ref": "#/components/parameters/skip"
           },
           {
             "in": "query",
@@ -315,13 +231,7 @@
             "description": "Sorting criteria."
           },
           {
-            "in": "query",
-            "name": "sort_dir",
-            "schema": {
-              "$ref": "#/components/schemas/ArgSortDir"
-            },
-            "required": false,
-            "description": "Sorting direction. Used only when \"sort\" is defined."
+            "$ref": "#/components/parameters/sort_dir"
           }
         ],
         "responses": {
@@ -339,14 +249,7 @@
             }
           },
           "422": {
-            "description": "Validation error.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/ValidationError"
           }
         }
       }
@@ -355,22 +258,15 @@
       "get": {
         "operationId": "getUsers",
         "summary": "Retrieve a list of users",
+        "tags": [
+          "users"
+        ],
         "parameters": [
           {
-            "in": "query",
-            "name": "limit",
-            "schema": {
-              "$ref": "#/components/schemas/ArgLimit"
-            },
-            "required": false
+            "$ref": "#/components/parameters/limit"
           },
           {
-            "in": "query",
-            "name": "skip",
-            "schema": {
-              "$ref": "#/components/schemas/ArgSkip"
-            },
-            "required": false
+            "$ref": "#/components/parameters/skip"
           },
           {
             "in": "query",
@@ -400,14 +296,7 @@
             }
           },
           "422": {
-            "description": "Validation error.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/ValidationError"
           }
         }
       }
@@ -416,16 +305,12 @@
       "get": {
         "operationId": "getUserById",
         "summary": "Get user by ID",
+        "tags": [
+          "users"
+        ],
         "parameters": [
           {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "required": true,
-            "description": "User ID as UUID v4"
+            "$ref": "#/components/parameters/id"
           }
         ],
         "responses": {
@@ -440,32 +325,58 @@
             }
           },
           "422": {
-            "description": "Validation error.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/ValidationError"
           }
         }
       }
     }
   },
   "components": {
+    "parameters": {
+      "id": {
+        "in": "path",
+        "name": "id",
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "required": true,
+        "description": "Object ID as UUID v4"
+      },
+      "limit": {
+        "in": "query",
+        "name": "limit",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 100
+        },
+        "required": false,
+        "description": "Maximum number of elements to fetch."
+      },
+      "skip": {
+        "in": "query",
+        "name": "skip",
+        "schema": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "required": false,
+        "description": "Offset for selecting sorted items."
+      },
+      "sort_dir": {
+        "in": "query",
+        "name": "sort_dir",
+        "schema": {
+          "$ref": "#/components/schemas/SortDir"
+        },
+        "required": false,
+        "description": "Sorting direction. Used only when \"sort\" is defined."
+      }
+    },
     "schemas": {
-      "ArgLimit": {
-        "type": "integer",
-        "minimum": 1,
-        "default": 100
-      },
-      "ArgSkip": {
-        "type": "integer",
-        "minimum": 0,
-        "default": 0
-      },
-      "ArgSortDir": {
+      "SortDir": {
         "type": "string",
         "enum": [
           "asc",
@@ -473,37 +384,31 @@
         ],
         "default": "asc"
       },
+      "ValidationErrorList": {
+        "type": "object",
+        "properties": {
+          "detail": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        }
+      },
       "ValidationError": {
-        "title": "ValidationError",
         "type": "object",
         "properties": {
           "loc": {
-            "title": "Location",
             "type": "array",
             "items": {
               "type": "string"
             }
           },
           "msg": {
-            "title": "Message",
             "type": "string"
           },
           "type": {
-            "title": "Error Type",
             "type": "string"
-          }
-        }
-      },
-      "HTTPValidationError": {
-        "title": "HTTPValidationError",
-        "type": "object",
-        "properties": {
-          "detail": {
-            "title": "Detail",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ValidationError"
-            }
           }
         }
       },
@@ -615,6 +520,18 @@
           "is_superuser": {
             "type": "boolean",
             "default": false
+          }
+        }
+      }
+    },
+    "responses": {
+      "ValidationError": {
+        "description": "Validation error.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ValidationErrorList"
+            }
           }
         }
       }
