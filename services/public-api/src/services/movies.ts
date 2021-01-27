@@ -3,53 +3,10 @@ import express from 'express';
 import slugify from 'slugify';
 import { Movie } from '../api/movies/api';
 import { moviesApi } from '../config';
+import { PublicMovie } from '../openapi';
 import { buildSortingHandler, buildErrorPassthrough, errorIfIdNotValid, handlePagination } from '../middleware';
 
 const router = express.Router();
-
-/**
- * @swagger
- * components:
- *   schemas:
- *     Movie:
- *       type: "object"
- *       required:
- *         - id
- *         - title
- *         - slug
- *         - poster_url
- *       properties:
- *         id:
- *           type: "string"
- *           format: "uuid"
- *         title:
- *           type: "string"
- *         slug:
- *           type: "string"
- *         poster_url:
- *           type: "string"
- *           format: "url"
- *         background_url:
- *           type: "string"
- *           format: "url"
- *         director:
- *           type: "string"
- *         year:
- *           type: "integer"
- *         country:
- *           type: "string"
- *         category:
- *           type: "string"
- */
-interface PublicMovie extends Movie {
-
-    /**
-     *
-     * @type {string}
-     * @memberof PublicMovie
-     */
-    slug: string;
-}
 
 /**
  * @swagger

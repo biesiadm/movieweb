@@ -384,34 +384,6 @@
         ],
         "default": "asc"
       },
-      "ValidationErrorList": {
-        "type": "object",
-        "properties": {
-          "detail": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ValidationError"
-            }
-          }
-        }
-      },
-      "ValidationError": {
-        "type": "object",
-        "properties": {
-          "loc": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "msg": {
-            "type": "string"
-          },
-          "type": {
-            "type": "string"
-          }
-        }
-      },
       "Movie": {
         "type": "object",
         "required": [
@@ -453,42 +425,6 @@
           }
         }
       },
-      "Review": {
-        "type": "object",
-        "required": [
-          "id",
-          "user_id",
-          "movie_id",
-          "rating",
-          "created"
-        ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "user_id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "movie_id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "rating": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 10
-          },
-          "comment": {
-            "type": "string"
-          },
-          "created": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
       "User": {
         "type": "object",
         "required": [
@@ -523,6 +459,76 @@
           "is_superuser": {
             "type": "boolean",
             "default": false
+          }
+        }
+      },
+      "ValidationErrorList": {
+        "type": "object",
+        "properties": {
+          "detail": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "type": "object",
+        "properties": {
+          "loc": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "msg": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "Review": {
+        "type": "object",
+        "required": [
+          "id",
+          "user_id",
+          "movie_id",
+          "rating",
+          "created"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "movie_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "comment": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "movie": {
+            "$ref": "#/components/schemas/Movie"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
           }
         }
       }

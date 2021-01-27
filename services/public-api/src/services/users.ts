@@ -3,60 +3,10 @@ import express from 'express';
 import md5 from 'md5';
 import { User } from '../api/users/api';
 import { usersApi } from '../config';
+import { PublicUser } from '../openapi';
 import { buildErrorPassthrough, errorIfIdNotValid, handlePagination } from '../middleware';
 
 const router = express.Router();
-
-/**
- * @swagger
- * components:
- *   schemas:
- *     User:
- *       type: "object"
- *       required:
- *         - id
- *         - login
- *         - name
- *         - avatar_url
- *       properties:
- *         id:
- *           type: "string"
- *           format: "uuid"
- *         login:
- *           type: "string"
- *         name:
- *           type: "string"
- *         email:
- *           type: "string"
- *           format: "email"
- *         avatar_url:
- *           type: "string"
- *           format: "url"
- *         is_active:
- *           type: "boolean"
- *           default: true
- *         is_superuser:
- *           type: "boolean"
- *           default: false
- */
-interface PublicUser extends User {
-
-    // TODO(biesiadm): Move to user API
-    /**
-     *
-     * @type {string}
-     * @memberof PublicUser
-     */
-    login: string;
-
-    // TODO(biesiadm): Move to user API
-    /**
-     *
-     * @type {string}
-     * @memberof PublicUser
-     */
-    avatar_url: string;
-}
 
 /**
  * @swagger
@@ -124,7 +74,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
 
                 // There should be an email istead of hash, but we don't have it in public-api.
                 const gravatarHash = md5(result.login!.trim().toLowerCase());
-                result.avatar_url = `https://www.gravatar.com/avatar/${gravatarHash}?d=identicon&s=128&r=g`;
+                result.avatar_url = `https://www.gravatar.com/avatar/${gravatarHash}?d=identicon&s=512&r=g`;
                 return <PublicUser>result;
             });
             return <AxiosResponse<PublicUser[]>>axiosResponse;
@@ -167,7 +117,7 @@ router.get("/:id", (req: express.Request, res: express.Response, next: express.N
 
             // TODO: There should be an email istead of hash, but we don't have it in public-api.
             const gravatarHash = md5(newResponse.data.login!.trim().toLowerCase());
-            newResponse.data.avatar_url = `https://www.gravatar.com/avatar/${gravatarHash}?d=identicon&s=128&r=g`;
+            newResponse.data.avatar_url = `https://www.gravatar.com/avatar/${gravatarHash}?d=identicon&s=512&r=g`;
             return <AxiosResponse<PublicUser>>newResponse;
         })
         .then((axiosResponse: AxiosResponse<PublicUser>) => {
