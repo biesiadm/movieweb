@@ -1,19 +1,11 @@
 import { AxiosResponse } from 'axios';
 import express from 'express';
 import slugify from 'slugify';
-import { validate as validateUuid } from 'uuid';
-import { axiosInstance } from './../config';
-import { buildErrorPassthrough } from './../utils';
-import { HTTPValidationError, Movie, MoviesApiFactory } from './../api/movies/api';
-import { Configuration } from './../api/movies/configuration';
-import { handlePagination, buildSortingHandler } from '../openapi';
+import { Movie } from '../api/movies/api';
+import { moviesApi } from '../config';
+import { buildSortingHandler, buildErrorPassthrough, errorIfIdNotValid, handlePagination } from '../middleware';
 
 const router = express.Router();
-const api = MoviesApiFactory(
-    new Configuration(),
-    "http://movies:80",
-    axiosInstance
-);
 
 /**
  * @swagger
@@ -65,17 +57,10 @@ interface PublicMovie extends Movie {
  *   get:
  *     operationId: getMovies
  *     summary: Retrieve a list of movies
+ *     tags: [movies]
  *     parameters:
- *       - in: query
- *         name: limit
- *         schema:
- *           $ref: "#/components/schemas/ArgLimit"
- *         required: false
- *       - in: query
- *         name: skip
- *         schema:
- *           $ref: "#/components/schemas/ArgSkip"
- *         required: false
+ *       - $ref: '#/components/parameters/limit'
+ *       - $ref: '#/components/parameters/skip'
  *       - in: query
  *         name: sort
  *         schema:
@@ -83,12 +68,7 @@ interface PublicMovie extends Movie {
  *           enum: [year, avg_rating, rating_count]
  *         required: false
  *         description: Sorting criteria.
- *       - in: query
- *         name: sort_dir
- *         schema:
- *           $ref: "#/components/schemas/ArgSortDir"
- *         required: false
- *         description: Sorting direction. Used only when "sort" is defined.
+ *       - $ref: '#/components/parameters/sort_dir'
  *     responses:
  *       200:
  *         description: List of movies.
@@ -99,11 +79,7 @@ interface PublicMovie extends Movie {
  *               items:
  *                 $ref: "#/components/schemas/Movie"
  *       422:
- *         description: Validation error.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/HTTPValidationError"
+ *         $ref: '#/components/responses/ValidationError'
  *
  */
 router.get("/", handlePagination);
@@ -115,7 +91,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
         // TODO(kantoniak): Fetch ids from movie service and then get movie details
     }
 
-    api.readMoviesMoviesGet(req.pagination!.skip, req.pagination!.limit)
+    moviesApi.readMoviesMoviesGet(req.pagination!.skip, req.pagination!.limit)
         .then((axiosResponse: AxiosResponse<Movie[]>) => {
             axiosResponse.data = axiosResponse.data.map((movie: Movie) => {
                 let result: Partial<PublicMovie> = movie;
@@ -142,14 +118,9 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
  *   get:
  *     operationId: getMovieById
  *     summary: Get movie by ID
+ *     tags: [movies]
  *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *           format: uuid
- *         required: true
- *         description: Movie ID as UUID v4
+ *       - $ref: '#/components/parameters/id'
  *     responses:
  *       200:
  *         description: Movie details.
@@ -158,32 +129,14 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
  *             schema:
  *               $ref: "#/components/schemas/Movie"
  *       422:
- *         description: Validation error.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/HTTPValidationError"
+ *         $ref: '#/components/responses/ValidationError'
  *
  */
+router.get("/:id", errorIfIdNotValid);
 router.get("/:id", (req: express.Request, res: express.Response, next: express.NextFunction) => {
 
-    // Parameter validation
-    const id: string = req.params.id;
-    if (!validateUuid(id)) {
-        const err: HTTPValidationError = {
-            detail: [
-                {
-                    loc: ["path", "id"],
-                    msg: "Parameter {id} is not a valid UUID.",
-                    type: "type_error.uuid"
-                }
-            ]
-        };
-        res.status(422).json(err);
-        return next(err);
-    }
-
-    api.readMovieByIdMoviesMovieIdGet(id)
+    const movie_id: string = req.params.id;
+    moviesApi.readMovieByIdMoviesMovieIdGet(movie_id)
         .then((axiosResponse: AxiosResponse<Movie>) => {
             let newResponse: AxiosResponse<Partial<PublicMovie>> = axiosResponse;
             newResponse.data.slug = slugify(axiosResponse.data.title, {

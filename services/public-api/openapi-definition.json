@@ -4,5 +4,11 @@
         "title": "Movieweb",
         "description": "Public REST API",
         "version": "1.0.0"
-    }
+    },
+    "servers": [
+      {
+        "url": "http://localhost:8081",
+        "description": "Development server"
+      }
+    ]
 }

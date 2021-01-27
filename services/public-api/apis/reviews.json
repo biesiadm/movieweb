@@ -1,0 +1,299 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+      "title": "reviews",
+      "version": "0.1.0"
+    },
+    "paths": {
+      "/api/reviews/movie/{movie_id}/reviews": {
+        "get": {
+          "tags": [
+            "reviews"
+          ],
+          "summary": "Read Reviews",
+          "description": "Retrieve reviews by movie.",
+          "operationId": "read_reviews_api_reviews_movie__movie_id__reviews_get",
+          "parameters": [
+            {
+              "required": true,
+              "schema": {
+                "title": "Movie Id",
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": "movie_id",
+              "in": "path"
+            },
+            {
+              "required": false,
+              "schema": {
+                "title": "Skip",
+                "type": "integer",
+                "default": 0
+              },
+              "name": "skip",
+              "in": "query"
+            },
+            {
+              "required": false,
+              "schema": {
+                "title": "Limit",
+                "type": "integer",
+                "default": 100
+              },
+              "name": "limit",
+              "in": "query"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "title": "Response Read Reviews Api Reviews Movie  Movie Id  Reviews Get",
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Review"
+                    }
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/reviews/user/{user_id}/reviews": {
+        "get": {
+          "tags": [
+            "reviews"
+          ],
+          "summary": "Read Reviews",
+          "description": "Retrieve reviews by movie.",
+          "operationId": "read_reviews_api_reviews_user__user_id__reviews_get",
+          "parameters": [
+            {
+              "required": true,
+              "schema": {
+                "title": "User Id",
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": "user_id",
+              "in": "path"
+            },
+            {
+              "required": false,
+              "schema": {
+                "title": "Skip",
+                "type": "integer",
+                "default": 0
+              },
+              "name": "skip",
+              "in": "query"
+            },
+            {
+              "required": false,
+              "schema": {
+                "title": "Limit",
+                "type": "integer",
+                "default": 100
+              },
+              "name": "limit",
+              "in": "query"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "title": "Response Read Reviews Api Reviews User  User Id  Reviews Get",
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Review"
+                    }
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/reviews/new": {
+        "post": {
+          "tags": [
+            "reviews"
+          ],
+          "summary": "Add Review",
+          "operationId": "add_review_api_reviews_new_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewCreate"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Review"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "HTTPValidationError": {
+          "title": "HTTPValidationError",
+          "type": "object",
+          "properties": {
+            "detail": {
+              "title": "Detail",
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ValidationError"
+              }
+            }
+          }
+        },
+        "Review": {
+          "title": "Review",
+          "required": [
+            "user_id",
+            "movie_id",
+            "rating",
+            "id",
+            "created"
+          ],
+          "type": "object",
+          "properties": {
+            "user_id": {
+              "title": "User Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "movie_id": {
+              "title": "Movie Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "rating": {
+              "title": "Rating",
+              "type": "integer"
+            },
+            "comment": {
+              "title": "Comment",
+              "type": "string"
+            },
+            "id": {
+              "title": "Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "created": {
+              "title": "Created",
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "ReviewCreate": {
+          "title": "ReviewCreate",
+          "required": [
+            "user_id",
+            "movie_id",
+            "rating"
+          ],
+          "type": "object",
+          "properties": {
+            "user_id": {
+              "title": "User Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "movie_id": {
+              "title": "Movie Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "rating": {
+              "title": "Rating",
+              "type": "integer"
+            },
+            "comment": {
+              "title": "Comment",
+              "type": "string"
+            }
+          }
+        },
+        "ValidationError": {
+          "title": "ValidationError",
+          "required": [
+            "loc",
+            "msg",
+            "type"
+          ],
+          "type": "object",
+          "properties": {
+            "loc": {
+              "title": "Location",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "msg": {
+              "title": "Message",
+              "type": "string"
+            },
+            "type": {
+              "title": "Error Type",
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }

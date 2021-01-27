@@ -43,5 +43,6 @@ def add_review(
         *,
         review_in: schemas.ReviewCreate
 ) -> Any:
+    # TODO(biesiadm): System allows for multiple reviews
     review = crud.review.create(db=db, obj_in=review_in)
     return review
