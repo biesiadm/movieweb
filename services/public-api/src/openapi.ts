@@ -4,8 +4,7 @@ import OpenapiDef from '../openapi-definition.json';
 const OpenapiSpec = swaggerJSDoc({
     swaggerDefinition: OpenapiDef,
     apis: [
-        "src/middleware.{js,ts}",
-        "src/openapi.{js,ts}",
+        "src/*.{js,ts}",
         "src/services/*.{js,ts}"
     ]
 });
