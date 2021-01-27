@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { ArrowRightCircleFill } from 'react-bootstrap-icons';
 import { Link } from 'react-router-dom';
 import { AxiosResponse } from 'axios';
-import PublicAPI from '../PublicAPI';
-import { ArgSortDir, Movie } from '../api/public/api';
+import { moviesApi } from '../config';
+import { SortDir, Movie } from '../api/public/api';
 import Carousel from '../components/Carousel';
 import MovieCard from '../components/MovieCard';
 import InfoScreen from '../components/Screen';
@@ -28,19 +28,19 @@ class PublicHomepage extends Component<Props, State> {
     super(props);
 
     // Latest
-    PublicAPI.getMovies(6, 0, "year", ArgSortDir.Desc)
+    moviesApi.getMovies(6, 0, "year", SortDir.Desc)
       .then((response: AxiosResponse<Movie[]>) => {
         this.setState({ latestMovies: response.data });
       });
 
     // Top rated
-    PublicAPI.getMovies(8, 0, "avg_rating", ArgSortDir.Desc)
+    moviesApi.getMovies(8, 0, "avg_rating", SortDir.Desc)
       .then((response: AxiosResponse<Movie[]>) => {
         this.setState({ topRatedMovies: response.data });
       });
 
     // Most popular
-    PublicAPI.getMovies(8, 0, "rating_count", ArgSortDir.Desc)
+    moviesApi.getMovies(8, 0, "rating_count", SortDir.Desc)
       .then((response: AxiosResponse<Movie[]>) => {
         this.setState({ mostPopularMovies: response.data });
       });

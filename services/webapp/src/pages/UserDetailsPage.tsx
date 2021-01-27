@@ -3,11 +3,12 @@ import { BinocularsFill, PeopleFill, StarFill } from 'react-bootstrap-icons';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { AxiosResponse } from 'axios';
 import { BASE_URL } from '../config';
-import PublicAPI from '../PublicAPI'
-import { User } from '../api/public/api'
-import Error from '../components/Error';
-import InfoScreen, { LoadingScreen } from '../components/Screen';
+import { usersApi } from '../config'
+import { Review, SortDir, User } from '../api/public/api'
 import Avatar from '../components/Avatar';
+import Error from '../components/Error';
+import { LoadingScreen } from '../components/Screen';
+import ReviewCard from '../components/ReviewCard';
 
 type Props = RouteComponentProps<{
   login: string
@@ -15,6 +16,8 @@ type Props = RouteComponentProps<{
 
 type State = {
   user: User | null,
+  topRated: Review[],
+  recentReviews: Review[],
   followers: User[],
   loading: boolean,
   error: unknown | null
@@ -24,6 +27,8 @@ class UserDetailsPage extends Component<Props, State> {
 
   state: State = {
     user: null,
+    topRated: [],
+    recentReviews: [],
     followers: [],
     loading: true,
     error: null
@@ -32,11 +37,14 @@ class UserDetailsPage extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.render.bind(this);
+    this.fetchBlocks.bind(this);
 
     const login:string = props.match.params.login?.trim().toLowerCase();
     if (login == null) {
       this.state = {
         user: null,
+        topRated: [],
+        recentReviews: [],
         followers: [],
         loading: false,
         error: 'No such user'
@@ -45,13 +53,14 @@ class UserDetailsPage extends Component<Props, State> {
     }
 
     // Make a sample call
-    PublicAPI.getUserById(login)
+    usersApi.getUserById(login)
       .then((response: AxiosResponse<User>) => {
         this.setState({
           user: response.data,
           loading: false,
           error: null
         });
+        this.fetchBlocks(response.data.id);
       })
       .catch((err: unknown) => {
         console.error(err);
@@ -61,10 +70,28 @@ class UserDetailsPage extends Component<Props, State> {
           error: err ?? true
         });
       });
+  }
+
+  fetchBlocks(user_id: string) {
+    // Top rated
+    usersApi.getUserReviews(user_id, 8, 0, 'rating', SortDir.Desc)
+      .then((response: AxiosResponse<Review[]>) => {
+        this.setState({
+          topRated: response.data
+        });
+      });
+
+    // Recent reviews
+    usersApi.getUserReviews(user_id, 8, 0, 'created', SortDir.Desc)
+      .then((response: AxiosResponse<Review[]>) => {
+        this.setState({
+          recentReviews: response.data
+        });
+      });
 
     // Followers
     // TODO(kantoniak): Fetch followers
-    PublicAPI.getUsers(8, 0)
+    usersApi.getUsers(8, 0)
       .then((response: AxiosResponse<User[]>) => {
         this.setState({ followers: response.data });
       });
@@ -115,13 +142,21 @@ class UserDetailsPage extends Component<Props, State> {
               </section>
               <section className="container">
                 <h2 className="my-3">Top rated movies</h2>
-                <InfoScreen className="bg-subtle h-100 py-0">
-                  User ratings block
-                </InfoScreen>
-                <h2 className="my-3 pt-4">Recent ratings</h2>
-                <InfoScreen className="bg-subtle h-100 py-0">
-                  User ratings block
-                </InfoScreen>
+                <div className="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xxl-4 g-4 preview-grid">
+                  {this.state.topRated.map((review: Review) => {
+                    return <div key={review.id} className="col-sm">
+                            <ReviewCard review={review} />
+                          </div>;
+                  })}
+                </div>
+                <h2 className="my-3 pt-4">Recent reviews</h2>
+                <div className="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xxl-4 g-4 preview-grid">
+                  {this.state.recentReviews.map((review: Review) => {
+                    return <div key={review.id} className="col-sm">
+                            <ReviewCard review={review} />
+                          </div>;
+                  })}
+                </div>
                 <h2 className="my-3 pt-4">Followers</h2>
                 <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-4 preview-grid">
                   {followers.map((user: User) => {

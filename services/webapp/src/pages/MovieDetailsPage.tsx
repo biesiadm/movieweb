@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { AxiosResponse } from 'axios';
 import { validate as validateUuid } from 'uuid';
-import PublicAPI from '../PublicAPI'
-import { Movie } from '../api/public/api'
+import { moviesApi } from '../config'
+import { Movie, Review, SortDir } from '../api/public/api'
 import Error from '../components/Error';
 import Poster from '../components/Poster';
+import ReviewCard from '../components/ReviewCard';
 import InfoScreen, { LoadingScreen } from '../components/Screen';
 
 type Props = RouteComponentProps<{
@@ -14,6 +15,7 @@ type Props = RouteComponentProps<{
 
 type State = {
   movie: Movie | null,
+  recentReviews: Review[],
   loading: boolean,
   error: unknown | null
 }
@@ -22,6 +24,7 @@ class MovieDetailsPage extends Component<Props, State> {
 
   state: State = {
     movie: null,
+    recentReviews: [],
     loading: true,
     error: null
   };
@@ -31,18 +34,19 @@ class MovieDetailsPage extends Component<Props, State> {
     this.render.bind(this);
 
     const slug_id:string = props.match.params.slug_id;
-    const id = this.getUuidFromSlugId(slug_id);
-    if (id == null) {
+    const movie_id = this.getUuidFromSlugId(slug_id);
+    if (movie_id == null) {
       this.state = {
         movie: null,
+        recentReviews: [],
         loading: false,
         error: 'Invalid UUID'
       };
       return;
     }
 
-    // Make a sample call
-    PublicAPI.getMovieById(id /*'e759da3c-e934-4ebc-a794-4c3cfe59d18e'*/)
+    // Get movie details
+    moviesApi.getMovieById(movie_id)
       .then((response: AxiosResponse<Movie>) => {
         this.setState({
           movie: response.data,
@@ -58,6 +62,14 @@ class MovieDetailsPage extends Component<Props, State> {
           error: err ?? true
         });
       });
+
+    // Get reviews
+    moviesApi.getMovieReviews(movie_id, 8, 0, 'rating', SortDir.Desc)
+      .then((response: AxiosResponse<Review[]>) => {
+        this.setState({
+          recentReviews: response.data
+        });
+      })
   }
 
   getUuidFromSlugId(slug_id:string): string | null {
@@ -83,6 +95,7 @@ class MovieDetailsPage extends Component<Props, State> {
 
     if (this.state.movie !== null) {
       const movie: Movie = this.state.movie;
+      const recentReviews = this.state.recentReviews;
       const featuredStyle = {
         backgroundImage: "linear-gradient(90deg, rgba(20,23,26,1) 0%, rgba(20,23,26,0.8) 8rem, rgba(20,23,26,0.8) calc(100% - 8rem), rgba(20,23,26,1) 100%), url(" + movie.background_url + ")",
         backgroundSize: "cover",
@@ -120,9 +133,13 @@ class MovieDetailsPage extends Component<Props, State> {
               </section>
               <section className="container pt-4">
                 <h2 className="my-3">Recent user ratings</h2>
-                <InfoScreen className="bg-subtle h-100 py-0">
-                  User ratings block
-                </InfoScreen>
+                <div className="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xxl-4 g-4 preview-grid">
+                  {recentReviews.map((review: Review) => {
+                    return <div key={review.id} className="col-sm">
+                            <ReviewCard review={review} />
+                          </div>;
+                  })}
+                </div>
               </section>
             </div>;
 
