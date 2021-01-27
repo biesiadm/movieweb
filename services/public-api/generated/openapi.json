@@ -118,6 +118,77 @@
         }
       }
     },
+    "/reviews": {
+      "get": {
+        "operationId": "getReviews",
+        "summary": "Retrieve a list of reviews",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "$ref": "#/components/schemas/ArgLimit"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "schema": {
+              "$ref": "#/components/schemas/ArgSkip"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "created",
+                "rating"
+              ]
+            },
+            "required": false,
+            "description": "Sorting criteria."
+          },
+          {
+            "in": "query",
+            "name": "sort_dir",
+            "schema": {
+              "$ref": "#/components/schemas/ArgSortDir"
+            },
+            "required": false,
+            "description": "Sorting direction. Used only when \"sort\" is defined."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of ratings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Review"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/users": {
       "get": {
         "operationId": "getUsers",
@@ -312,6 +383,39 @@
           },
           "category": {
             "type": "string"
+          }
+        }
+      },
+      "Review": {
+        "type": "object",
+        "required": [
+          "id",
+          "user_id",
+          "movie_id",
+          "rating",
+          "created"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "movie_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
