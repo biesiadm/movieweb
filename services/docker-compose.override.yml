@@ -18,6 +18,10 @@ services:
       - ./users/app:/app
 
   reviews:
+    depends_on:
+      - movies
+      - users
+      - reviews-db
     ports:
       - ${REVIEWS_PORT}:80
     command:
