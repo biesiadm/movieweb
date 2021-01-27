@@ -37,6 +37,7 @@ class UserDetailsPage extends Component<Props, State> {
     if (login == null) {
       this.state = {
         user: null,
+        followers: [],
         loading: false,
         error: 'No such user'
       };
