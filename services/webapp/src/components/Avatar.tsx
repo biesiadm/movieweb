@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { User } from '../api/public/api';
+import { EmptyState } from '../utils';
 
 type Props = {
   className?: string,
@@ -8,9 +9,7 @@ type Props = {
   url?: URL
 }
 
-type State = Record<string, never>
-
-class Avatar extends Component<Props, State> {
+class Avatar extends Component<Props, EmptyState> {
 
   constructor(props: Props) {
     super(props);

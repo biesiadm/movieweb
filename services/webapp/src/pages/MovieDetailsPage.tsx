@@ -6,8 +6,8 @@ import { moviesApi } from '../config'
 import { Movie, Review, SortDir } from '../api/public/api'
 import Error from '../components/Error';
 import Poster from '../components/Poster';
-import ReviewCard from '../components/ReviewCard';
 import InfoScreen, { LoadingScreen } from '../components/Screen';
+import { ReviewList } from '../components/EntryList';
 
 type Props = RouteComponentProps<{
   slug_id: string
@@ -63,13 +63,6 @@ class MovieDetailsPage extends Component<Props, State> {
         });
       });
 
-    // Get reviews
-    moviesApi.getMovieReviews(movie_id, 8, 0, 'rating', SortDir.Desc)
-      .then((response: AxiosResponse<Review[]>) => {
-        this.setState({
-          recentReviews: response.data
-        });
-      })
   }
 
   getUuidFromSlugId(slug_id:string): string | null {
@@ -95,7 +88,7 @@ class MovieDetailsPage extends Component<Props, State> {
 
     if (this.state.movie !== null) {
       const movie: Movie = this.state.movie;
-      const recentReviews = this.state.recentReviews;
+      const recentReviewsPromise = () => moviesApi.getMovieReviews(movie.id, 8, 0, 'rating', SortDir.Desc);
       const featuredStyle = {
         backgroundImage: "linear-gradient(90deg, rgba(20,23,26,1) 0%, rgba(20,23,26,0.8) 8rem, rgba(20,23,26,0.8) calc(100% - 8rem), rgba(20,23,26,1) 100%), url(" + movie.background_url + ")",
         backgroundSize: "cover",
@@ -133,13 +126,7 @@ class MovieDetailsPage extends Component<Props, State> {
               </section>
               <section className="container pt-4">
                 <h2 className="my-3">Recent user ratings</h2>
-                <div className="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xxl-4 g-4 preview-grid">
-                  {recentReviews.map((review: Review) => {
-                    return <div key={review.id} className="col-sm">
-                            <ReviewCard review={review} />
-                          </div>;
-                  })}
-                </div>
+                <ReviewList promise={recentReviewsPromise} className="preview-grid" />
               </section>
             </div>;
 

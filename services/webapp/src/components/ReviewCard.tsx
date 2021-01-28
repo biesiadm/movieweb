@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { Star, StarFill } from 'react-bootstrap-icons';
 import TimeAgo from 'react-timeago';
 import { Review } from '../api/public/api';
-import { BASE_URL, usersApi } from '../config';
+import { BASE_URL } from '../config';
+import { EmptyState } from '../utils';
 import Avatar from './Avatar';
 import Poster from './Poster';
 
@@ -10,10 +11,7 @@ type Props = {
   review: Review
 }
 
-type State = {
-}
-
-class ReviewCard extends Component<Props, State> {
+class ReviewCard extends Component<Props, EmptyState> {
 
   constructor(props: Props) {
     super(props);
@@ -26,10 +24,10 @@ class ReviewCard extends Component<Props, State> {
     const filledStars = [];
     const emptyStars = [];
     for (let i=0; i<review.rating; i++) {
-        filledStars.push(<StarFill color="#F0A96E" size="1.22em" className="mb-1" />);
+        filledStars.push(<StarFill key={`star-${i}`} color="#F0A96E" size="1.22em" className="mb-1" />);
     }
     for (let i=review.rating; i<10; i++) {
-        emptyStars.push(<Star color="#F0A96E" size="1.22em" className="mb-1" />);
+        emptyStars.push(<Star key={`star-${i}`} color="#F0A96E" size="1.22em" className="mb-1" />);
     }
 
     let optionalMovie = null;
