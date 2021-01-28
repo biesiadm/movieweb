@@ -15,7 +15,7 @@ class UserListPage extends Component<EmptyProps, EmptyState> {
   render(): React.ReactNode {
     return <section className="container pt-5">
             <h1>Users</h1>
-            <UserList promise={usersApi.getUsers} />
+            <UserList promise={usersApi.getUsers} className="pt-3" />
           </section>;
   }
 }

@@ -6,6 +6,7 @@ import { BASE_URL } from '../config';
 import { ErrorScreen, LoadingScreen } from '../components/Screen';
 
 type Props<T> = {
+  className?: string,
   loadingMessage: string,
   errorMessage: string,
   retryButtonLabel: string,
@@ -88,8 +89,13 @@ class EntryList<T> extends Component<Props<T>, State<T>> {
   }
 
   renderList(): React.ReactNode {
+    let outerClasses = "row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-4";
+    if (this.props.className) {
+      outerClasses += " " + this.props.className;
+    }
+
     const entries = this.state.entries;
-    return <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-4 pt-3">
+    return <div className={outerClasses}>
             {entries.map(this.renderEntry)}
           </div>;
   }

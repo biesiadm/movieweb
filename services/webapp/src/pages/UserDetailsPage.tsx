@@ -9,6 +9,7 @@ import Avatar from '../components/Avatar';
 import Error from '../components/Error';
 import { LoadingScreen } from '../components/Screen';
 import ReviewCard from '../components/ReviewCard';
+import { UserList } from '../components/EntryList';
 
 type Props = RouteComponentProps<{
   login: string
@@ -104,6 +105,7 @@ class UserDetailsPage extends Component<Props, State> {
     }
 
     if (this.state.user !== null) {
+      const followersPromise = () => usersApi.getUsers(8, 0);
       const user: User = this.state.user;
       const followers: User[] = this.state.followers;
       const profileUrl = new URL(BASE_URL + '/users/' + user.login);
@@ -158,32 +160,7 @@ class UserDetailsPage extends Component<Props, State> {
                   })}
                 </div>
                 <h2 className="my-3 pt-4">Followers</h2>
-                <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-4 preview-grid">
-                  {followers.map((user: User) => {
-                    const profileUrl = new URL(BASE_URL + '/users/' + user.login).pathname;
-                    return <div key={user.id} className="col-sm">
-                            <div className="card shadow-sm overflow-hidden">
-                              <div className="row g-0">
-                                <div className="col-md-4">
-                                  <div className="m-2">
-                                    <Link to={profileUrl}>
-                                      <div className="rounded-pill overflow-hidden shadow-sm border">
-                                        <img src={user.avatar_url} className="w-100 rounded-pill border border-5 border-white" />
-                                      </div>
-                                    </Link>
-                                  </div>
-                                </div>
-                                <div className="col-md-8">
-                                  <div className="card-body">
-                                    <h5 className="card-title">{user.name}</h5>
-                                    <p className="card-text text-muted small"><Link to={profileUrl}>Details</Link></p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>;
-                  })}
-                </div>
+                <UserList promise={followersPromise} className="promo-grid" />
               </section>
             </div>;
 
