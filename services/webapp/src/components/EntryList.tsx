@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import { AxiosPromise, AxiosResponse } from 'axios';
 import { Movie, Review, User } from '../api/public/api';
-import { BASE_URL } from '../config';
 import { ErrorScreen, LoadingScreen } from '../components/Screen';
 import MovieCard from './MovieCard';
 import ReviewCard from './ReviewCard';
@@ -153,7 +151,6 @@ class UserList extends EntryList<User> {
   };
 
   renderEntry(user: User): React.ReactNode {
-    const profileUrl = new URL(BASE_URL + '/users/' + user.login).pathname;
     return <div key={user.id} className="col-sm">
             <UserCard user={user} />
           </div>;
