@@ -11,5 +11,5 @@ const router: JSX.Element =
 
 ReactDOM.render(
   router,
-  document.getElementsByTagName('body')[0]
+  document.getElementById('app')
 )
