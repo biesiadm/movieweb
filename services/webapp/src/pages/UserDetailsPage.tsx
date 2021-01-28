@@ -4,12 +4,11 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { AxiosResponse } from 'axios';
 import { BASE_URL } from '../config';
 import { usersApi } from '../config'
-import { Review, SortDir, User } from '../api/public/api'
+import { SortDir, User } from '../api/public/api'
 import Avatar from '../components/Avatar';
 import Error from '../components/Error';
 import { LoadingScreen } from '../components/Screen';
-import ReviewCard from '../components/ReviewCard';
-import { UserList } from '../components/EntryList';
+import { ReviewList, UserList } from '../components/EntryList';
 
 type Props = RouteComponentProps<{
   login: string
@@ -17,20 +16,13 @@ type Props = RouteComponentProps<{
 
 type State = {
   user: User | null,
-  topRated: Review[],
-  recentReviews: Review[],
-  followers: User[],
   loading: boolean,
   error: unknown | null
 }
 
 class UserDetailsPage extends Component<Props, State> {
-
   state: State = {
     user: null,
-    topRated: [],
-    recentReviews: [],
-    followers: [],
     loading: true,
     error: null
   };
@@ -38,15 +30,11 @@ class UserDetailsPage extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.render.bind(this);
-    this.fetchBlocks.bind(this);
 
     const login:string = props.match.params.login?.trim().toLowerCase();
     if (login == null) {
       this.state = {
         user: null,
-        topRated: [],
-        recentReviews: [],
-        followers: [],
         loading: false,
         error: 'No such user'
       };
@@ -61,40 +49,13 @@ class UserDetailsPage extends Component<Props, State> {
           loading: false,
           error: null
         });
-        this.fetchBlocks(response.data.id);
       })
       .catch((err: unknown) => {
-        console.error(err);
         this.setState({
           user: null,
           loading: false,
           error: err ?? true
         });
-      });
-  }
-
-  fetchBlocks(user_id: string) {
-    // Top rated
-    usersApi.getUserReviews(user_id, 8, 0, 'rating', SortDir.Desc)
-      .then((response: AxiosResponse<Review[]>) => {
-        this.setState({
-          topRated: response.data
-        });
-      });
-
-    // Recent reviews
-    usersApi.getUserReviews(user_id, 8, 0, 'created', SortDir.Desc)
-      .then((response: AxiosResponse<Review[]>) => {
-        this.setState({
-          recentReviews: response.data
-        });
-      });
-
-    // Followers
-    // TODO(kantoniak): Fetch followers
-    usersApi.getUsers(8, 0)
-      .then((response: AxiosResponse<User[]>) => {
-        this.setState({ followers: response.data });
       });
   }
 
@@ -105,9 +66,10 @@ class UserDetailsPage extends Component<Props, State> {
     }
 
     if (this.state.user !== null) {
-      const followersPromise = () => usersApi.getUsers(8, 0);
       const user: User = this.state.user;
-      const followers: User[] = this.state.followers;
+      const followersPromise = () => usersApi.getUsers(8, 0);
+      const topReviewsPromise = () => usersApi.getUserReviews(user.id, 8, 0, 'rating', SortDir.Desc);
+      const recentReviewsPromise = () => usersApi.getUserReviews(user.id, 8, 0, 'created', SortDir.Desc);
       const profileUrl = new URL(BASE_URL + '/users/' + user.login);
       return <div>
               <section className="bg-darker">
@@ -144,21 +106,9 @@ class UserDetailsPage extends Component<Props, State> {
               </section>
               <section className="container">
                 <h2 className="my-3">Top rated movies</h2>
-                <div className="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xxl-4 g-4 preview-grid">
-                  {this.state.topRated.map((review: Review) => {
-                    return <div key={review.id} className="col-sm">
-                            <ReviewCard review={review} />
-                          </div>;
-                  })}
-                </div>
+                <ReviewList promise={topReviewsPromise} className="preview-grid" />
                 <h2 className="my-3 pt-4">Recent reviews</h2>
-                <div className="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xxl-4 g-4 preview-grid">
-                  {this.state.recentReviews.map((review: Review) => {
-                    return <div key={review.id} className="col-sm">
-                            <ReviewCard review={review} />
-                          </div>;
-                  })}
-                </div>
+                <ReviewList promise={recentReviewsPromise} className="preview-grid" />
                 <h2 className="my-3 pt-4">Followers</h2>
                 <UserList promise={followersPromise} className="promo-grid" />
               </section>

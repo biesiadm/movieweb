@@ -3,30 +3,22 @@ import { ArrowRightCircleFill } from 'react-bootstrap-icons';
 import { Link } from 'react-router-dom';
 import { AxiosResponse } from 'axios';
 import { moviesApi, reviewsApi } from '../config';
-import { SortDir, Movie, Review } from '../api/public/api';
+import { SortDir, Movie } from '../api/public/api';
 import Carousel from '../components/Carousel';
-import MovieCard from '../components/MovieCard';
-import ReviewCard from '../components/ReviewCard';
-
-type Props = Record<string, never>
+import { MovieList, ReviewList } from '../components/EntryList';
+import { EmptyProps } from '../utils';
 
 type State = {
-  latestMovies: Movie[],
-  topRatedMovies: Movie[],
-  mostPopularMovies: Movie[],
-  recentReviews: Review[]
+  latestMovies: Movie[]
 }
 
-class PublicHomepage extends Component<Props, State> {
+class PublicHomepage extends Component<EmptyProps, State> {
 
   state = {
-    latestMovies: [],
-    topRatedMovies: [],
-    mostPopularMovies: [],
-    recentReviews: []
+    latestMovies: []
   };
 
-  constructor(props: Props) {
+  constructor(props: EmptyProps) {
     super(props);
 
     // Latest
@@ -34,37 +26,17 @@ class PublicHomepage extends Component<Props, State> {
       .then((response: AxiosResponse<Movie[]>) => {
         this.setState({ latestMovies: response.data });
       });
-
-    // Top rated
-    moviesApi.getMovies(8, 0, "avg_rating", SortDir.Desc)
-      .then((response: AxiosResponse<Movie[]>) => {
-        this.setState({ topRatedMovies: response.data });
-      });
-
-    // Most popular
-    moviesApi.getMovies(8, 0, "rating_count", SortDir.Desc)
-      .then((response: AxiosResponse<Movie[]>) => {
-        this.setState({ mostPopularMovies: response.data });
-      });
-
-    // Latest rating
-    reviewsApi.getReviews(8, 0, 'created', SortDir.Desc)
-      .then((response: AxiosResponse<Review[]>) => {
-        this.setState({
-          recentReviews: response.data
-        });
-      })
   }
 
   render(): React.ReactNode {
-    const latest = this.state.latestMovies;
-    const best = this.state.topRatedMovies;
-    const mostPopular = this.state.mostPopularMovies;
-    const recentReviews = this.state.recentReviews;
+    const latestMovies = this.state.latestMovies;
+    const topRatedPromise = () => moviesApi.getMovies(8, 0, "avg_rating", SortDir.Desc);
+    const recentReviewsPromise = () => reviewsApi.getReviews(8, 0, 'created', SortDir.Desc);
+    const mostPopularPromise = () => moviesApi.getMovies(8, 0, "rating_count", SortDir.Desc);
     return <div>
             <h1 className="visually-hidden">Movieweb</h1>
             <section className="bg-darker mb-5">
-              <Carousel id="homepageCarousel" movies={latest} />
+              <Carousel id="homepageCarousel" movies={latestMovies} />
             </section>
             <section className="container">
               <h2 className="mb-4 heading-with-btn">
@@ -73,34 +45,16 @@ class PublicHomepage extends Component<Props, State> {
                   <span className="badge badge-btn">All movies <ArrowRightCircleFill className="ms-2" color="#F0A96E" /></span>
                 </Link>
               </h2>
-              <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-4 preview-grid">
-                {best.map((movie: Movie) => {
-                  return <div key={movie.id} className="col-sm">
-                          <MovieCard movie={movie} />
-                        </div>;
-                })}
-              </div>
+              <MovieList promise={topRatedPromise} className="preview-grid" />
               <h2 className="mt-5 mb-4">Latest reviews</h2>
-              <div className="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xxl-4 g-4 preview-grid">
-                {recentReviews.map((review: Review) => {
-                  return <div key={review.id} className="col-sm">
-                          <ReviewCard review={review} />
-                        </div>;
-                })}
-              </div>
+              <ReviewList promise={recentReviewsPromise} className="preview-grid" />
               <h2 className="mt-5 mb-4 heading-with-btn">
                 Most popular
                 <Link to="/movies" className="text-decoration-none">
                   <span className="badge badge-btn">All movies <ArrowRightCircleFill className="ms-2" color="#F0A96E" /></span>
                 </Link>
               </h2>
-              <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-4 preview-grid">
-                {mostPopular.map((movie: Movie) => {
-                  return <div key={movie.id} className="col-sm">
-                          <MovieCard movie={movie} />
-                        </div>;
-                })}
-              </div>
+              <MovieList promise={mostPopularPromise} className="preview-grid" />
             </section>
           </div>;
   }

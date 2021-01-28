@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { EmptyState } from '../utils';
 
 type ErrorCallback = {
     label: string,
@@ -10,8 +11,6 @@ interface Props {
   message: string,
   callback?: ErrorCallback
 }
-
-type EmptyState = Record<string, never>
 
 class Error extends Component<Props, EmptyState> {
 

@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { UserList } from '../components/EntryList';
 import { usersApi } from '../config';
-
-type EmptyProps = Record<string, never>
-type EmptyState = Record<string, never>
+import { EmptyProps, EmptyState } from '../utils';
 
 class UserListPage extends Component<EmptyProps, EmptyState> {
 
