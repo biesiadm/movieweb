@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import { AxiosPromise, AxiosResponse } from 'axios';
-import { Movie, Review, User } from '../api/public/api';
+import { InlineResponse200 as MovieListResponse, InlineResponse2001 as ReviewListResponse, InlineResponse2002 as UserListResponse, Movie, Review, User } from '../api/public/api';
 import { ErrorScreen, LoadingScreen } from '../components/Screen';
 import MovieCard from './MovieCard';
 import ReviewCard from './ReviewCard';
 import UserCard from './UserCard';
 
-type Props<T> = {
+type Props<RespT> = {
   className?: string,
   loadingMessage: string,
   errorMessage: string,
   retryButtonLabel: string,
-  promise: () => AxiosPromise<T[]>
+  promise: () => AxiosPromise<RespT>
 }
 
 type State<T> = {
@@ -25,7 +25,7 @@ enum RequestState {
   Finished = "FINISHED"
 }
 
-class EntryList<T> extends Component<Props<T>, State<T>> {
+class EntryList<T, RespT> extends Component<Props<RespT>, State<T>> {
 
   public static defaultProps = {
     loadingMessage: "Loading...",
@@ -36,6 +36,7 @@ class EntryList<T> extends Component<Props<T>, State<T>> {
   constructor(props: Props<T>) {
     super(props);
     this.componentDidMount.bind(this);
+    this.extractData.bind(this);
     this.loadEntries.bind(this);
     this.render.bind(this);
     this.renderList.bind(this);
@@ -51,6 +52,10 @@ class EntryList<T> extends Component<Props<T>, State<T>> {
     this.loadEntries();
   }
 
+  extractData(response: AxiosResponse<RespT>): T[] {
+    return ((response as unknown) as T[]);
+  }
+
   loadEntries() {
     this.setState({
       state: RequestState.Loading,
@@ -58,10 +63,10 @@ class EntryList<T> extends Component<Props<T>, State<T>> {
     });
 
     this.props.promise()
-    .then((response: AxiosResponse<T[]>) => {
+    .then((response: AxiosResponse<RespT>) => {
       this.setState({
         state: RequestState.Finished,
-        entries: response.data
+        entries: this.extractData(response)
       })
     })
     .catch(() => {
@@ -112,13 +117,17 @@ class EntryList<T> extends Component<Props<T>, State<T>> {
   }
 }
 
-class MovieList extends EntryList<Movie> {
+class MovieList extends EntryList<Movie, MovieListResponse> {
 
   public static defaultProps = {
     loadingMessage: "Loading...",
     errorMessage: "Could not fetch movies.",
     retryButtonLabel: "Retry"
   };
+
+  extractData(response: AxiosResponse<MovieListResponse>): Movie[] {
+    return response.data.movies;
+  }
 
   renderEntry(movie: Movie): React.ReactNode {
     return <div key={movie.id} className="col-sm">
@@ -127,13 +136,17 @@ class MovieList extends EntryList<Movie> {
   }
 }
 
-class ReviewList extends EntryList<Review> {
+class ReviewList extends EntryList<Review, ReviewListResponse> {
 
   public static defaultProps = {
     loadingMessage: "Loading...",
     errorMessage: "Could not fetch reviews.",
     retryButtonLabel: "Retry"
   };
+
+  extractData(response: AxiosResponse<ReviewListResponse>): Review[] {
+    return response.data.reviews;
+  }
 
   renderEntry(review: Review): React.ReactNode {
     return <div key={review.id} className="col-sm">
@@ -142,13 +155,17 @@ class ReviewList extends EntryList<Review> {
   }
 }
 
-class UserList extends EntryList<User> {
+class UserList extends EntryList<User, UserListResponse> {
 
   public static defaultProps = {
     loadingMessage: "Loading...",
     errorMessage: "Could not fetch users.",
     retryButtonLabel: "Retry"
   };
+
+  extractData(response: AxiosResponse<UserListResponse>): User[] {
+    return response.data.users;
+  }
 
   renderEntry(user: User): React.ReactNode {
     return <div key={user.id} className="col-sm">

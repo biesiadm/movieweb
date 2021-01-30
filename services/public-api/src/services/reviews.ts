@@ -67,6 +67,28 @@ interface PublicReview extends Review {
 
 /**
  * @swagger
+ * components:
+ *   responses:
+ *     ReviewListResponse:
+ *       description: List of reviews.
+ *       content:
+ *         application/json:
+ *           schema:
+ *               type: object
+ *               required:
+ *                 - reviews
+ *                 - info
+ *               properties:
+ *                 reviews:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Review'
+ *                 info:
+ *                   $ref: '#/components/schemas/ListInfo'
+ */
+
+/**
+ * @swagger
  * /reviews:
  *   get:
  *     operationId: getReviews
@@ -85,13 +107,7 @@ interface PublicReview extends Review {
  *       - $ref: '#/components/parameters/sort_dir'
  *     responses:
  *       200:
- *         description: List of ratings.
- *         content:
- *           application/json:
- *             schema:
- *               type: "array"
- *               items:
- *                 $ref: "#/components/schemas/Review"
+ *         $ref: '#/components/responses/ReviewListResponse'
  *       422:
  *         $ref: '#/components/responses/ValidationError'
  *
@@ -138,7 +154,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
         })
         .then((axiosResponse: AxiosResponse<PublicReview[]>) => {
             const reviews: PublicReview[] = axiosResponse.data;
-            Promise
+            return Promise
                 .all(reviews
                     .map(r => r.user_id)
                     .map(usersApi.readUserByIdApiUsersUserIdGet))
@@ -157,9 +173,20 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
                         users.forEach((user, i) => {
                             reviews[i].user = user;
                         });
-                        res.status(axiosResponse.status).json(reviews);
-                        next();
+                        return axiosResponse;
                     })
+        })
+        .then((axiosResponse: AxiosResponse<PublicReview[]>) => {
+            // TODO(biesiadm): Pass info from the service
+            const responseBody = {
+                reviews: axiosResponse.data,
+                info: {
+                    count: axiosResponse.data.length,
+                    totalCount: 4 * 16
+                }
+            };
+            res.status(axiosResponse.status).json(responseBody);
+            return next();
         })
         .catch(buildErrorPassthrough([422], res, next));
     return res;
@@ -186,13 +213,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
  *       - $ref: '#/components/parameters/sort_dir'
  *     responses:
  *       200:
- *         description: List of ratings.
- *         content:
- *           application/json:
- *             schema:
- *               type: "array"
- *               items:
- *                 $ref: "#/components/schemas/Review"
+ *         $ref: '#/components/responses/ReviewListResponse'
  *       422:
  *         $ref: '#/components/responses/ValidationError'
  *
@@ -213,7 +234,7 @@ movieRouter.get("/", (req: express.Request, res: express.Response, next: express
         })
         .then((axiosResponse: AxiosResponse<PublicReview[]>) => {
             const reviews: PublicReview[] = axiosResponse.data;
-            Promise
+            return Promise
                 .all(reviews
                     .map(r => r.user_id)
                     .map(usersApi.readUserByIdApiUsersUserIdGet))
@@ -232,9 +253,20 @@ movieRouter.get("/", (req: express.Request, res: express.Response, next: express
                         users.forEach((user, i) => {
                             reviews[i].user = user;
                         });
-                        res.status(axiosResponse.status).json(reviews);
-                        next();
+                        return axiosResponse;
                     })
+        })
+        .then((axiosResponse: AxiosResponse<PublicReview[]>) => {
+            // TODO(biesiadm): Pass info from the service
+            const responseBody = {
+                reviews: axiosResponse.data,
+                info: {
+                    count: axiosResponse.data.length,
+                    totalCount: 4 * 16
+                }
+            };
+            res.status(axiosResponse.status).json(responseBody);
+            return next();
         })
         .catch(buildErrorPassthrough([422], res, next));
     return res;
@@ -261,13 +293,7 @@ movieRouter.get("/", (req: express.Request, res: express.Response, next: express
  *       - $ref: '#/components/parameters/sort_dir'
  *     responses:
  *       200:
- *         description: List of ratings.
- *         content:
- *           application/json:
- *             schema:
- *               type: "array"
- *               items:
- *                 $ref: "#/components/schemas/Review"
+ *         $ref: '#/components/responses/ReviewListResponse'
  *       422:
  *         $ref: '#/components/responses/ValidationError'
  *
@@ -287,7 +313,7 @@ userRouter.get("/", (req: express.Request, res: express.Response, next: express.
         })
         .then((axiosResponse: AxiosResponse<PublicReview[]>) => {
             const reviews: PublicReview[] = axiosResponse.data;
-            Promise
+            return Promise
                 .all(reviews
                     .map(r => r.movie_id)
                     .map(moviesApi.readMovieByIdMoviesMovieIdGet))
@@ -308,9 +334,20 @@ userRouter.get("/", (req: express.Request, res: express.Response, next: express.
                         movies.forEach((movie, i) => {
                             reviews[i].movie = movie;
                         });
-                        res.status(axiosResponse.status).json(reviews);
-                        next();
+                        return axiosResponse;
                     })
+        })
+        .then((axiosResponse: AxiosResponse<PublicReview[]>) => {
+            // TODO(biesiadm): Pass info from the service
+            const responseBody = {
+                reviews: axiosResponse.data,
+                info: {
+                    count: axiosResponse.data.length,
+                    totalCount: 4 * 16
+                }
+            };
+            res.status(axiosResponse.status).json(responseBody);
+            return next();
         })
         .catch(buildErrorPassthrough([422], res, next));
     return res;
