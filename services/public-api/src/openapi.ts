@@ -117,6 +117,17 @@ interface PublicUser extends User {
  *           schema:
  *             $ref: "#/components/schemas/ValidationErrorList"
  *   schemas:
+ *     ListInfo:
+ *       type: object
+ *       properties:
+ *         count:
+ *           type: integer
+ *           minimum: 0
+ *           description: Number of entries returned with request.
+ *         totalCount:
+ *           type: integer
+ *           minimum: 0
+ *           description: Number of all entries matching criteria.
  *     ValidationErrorList:
  *       type: "object"
  *       properties:

@@ -10,6 +10,28 @@ const router = express.Router();
 
 /**
  * @swagger
+ * components:
+ *   responses:
+ *     MovieListResponse:
+ *       description: List of movies.
+ *       content:
+ *         application/json:
+ *           schema:
+ *               type: object
+ *               required:
+ *                 - movies
+ *                 - info
+ *               properties:
+ *                 movies:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Movie'
+ *                 info:
+ *                   $ref: '#/components/schemas/ListInfo'
+ */
+
+/**
+ * @swagger
  * /movies:
  *   get:
  *     operationId: getMovies
@@ -28,13 +50,7 @@ const router = express.Router();
  *       - $ref: '#/components/parameters/sort_dir'
  *     responses:
  *       200:
- *         description: List of movies.
- *         content:
- *           application/json:
- *             schema:
- *               type: "array"
- *               items:
- *                 $ref: "#/components/schemas/Movie"
+ *         $ref: '#/components/responses/MovieListResponse'
  *       422:
  *         $ref: '#/components/responses/ValidationError'
  *
@@ -62,7 +78,15 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
             return <AxiosResponse<PublicMovie[]>>axiosResponse;
         })
         .then((axiosResponse: AxiosResponse<PublicMovie[]>) => {
-            res.status(axiosResponse.status).json(axiosResponse.data);
+            // TODO(biesiadm): Pass info from the service
+            const responseBody = {
+                movies: axiosResponse.data,
+                info: {
+                    count: axiosResponse.data.length,
+                    totalCount: 16
+                }
+            };
+            res.status(axiosResponse.status).json(responseBody);
             return next();
         })
         .catch(buildErrorPassthrough([404, 422], res, next));

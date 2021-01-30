@@ -10,6 +10,28 @@ const router = express.Router();
 
 /**
  * @swagger
+ * components:
+ *   responses:
+ *     UserListResponse:
+ *       description: List of users.
+ *       content:
+ *         application/json:
+ *           schema:
+ *               type: object
+ *               required:
+ *                 - users
+ *                 - info
+ *               properties:
+ *                 users:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
+ *                 info:
+ *                   $ref: '#/components/schemas/ListInfo'
+ */
+
+/**
+ * @swagger
  * /users:
  *   get:
  *     operationId: getUsers
@@ -28,13 +50,7 @@ const router = express.Router();
  *         description: Limits results to provided login or logins.
  *     responses:
  *       200:
- *         description: List of users.
- *         content:
- *           application/json:
- *             schema:
- *               type: "array"
- *               items:
- *                 $ref: "#/components/schemas/User"
+ *         $ref: '#/components/responses/UserListResponse'
  *       422:
  *         $ref: '#/components/responses/ValidationError'
  */
@@ -80,7 +96,15 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
             return <AxiosResponse<PublicUser[]>>axiosResponse;
         })
         .then((axiosResponse: AxiosResponse<PublicUser[]>) => {
-            res.status(axiosResponse.status).json(axiosResponse.data);
+            // TODO(biesiadm): Pass info from the service
+            const responseBody = {
+                users: axiosResponse.data,
+                info: {
+                    count: axiosResponse.data.length,
+                    totalCount: 5
+                }
+            };
+            res.status(axiosResponse.status).json(responseBody);
             return next();
         })
         .catch(buildErrorPassthrough([401, 404, 422], res, next));

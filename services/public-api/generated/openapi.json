@@ -46,17 +46,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of movies.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Movie"
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/MovieListResponse"
           },
           "422": {
             "$ref": "#/components/responses/ValidationError"
@@ -126,17 +116,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of ratings.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Review"
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/ReviewListResponse"
           },
           "422": {
             "$ref": "#/components/responses/ValidationError"
@@ -181,17 +161,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of ratings.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Review"
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/ReviewListResponse"
           },
           "422": {
             "$ref": "#/components/responses/ValidationError"
@@ -236,17 +206,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of ratings.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Review"
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/ReviewListResponse"
           },
           "422": {
             "$ref": "#/components/responses/ValidationError"
@@ -283,17 +243,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of users.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/User"
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/UserListResponse"
           },
           "422": {
             "$ref": "#/components/responses/ValidationError"
@@ -462,6 +412,21 @@
           }
         }
       },
+      "ListInfo": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of entries returned with request."
+          },
+          "totalCount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of all entries matching criteria."
+          }
+        }
+      },
       "ValidationErrorList": {
         "type": "object",
         "properties": {
@@ -540,6 +505,81 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/ValidationErrorList"
+            }
+          }
+        }
+      },
+      "MovieListResponse": {
+        "description": "List of movies.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "movies",
+                "info"
+              ],
+              "properties": {
+                "movies": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Movie"
+                  }
+                },
+                "info": {
+                  "$ref": "#/components/schemas/ListInfo"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ReviewListResponse": {
+        "description": "List of reviews.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "reviews",
+                "info"
+              ],
+              "properties": {
+                "reviews": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Review"
+                  }
+                },
+                "info": {
+                  "$ref": "#/components/schemas/ListInfo"
+                }
+              }
+            }
+          }
+        }
+      },
+      "UserListResponse": {
+        "description": "List of users.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "users",
+                "info"
+              ],
+              "properties": {
+                "users": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                },
+                "info": {
+                  "$ref": "#/components/schemas/ListInfo"
+                }
+              }
             }
           }
         }
