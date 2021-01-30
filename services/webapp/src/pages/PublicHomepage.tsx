@@ -3,7 +3,7 @@ import { ArrowRightCircleFill } from 'react-bootstrap-icons';
 import { Link } from 'react-router-dom';
 import { AxiosResponse } from 'axios';
 import { moviesApi, reviewsApi } from '../config';
-import { SortDir, Movie } from '../api/public/api';
+import { SortDir, Movie, InlineResponse200 as MovieListResponse } from '../api/public/api';
 import Carousel from '../components/Carousel';
 import { MovieList, ReviewList } from '../components/EntryList';
 import { EmptyProps } from '../utils';
@@ -23,8 +23,8 @@ class PublicHomepage extends Component<EmptyProps, State> {
 
     // Latest
     moviesApi.getMovies(6, 0, "year", SortDir.Desc)
-      .then((response: AxiosResponse<Movie[]>) => {
-        this.setState({ latestMovies: response.data });
+      .then((response: AxiosResponse<MovieListResponse>) => {
+        this.setState({ latestMovies: response.data.movies });
       });
   }
 
