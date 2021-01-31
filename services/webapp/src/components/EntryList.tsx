@@ -33,7 +33,7 @@ class EntryList<T, RespT> extends Component<Props<RespT>, State<T>> {
     retryButtonLabel: "Retry"
   };
 
-  constructor(props: Props<T>) {
+  constructor(props: Props<RespT>) {
     super(props);
     this.componentDidMount.bind(this);
     this.extractData.bind(this);
