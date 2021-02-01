@@ -6,8 +6,9 @@ import { moviesApi } from '../config'
 import { Movie, Review, SortDir } from '../api/public/api'
 import Error from '../components/Error';
 import Poster from '../components/Poster';
-import InfoScreen, { LoadingScreen } from '../components/Screen';
+import { LoadingScreen } from '../components/Screen';
 import { ReviewList } from '../components/EntryList';
+import RateBlock from '../components/RateBlock';
 
 type Props = RouteComponentProps<{
   slug_id: string
@@ -116,9 +117,7 @@ class MovieDetailsPage extends Component<Props, State> {
                         </div>
                       </div>
                       <div className="col-xl-4 pt-4 pt-lg-5 pt-xl-0 ps-xl-5">
-                        <InfoScreen className="bg-subtle h-100 py-0">
-                          Your rating block
-                        </InfoScreen>
+                        <RateBlock className="rounded" />
                       </div>
                     </div>
                   </div>
