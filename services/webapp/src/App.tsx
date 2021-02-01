@@ -8,6 +8,7 @@ import MovieDetailsPage from './pages/MovieDetailsPage';
 import UserListPage from './pages/UserListPage';
 import UserDetailsPage from './pages/UserDetailsPage';
 import PublicHomepage from './pages/PublicHomepage';
+import LoginPage from './pages/LoginPage';
 
 type EmptyProps = Record<string, never>
 type EmptyState = Record<string, never>
@@ -15,6 +16,15 @@ type EmptyState = Record<string, never>
 class App extends Component<EmptyProps, EmptyState> {
 
   render(): React.ReactNode {
+    return <Switch>
+      <Route exact path='/login' component={LoginPage} />
+      <Route>
+        {this.renderApp()}
+      </Route>
+    </Switch>;
+  }
+
+  renderApp(): React.ReactNode {
     return  <div className="d-flex flex-column">
               <header id="main-menu" className="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div className="container">
@@ -32,6 +42,7 @@ class App extends Component<EmptyProps, EmptyState> {
                       </li>
                     </ul>
                   </nav>
+                  <Link to="/login" className="btn btn-primary flex-shrink-0">Log in</Link>
                 </div>
               </header>
               <main className="pb-5 bg-light col">

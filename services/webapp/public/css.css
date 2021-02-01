@@ -190,3 +190,13 @@ html, body, body>div {
         margin-right: auto;
     }
 }
+
+/* Log in page */
+.login-screen .spinner-border {
+    width: 1em;
+    height: 1em;
+    border-width: 0.17em;
+    margin-right: -0.05em;
+    margin-left: 0.5em;
+    margin-bottom: 0.1em;
+}
