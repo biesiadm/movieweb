@@ -29,6 +29,14 @@ services:
     volumes:
       - ./reviews/app:/app
 
+  relationships:
+    ports:
+      - ${RELATIONSHIPS_PORT}:80
+    command:
+      - /start-reload.sh
+    volumes:
+      - ./relationships/app:/app
+
   public-api:
     build:
       context: public-api/
