@@ -50,16 +50,12 @@ services:
     env_file:
       - .env
       - relationships.env
-    ports:
-      - ${RELATIONSHIPS_PORT}:80
 
   relationships-db:
     image: postgres:13-alpine
     env_file: relationships.env
     volumes:
       - relationships-db-data:/var/lib/postgresql/data/
-    ports:
-      - 5432:5432
 
 
   public-api:
