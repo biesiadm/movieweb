@@ -7,6 +7,6 @@ from sqlalchemy.dialects.postgresql import UUID
 
 class Relationship(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True))
-    followed_user_id = Column(UUID(as_uuid=True))
+    user_id = Column(UUID(as_uuid=True), nullable=False)
+    followed_user_id = Column(UUID(as_uuid=True), nullable=False)
     created = Column(DateTime, nullable=False)

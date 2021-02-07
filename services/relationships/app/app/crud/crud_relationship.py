@@ -30,5 +30,9 @@ class CRUDReview(CRUDBase[Relationship, RelationshipCreate, RelationshipUpdate])
         return db.query(self.model).filter(Relationship.user_id == user_id) \
             .offset(skip).limit(limit).all()
 
+    def get_relationship(self, db: Session, *, user_id: UUID, followed_user_id: UUID):
+        return db.query(self.model).filter(Relationship.user_id == user_id,
+                                           Relationship.followed_user_id == followed_user_id).first()
+
 
 relationship = CRUDReview(Relationship)

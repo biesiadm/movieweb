@@ -2,4 +2,4 @@
 # imported by Alembic
 
 from app.db.base_class import Base  # noqa
-from app.db.models.review import Review  # noqa
+from app.db.models.relationship import Relationship  # noqa
