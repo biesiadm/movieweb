@@ -37,12 +37,20 @@ def read_reviews(
     reviews = crud.review.get_by_user(db, user_id=user_id, skip=skip, limit=limit)
     return reviews
 
+
 @router.post("/new", response_model=schemas.Review)
 def add_review(
         db: Session = Depends(deps.get_db),
         *,
         review_in: schemas.ReviewCreate
 ) -> Any:
-    # TODO(biesiadm): System allows for multiple reviews
+    review = crud.review.get_by_user_and_movie(db=db, user_id=review_in.user_id, movie_id=review_in.movie_id)
+
+    if review:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='You already reviewed this movie.'
+        )
+
     review = crud.review.create(db=db, obj_in=review_in)
     return review
