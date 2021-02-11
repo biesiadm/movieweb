@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import OpenapiSpec from './openapi';
+import AuthRouter from './services/auth';
 import MoviesRouter from './services/movies';
 import ReviewsRouter, { MovieReviewsRouter, UserReviewsRouter } from './services/reviews';
 import UsersRouter from './services/users';
@@ -12,6 +13,7 @@ app.use(morgan('combined'));
 app.use(cors());
 
 // Routes (handled in order of appearance)
+app.use('/auth', AuthRouter);
 app.use('/movies/:id/reviews', MovieReviewsRouter);
 app.use('/movies', MoviesRouter);
 app.use('/reviews', ReviewsRouter);

@@ -3,7 +3,7 @@ import { MoviesApiFactory } from './api/movies/api';
 import { Configuration as MoviesApiConfiguration } from './api/movies/configuration';
 import { ReviewsApiFactory } from './api/reviews/api';
 import { Configuration as ReviewsApiConfiguration } from './api/reviews/configuration';
-import { UsersApiFactory } from './api/users/api';
+import { LoginApiFactory, UsersApiFactory } from './api/users/api';
 import { Configuration as UsersApiConfiguration } from './api/users/configuration';
 
 const axiosInstance: AxiosInstance = axios.create({
@@ -22,10 +22,17 @@ const reviewsApi = ReviewsApiFactory(
   axiosInstance
 );
 
+const usersApiConfig = new UsersApiConfiguration();
 const usersApi = UsersApiFactory(
-  new UsersApiConfiguration(),
+  usersApiConfig,
   "http://users:80",
   axiosInstance
 );
 
-export { moviesApi, reviewsApi, usersApi };
+const loginApi = LoginApiFactory(
+  usersApiConfig,
+  "http://users:80",
+  axiosInstance
+);
+
+export { loginApi, moviesApi, reviewsApi, usersApi };
