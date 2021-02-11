@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
 import express from 'express';
 import md5 from 'md5';
-import { User } from '../api/users/api';
+import { UserWeb } from '../api/users/api';
 import { usersApi } from '../config';
 import { PublicUser } from '../openapi';
 import { buildErrorPassthrough, errorIfIdNotValid, handlePagination } from '../middleware';
@@ -70,10 +70,10 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
 
         Promise
             .all(loginList.map(usersApi.readUserByIdApiUsersUserIdGet))
-            .then((responses): User[] => {
+            .then((responses): UserWeb[] => {
                 return responses.map((response) => response.data);
             })
-            .then((users: User[]): void => {
+            .then((users: UserWeb[]): void => {
                 res.status(200).json(users);
                 return next();
             })
@@ -83,8 +83,8 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
 
     // Fetch all users
     usersApi.readUsersApiUsersGet(req.pagination!.skip, req.pagination!.limit)
-        .then((axiosResponse: AxiosResponse<User[]>) => {
-            axiosResponse.data = axiosResponse.data.map((movie: User) => {
+        .then((axiosResponse: AxiosResponse<UserWeb[]>) => {
+            axiosResponse.data = axiosResponse.data.map((movie: UserWeb) => {
                 let result: Partial<PublicUser> = movie;
                 result.login = result.id;
 
@@ -135,7 +135,7 @@ router.get("/:id", (req: express.Request, res: express.Response, next: express.N
 
     const user_id: string = req.params.id;
     usersApi.readUserByIdApiUsersUserIdGet(user_id)
-        .then((axiosResponse: AxiosResponse<User>) => {
+        .then((axiosResponse: AxiosResponse<UserWeb>) => {
             let newResponse: AxiosResponse<Partial<PublicUser>> = axiosResponse;
             newResponse.data.login = newResponse.data.id;
 

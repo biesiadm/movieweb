@@ -1,7 +1,7 @@
 import swaggerJSDoc from 'swagger-jsdoc';
 import OpenapiDef from '../openapi-definition.json';
 import { Movie } from './api/movies';
-import { User } from './api/users';
+import { UserWeb } from './api/users';
 
 const OpenapiSpec = swaggerJSDoc({
     swaggerDefinition: OpenapiDef,
@@ -74,20 +74,11 @@ interface PublicMovie extends Movie {
  *           type: "string"
  *         name:
  *           type: "string"
- *         email:
- *           type: "string"
- *           format: "email"
  *         avatar_url:
  *           type: "string"
  *           format: "url"
- *         is_active:
- *           type: "boolean"
- *           default: true
- *         is_superuser:
- *           type: "boolean"
- *           default: false
  */
-interface PublicUser extends User {
+interface PublicUser extends UserWeb {
 
     // TODO(biesiadm): Move to user API
     /**

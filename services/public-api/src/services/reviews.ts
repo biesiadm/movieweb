@@ -7,7 +7,7 @@ import { moviesApi, reviewsApi, usersApi } from '../config';
 import { PublicMovie, PublicUser } from '../openapi';
 import { buildSortingHandler, buildErrorPassthrough, errorIfIdNotValid, handlePagination } from '../middleware';
 import { Movie } from '../api/movies';
-import { User } from '../api/users';
+import { UserWeb } from '../api/users';
 
 const router = express.Router();
 const handleReviewSorting = buildSortingHandler(['created', 'rating']);
@@ -158,7 +158,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
                 .all(reviews
                     .map(r => r.user_id)
                     .map(usersApi.readUserByIdApiUsersUserIdGet))
-                    .then((responses: AxiosResponse<User>[]) => {
+                    .then((responses: AxiosResponse<UserWeb>[]) => {
                         return responses.map(response => {
                             let user: Partial<PublicUser> = response.data;
                             user.login = response.data.id;
@@ -238,7 +238,7 @@ movieRouter.get("/", (req: express.Request, res: express.Response, next: express
                 .all(reviews
                     .map(r => r.user_id)
                     .map(usersApi.readUserByIdApiUsersUserIdGet))
-                    .then((responses: AxiosResponse<User>[]) => {
+                    .then((responses: AxiosResponse<UserWeb>[]) => {
                         return responses.map(response => {
                             let user: Partial<PublicUser> = response.data;
                             user.login = response.data.id;
