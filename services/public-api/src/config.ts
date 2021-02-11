@@ -6,6 +6,19 @@ import { Configuration as ReviewsApiConfiguration } from './api/reviews/configur
 import { LoginApiFactory, UsersApiFactory } from './api/users/api';
 import { Configuration as UsersApiConfiguration } from './api/users/configuration';
 
+const sessionConfig = {
+  // FIXME(kantoniak): Hardcoded secret
+  secret: 'session-secret',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+      httpOnly: true,
+      //secure: true, // Set only if HTTPS
+      domain: 'localhost'
+  }
+  // TODO(kantoniak): Set up a secure store (Redis?) for prod. `express-session` uses memory by default.
+};
+
 const axiosInstance: AxiosInstance = axios.create({
   responseType: "json"
 });
@@ -35,4 +48,4 @@ const loginApi = LoginApiFactory(
   axiosInstance
 );
 
-export { loginApi, moviesApi, reviewsApi, usersApi };
+export { loginApi, moviesApi, reviewsApi, usersApi, sessionConfig };

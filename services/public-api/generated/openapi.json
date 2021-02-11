@@ -16,6 +16,7 @@
       "post": {
         "operationId": "authorize",
         "summary": "Obtain JWT token",
+        "description": "Creates a new JWT. Tokens are ignored if user has started a session.",
         "tags": [
           "auth"
         ],
@@ -23,20 +24,7 @@
           "content": {
             "application/x-www-form-urlencoded": {
               "schema": {
-                "type": "object",
-                "required": [
-                  "username",
-                  "password"
-                ],
-                "properties": {
-                  "username": {
-                    "type": "string",
-                    "format": "email"
-                  },
-                  "password": {
-                    "type": "string"
-                  }
-                }
+                "$ref": "#/components/schemas/LogInCredentials"
               }
             }
           }
@@ -47,6 +35,53 @@
           },
           "422": {
             "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/auth/log-in": {
+      "post": {
+        "operationId": "logIn",
+        "summary": "Start session",
+        "tags": [
+          "auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogInCredentials"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/auth/log-out": {
+      "get": {
+        "operationId": "logOut",
+        "summary": "End session",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Logged out successfully."
           }
         }
       }
@@ -482,21 +517,19 @@
           }
         }
       },
-      "Token": {
+      "LogInCredentials": {
         "type": "object",
         "required": [
-          "access_token",
-          "token_type"
+          "username",
+          "password"
         ],
         "properties": {
-          "access_token": {
-            "type": "string"
-          },
-          "token_type": {
+          "username": {
             "type": "string",
-            "enum": [
-              "bearer"
-            ]
+            "format": "email"
+          },
+          "password": {
+            "type": "string"
           }
         }
       },
@@ -559,7 +592,22 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/Token"
+              "type": "object",
+              "required": [
+                "access_token",
+                "token_type"
+              ],
+              "properties": {
+                "access_token": {
+                  "type": "string"
+                },
+                "token_type": {
+                  "type": "string",
+                  "enum": [
+                    "bearer"
+                  ]
+                }
+              }
             }
           }
         }

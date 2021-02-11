@@ -1,4 +1,5 @@
 import express from 'express';
+import session from 'express-session';
 import cors from 'cors';
 import morgan from 'morgan';
 import OpenapiSpec from './openapi';
@@ -7,10 +8,18 @@ import MoviesRouter from './services/movies';
 import ReviewsRouter, { MovieReviewsRouter, UserReviewsRouter } from './services/reviews';
 import UsersRouter from './services/users';
 import swaggerUi from 'swagger-ui-express';
+import { handleTokenExpiration } from './session';
+import { sessionConfig } from './config';
 
 const app = express();
+
+// TODO(kantoniak): Don't log in prod
 app.use(morgan('combined'));
 app.use(cors());
+app.use(session(sessionConfig));
+
+// Custom middleware
+app.use(handleTokenExpiration);
 
 // Routes (handled in order of appearance)
 app.use('/auth', AuthRouter);
