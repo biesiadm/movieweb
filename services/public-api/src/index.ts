@@ -9,13 +9,13 @@ import ReviewsRouter, { MovieReviewsRouter, UserReviewsRouter } from './services
 import UsersRouter from './services/users';
 import swaggerUi from 'swagger-ui-express';
 import { handleTokenExpiration } from './session';
-import { sessionConfig } from './config';
+import { corsConfig, sessionConfig } from './config';
 
 const app = express();
 
 // TODO(kantoniak): Don't log in prod
 app.use(morgan('combined'));
-app.use(cors());
+app.use(cors(corsConfig));
 app.use(session(sessionConfig));
 
 // Custom middleware

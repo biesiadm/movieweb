@@ -6,6 +6,11 @@ import { Configuration as ReviewsApiConfiguration } from './api/reviews/configur
 import { LoginApiFactory, UsersApiFactory } from './api/users/api';
 import { Configuration as UsersApiConfiguration } from './api/users/configuration';
 
+const corsConfig = {
+  origin: new RegExp('localhost'),
+  credentials: true
+};
+
 const sessionConfig = {
   // FIXME(kantoniak): Hardcoded secret
   secret: 'session-secret',
@@ -48,4 +53,4 @@ const loginApi = LoginApiFactory(
   axiosInstance
 );
 
-export { loginApi, moviesApi, reviewsApi, usersApi, sessionConfig };
+export { loginApi, moviesApi, reviewsApi, usersApi, corsConfig, sessionConfig };
