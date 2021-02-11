@@ -19,9 +19,6 @@ def generate_base_url(service_name: str, api_prefix: str) -> str:
 
 
 def init_db(db: Session) -> None:
-    # TODO(biesiadm): Resolve URLs from environment
-    # movies_resp = urllib.request.urlopen('http://movies:80/api/movies/')
-    # users_resp = urllib.request.urlopen('http://users:80/api/users/')
     movies_resp = urllib.request.urlopen(generate_base_url(settings.MOVIES_SERVICE_NAME, settings.API_MOVIES))
     users_resp = urllib.request.urlopen(generate_base_url(settings.USERS_SERVICE_NAME, settings.API_USERS))
 
