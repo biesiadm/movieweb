@@ -54,10 +54,8 @@ def init_db(db: Session) -> None:
                 movie_id=movie_id,
                 rating=random.randint(1, 10),
                 comment=random.choice(sample_comments),
-                # TODO(biesiadm): Allow overriding creation time for sample data
-                # created=datetime.now(timezone.utc)
             )
-            crud.review.create(db, obj_in=review)
+            crud.review.create_with_date(db, obj_in=review, creation_time=datetime.now(timezone.utc))
 
     db.commit()
 
