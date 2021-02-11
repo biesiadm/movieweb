@@ -3,12 +3,13 @@ import random
 import urllib.request
 import urllib.parse
 
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from sqlalchemy.orm import Session
 from uuid import UUID
 
 from app import crud, schemas
 from app.db.models.review import Review
+
 
 def init_db(db: Session) -> None:
     # TODO(biesiadm): Resolve URLs from environment
@@ -55,8 +56,8 @@ def init_db(db: Session) -> None:
                 rating=random.randint(1, 10),
                 comment=random.choice(sample_comments),
             )
-            crud.review.create_with_date(db, obj_in=review, creation_time=datetime.now(timezone.utc))
+            review_date = datetime.now(timezone.utc) - timedelta(days=random.randint(0, 100),
+                                                                 minutes=random.randint(0, 10000))
+            crud.review.create_with_date(db, obj_in=review, creation_time=review_date)
 
     db.commit()
-
-
