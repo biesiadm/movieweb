@@ -13,7 +13,7 @@ from app.db.models.review import Review
 
 def init_db(db: Session) -> None:
     # TODO(biesiadm): Resolve URLs from environment
-    movies_resp = urllib.request.urlopen('http://movies:80/movies/')
+    movies_resp = urllib.request.urlopen('http://movies:80/api/movies/')
     users_resp = urllib.request.urlopen('http://users:80/api/users/')
 
     movie_ids = list(map(
