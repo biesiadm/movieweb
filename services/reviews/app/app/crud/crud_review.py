@@ -45,5 +45,8 @@ class CRUDReview(CRUDBase[Review, ReviewCreate, ReviewUpdate]):
         return db.query(self.model).filter(Review.movie_id == movie_id) \
             .offset(skip).limit(limit).all()
 
+    def get_by_user_and_movie(self, db: Session, *, user_id: UUID, movie_id: UUID) -> Review:
+        return db.query(self.model).filter(Review.user_id == user_id, Review.movie_id == movie_id).first()
+
 
 review = CRUDReview(Review)
