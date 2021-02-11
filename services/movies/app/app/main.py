@@ -3,9 +3,11 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.core.config import settings
 from app.api.api.api import api_router
 
-app = FastAPI(title=os.environ['SERVICE_NAME'])
+app = FastAPI(title=settings.SERVICE_NAME,
+              openapi_url=f"{settings.API_MOVIES}/openapi.json")
 
 # CORS setup
 origins = [
@@ -21,4 +23,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(api_router)
+app.include_router(api_router, prefix=settings.API_MOVIES)

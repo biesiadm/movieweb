@@ -5,7 +5,7 @@
       "version": "0.1.0"
     },
     "paths": {
-      "/movies/": {
+      "/api/movies/": {
         "get": {
           "tags": [
             "movies"
@@ -62,7 +62,7 @@
           }
         }
       },
-      "/movies/{movie_id}": {
+      "/api/movies/{movie_id}": {
         "get": {
           "tags": [
             "movies"
@@ -105,7 +105,7 @@
           }
         }
       },
-      "/movies/title/{title}": {
+      "/api/movies/title/{title}": {
         "get": {
           "tags": [
             "movies"
@@ -151,7 +151,7 @@
           }
         }
       },
-      "/movies/director/{director}": {
+      "/api/movies/director/{director}": {
         "get": {
           "tags": [
             "movies"
@@ -197,7 +197,7 @@
           }
         }
       },
-      "/movies/category/{category}": {
+      "/api/movies/category/{category}": {
         "get": {
           "tags": [
             "movies"
@@ -243,7 +243,7 @@
           }
         }
       },
-      "/movies/country/{country}": {
+      "/api/movies/country/{country}": {
         "get": {
           "tags": [
             "movies"
@@ -289,7 +289,7 @@
           }
         }
       },
-      "/movies/add": {
+      "/api/movies/add": {
         "post": {
           "tags": [
             "movies"
