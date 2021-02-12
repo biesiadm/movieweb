@@ -205,3 +205,10 @@ html, body, body>div {
     margin-left: 0.5em;
     margin-bottom: 0.1em;
 }
+
+/* Header */
+@media (max-width: 991px) { /* Up to MD */
+    .dropdown-menu {
+        position: relative !important;
+    }
+}

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router-dom';
 import { User } from '../api/public';
 import { authApi } from '../config';
+import { Emitter, UserEvent } from '../events';
 
 enum LogInState {
   Clear = "CLEAR",
@@ -67,13 +68,12 @@ class LoginPage extends Component<RouteComponentProps, State> {
       password: this.state.password
     };
 
-
     authApi.logIn(credentials)
     .then((response: AxiosResponse<User>) => {
       this.setState({
         state: LogInState.Clear
       });
-      this.onSuccess();
+      this.onSuccess(response.data);
     })
     .catch((error) => {
       let errorMessage = "Could not log in."
@@ -87,12 +87,13 @@ class LoginPage extends Component<RouteComponentProps, State> {
     });
   }
 
-  onSuccess(): void {
+  onSuccess(user: User): void {
     const params = new URLSearchParams(this.props.location.search);
     let target = params.get('redirect');
     if (!target) {
       target = '/';
     }
+    Emitter.emit(UserEvent.LogIn, user);
     this.props.history.push(target);
   }
 
