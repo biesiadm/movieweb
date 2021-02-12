@@ -1,7 +1,14 @@
 import { Location } from 'history';
+import { ListInfo } from './api/public';
 
 type EmptyProps = Record<string, never>;
 type EmptyState = Record<string, never>;
+
+interface AxiosListResponse {
+    data: {
+        info: ListInfo
+    }
+}
 
 function getLogInPath(location: Location): string {
     const query = new URLSearchParams();
@@ -9,5 +16,5 @@ function getLogInPath(location: Location): string {
     return ('/login?' + query.toString());
 }
 
-export type { EmptyProps, EmptyState };
+export type { EmptyProps, EmptyState, AxiosListResponse as PaginatedResponse };
 export { getLogInPath };

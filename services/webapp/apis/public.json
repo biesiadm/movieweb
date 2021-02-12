@@ -157,6 +157,94 @@
         }
       }
     },
+    "/users/{id}/followers": {
+      "get": {
+        "operationId": "getFollowers",
+        "summary": "Retrieve a list of followers",
+        "tags": [
+          "users",
+          "relations"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/skip"
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "created"
+              ]
+            },
+            "required": false,
+            "description": "Sorting criteria."
+          },
+          {
+            "$ref": "#/components/parameters/sort_dir"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/UserListResponse"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/users/{id}/follows": {
+      "get": {
+        "operationId": "getFollowedBy",
+        "summary": "Retrieve a list of followed users",
+        "tags": [
+          "users",
+          "relations"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/skip"
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "created"
+              ]
+            },
+            "required": false,
+            "description": "Sorting criteria."
+          },
+          {
+            "$ref": "#/components/parameters/sort_dir"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/UserListResponse"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
     "/reviews": {
       "get": {
         "operationId": "getReviews",

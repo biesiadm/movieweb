@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, NavLink, Route, Switch } from 'react-router-dom';
+import { Link, NavLink, Route, RouteComponentProps, Switch } from 'react-router-dom';
 
 import { EmptyProps } from './utils';
 import { Emitter, UserEvent } from './events';
@@ -95,7 +95,10 @@ class App extends Component<EmptyProps, State> {
                 <Route exact path='/movies/:slug_id' component={MovieDetailsPage} />
                 <Route exact path='/users' component={UserListPage} />
                 {/* Key below is a quick fix for going from user page to another user page */}
-                <Route exact key={location.pathname} path='/users/:login' component={UserDetailsPage} />
+                <Route exact
+                  key={location.pathname}
+                  path='/users/:login'
+                  render={(props: RouteComponentProps<{login: string}>) => <UserDetailsPage {...props} user={user}/>} />
                 <Route component={GenericNotFoundPage} />
               </Switch>
               </main>
