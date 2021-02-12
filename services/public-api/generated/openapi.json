@@ -201,6 +201,56 @@
         }
       }
     },
+    "/users/{id}/followers/{follower_id}": {
+      "post": {
+        "operationId": "addFollower",
+        "summary": "Add follower",
+        "tags": [
+          "users",
+          "relations"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          },
+          {
+            "$ref": "#/components/parameters/follower_id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Relation created successfully."
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "removeFollower",
+        "summary": "Remove follower",
+        "tags": [
+          "users",
+          "relations"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          },
+          {
+            "$ref": "#/components/parameters/follower_id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Relation removed successfully."
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
     "/users/{id}/follows": {
       "get": {
         "operationId": "getFollowedBy",
@@ -485,6 +535,16 @@
         },
         "required": false,
         "description": "Sorting direction. Used only when \"sort\" is defined."
+      },
+      "follower_id": {
+        "in": "path",
+        "name": "follower_id",
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "required": true,
+        "description": "Follower ID as UUID v4"
       }
     },
     "schemas": {

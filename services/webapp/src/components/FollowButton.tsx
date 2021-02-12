@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import { BinocularsFill } from 'react-bootstrap-icons';
 import { User } from '../api/public/api';
+import { usersApi } from '../config';
+import { Emitter, Event } from '../events';
 
 type Props = {
   className?: string,
-  user: User
+  user: User,
+  follower: User
 }
 
 type State = {
@@ -17,6 +20,8 @@ class FollowButton extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.handleClick.bind(this);
+    this.tryFollow.bind(this);
+    this.tryUnfollow.bind(this);
     this.render.bind(this);
 
     this.state = {
@@ -28,21 +33,59 @@ class FollowButton extends Component<Props, State> {
   handleClick(e: React.SyntheticEvent): void {
     e.preventDefault();
 
+    if (this.state.following) {
+      this.tryUnfollow();
+    } else {
+      this.tryFollow();
+    }
+  }
+
+  tryFollow(): void {
+    const user = this.props.user;
+    const follower = this.props.follower;
+
     this.setState({
       loading: true
     });
 
-    new Promise<void>((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, 500)
-    })
+    usersApi.addFollower(user.id, follower.id)
     .then(() => {
       this.setState({
         loading: false,
-        following: !this.state.following
+        following: true
       })
+      Emitter.emit(Event.Follow, user, follower);
+    })
+    .catch(() => {
+      this.setState({
+        loading: false,
+        following: false
+      })
+    })
+  }
+
+  tryUnfollow(): void {
+    const user = this.props.user;
+    const follower = this.props.follower;
+
+    this.setState({
+      loading: true
     });
+
+    usersApi.removeFollower(user.id, follower.id)
+    .then(() => {
+      this.setState({
+        loading: false,
+        following: false
+      })
+      Emitter.emit(Event.Unfollow, user, follower);
+    })
+    .catch(() => {
+      this.setState({
+        loading: false,
+        following: true
+      })
+    })
   }
 
   render(): React.ReactNode {

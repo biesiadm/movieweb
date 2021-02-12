@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router-dom';
 import { User } from '../api/public';
 import { authApi } from '../config';
-import { Emitter, UserEvent } from '../events';
+import { Emitter, Event } from '../events';
 
 enum LogInState {
   Clear = "CLEAR",
@@ -93,7 +93,7 @@ class LoginPage extends Component<RouteComponentProps, State> {
     if (!target) {
       target = '/';
     }
-    Emitter.emit(UserEvent.LogIn, user);
+    Emitter.emit(Event.LogIn, user);
     this.props.history.push(target);
   }
 

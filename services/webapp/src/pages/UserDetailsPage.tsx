@@ -11,6 +11,7 @@ import FollowButton from '../components/FollowButton';
 import { LoadingScreen } from '../components/Screen';
 import { ReviewList, UserList } from '../components/EntryList';
 import { PaginatedResponse } from '../utils';
+import { Emitter, Event } from '../events';
 
 interface Props extends RouteComponentProps<{login: string}> {
   user: User | null
@@ -55,6 +56,8 @@ class UserDetailsPage extends Component<Props, State> {
       return Promise.resolve();
     }
 
+    this.addEventListeners();
+
     try {
       const userResp = await usersApi.getUserById(login);
       const user = userResp.data;
@@ -62,6 +65,7 @@ class UserDetailsPage extends Component<Props, State> {
       const followsPromise = () => usersApi.getFollowedBy(user.id, 8, 0, 'created', SortDir.Desc);
       const topReviewsPromise = () => usersApi.getUserReviews(user.id, 8, 0, 'rating', SortDir.Desc);
       const recentReviewsPromise = () => usersApi.getUserReviews(user.id, 8, 0, 'created', SortDir.Desc);
+      // TODO(kantoniak): set initial follow button state
       this.setState({
         user: user,
         loading: false,
@@ -97,6 +101,38 @@ class UserDetailsPage extends Component<Props, State> {
     return Promise.resolve();
   }
 
+  componentWillUnmount() {
+    this.removeEventListeners();
+  }
+
+  addEventListeners() {
+    Emitter.on(Event.Follow, (user: User, follower: User) => {
+      const sameUser = (user.id === this.state.user?.id);
+      const sameFollower = (follower.id === this.props.user?.id);
+      if (!sameUser || !sameFollower) {
+        return;
+      }
+      this.setState({
+        totalFollowers: this.state.totalFollowers + 1,
+      });
+    });
+    Emitter.on(Event.Unfollow, (user: User, follower: User) => {
+      const sameUser = (user.id === this.state.user?.id);
+      const sameFollower = (follower.id === this.props.user?.id);
+      if (!sameUser || !sameFollower) {
+        return;
+      }
+      this.setState({
+        totalFollowers: this.state.totalFollowers - 1,
+      });
+    });
+  }
+
+  removeEventListeners() {
+    Emitter.off(Event.Follow);
+    Emitter.off(Event.Unfollow);
+  }
+
   render(): React.ReactNode {
 
     if (this.state.loading) {
@@ -114,7 +150,7 @@ class UserDetailsPage extends Component<Props, State> {
 
       let followButton = null;
       if (loggedInUser?.id != user.id) {
-        followButton = <FollowButton user={user} className="ms-4" />;
+        followButton = <FollowButton user={user} follower={loggedInUser!} className="ms-4" />;
       }
 
       return <div>

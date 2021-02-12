@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link, NavLink, Route, RouteComponentProps, Switch } from 'react-router-dom';
 
 import { EmptyProps } from './utils';
-import { Emitter, UserEvent } from './events';
+import { Emitter, Event } from './events';
 import { User } from './api/public';
 import CurrentUserBlock from './components/CurrentUserBlock';
 import { GenericNotFoundPage } from './pages/ErrorPage';
@@ -51,19 +51,19 @@ class App extends Component<EmptyProps, State> {
 
     // FIXME(kantoniak): Handle refresh tokens and sync localStorage
 
-    Emitter.on(UserEvent.LogIn, (user: User) => {
+    Emitter.on(Event.LogIn, (user: User) => {
       window.localStorage.setItem('currentUser', JSON.stringify(user));
       this.setState({ user: user });
     });
-    Emitter.on(UserEvent.LogOut, (user: User) => {
+    Emitter.on(Event.LogOut, (user: User) => {
       window.localStorage.removeItem('currentUser');
       this.setState({ user: null });
     });
   }
 
   componentWillUnmount() {
-    Emitter.off(UserEvent.LogIn);
-    Emitter.off(UserEvent.LogOut);
+    Emitter.off(Event.LogIn);
+    Emitter.off(Event.LogOut);
   }
 
   renderApp(): React.ReactNode {
