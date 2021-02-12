@@ -1,12 +1,13 @@
 import { AxiosPromise, AxiosResponse } from 'axios';
 import React, { Component } from 'react';
-import { BinocularsFill, PeopleFill, StarFill } from 'react-bootstrap-icons';
+import { PeopleFill, StarFill } from 'react-bootstrap-icons';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { BASE_URL, ReviewListResponse, UserListResponse } from '../config';
 import { usersApi } from '../config'
 import { ListInfo, SortDir, User } from '../api/public/api'
 import Avatar from '../components/Avatar';
 import Error from '../components/Error';
+import FollowButton from '../components/FollowButton';
 import { LoadingScreen } from '../components/Screen';
 import { ReviewList, UserList } from '../components/EntryList';
 import { PaginatedResponse } from '../utils';
@@ -113,10 +114,7 @@ class UserDetailsPage extends Component<Props, State> {
 
       let followButton = null;
       if (loggedInUser?.id != user.id) {
-        followButton = <a className="badge badge-btn badge-btn-light d-inline-flex ms-4 align-items-center pt-2 text-decoration-none">
-                        Follow
-                        <BinocularsFill className="ms-2 mb-1 me-1" color="#212529" />
-                      </a>
+        followButton = <FollowButton user={user} className="ms-4" />;
       }
 
       return <div>
