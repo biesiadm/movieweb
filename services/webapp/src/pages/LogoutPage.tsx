@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { LoadingScreen } from '../components/Screen';
 import { authApi } from '../config';
-import { Emitter, UserEvent } from '../events';
+import { Emitter, Event } from '../events';
 import { EmptyState } from '../utils';
 
 class LogoutPage extends Component<RouteComponentProps, EmptyState> {
@@ -21,7 +21,7 @@ class LogoutPage extends Component<RouteComponentProps, EmptyState> {
   }
 
   onSuccess(): void {
-    Emitter.emit(UserEvent.LogOut);
+    Emitter.emit(Event.LogOut);
     this.props.history.push('/');
   }
 

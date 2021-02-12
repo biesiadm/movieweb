@@ -1,5 +1,7 @@
 import { NextFunction, Response, Request } from 'express';
+import jwt from 'jsonwebtoken';
 import { HTTPValidationError } from './api/users';
+import { tokenConfig } from './config';
 
 interface TokenPayload {
     /** Expiration date as unix timestamp. */
@@ -72,5 +74,57 @@ function handleTokenExpiration(req: Request, res: Response, next: NextFunction) 
     return next();
 }
 
-export { requireLogInCredentials, handleTokenExpiration };
+// Adds token to request
+declare global {
+    namespace Express {
+        interface Request {
+            token_payload?: TokenPayload
+        }
+    }
+}
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     JwtBearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *     JwtCookieAuth:
+ *       type: apiKey
+ *       in: cookie
+ *       name: connect.sid
+ */
+function requireSessionOrToken(req: Request, res: Response, next: NextFunction) {
+
+    // Extract bearer token if exists
+    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+        const token = req.headers.authorization.split(' ')[1];
+        try {
+            const payload: TokenPayload = <any>jwt.verify(token, tokenConfig.secret, tokenConfig.options);
+            req.token_payload = payload;
+            return next();
+        } catch(err) {
+            const error = { detail: 'Invalid token' };
+            res.status(401).json(error).send();
+            return;
+        }
+    }
+
+    // Use session token
+    if (req.session?.token_payload) {
+        // HandleTokenExpiration checked everything already
+        const token: TokenPayload = req.session.token_payload;
+        req.token_payload = token;
+        return next();
+    }
+
+    const error = { detail: 'Missing token' };
+    res.status(401).json(error).send();
+    return;
+}
+
+
+export { requireLogInCredentials, handleTokenExpiration, requireSessionOrToken };
 export type { TokenPayload };

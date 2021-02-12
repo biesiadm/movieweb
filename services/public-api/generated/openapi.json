@@ -42,7 +42,7 @@
     "/auth/log-in": {
       "post": {
         "operationId": "logIn",
-        "summary": "Start session",
+        "summary": "Obtain JWT token in session cookie",
         "tags": [
           "auth"
         ],
@@ -64,6 +64,14 @@
                   "$ref": "#/components/schemas/User"
                 }
               }
+            },
+            "headers": {
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string",
+                  "example": "connect.sid=abcde12345; Domain=localhost; Path=/; HttpOnly"
+                }
+              }
             }
           },
           "422": {
@@ -75,7 +83,7 @@
     "/auth/log-out": {
       "get": {
         "operationId": "logOut",
-        "summary": "End session",
+        "summary": "Drop JWT token session cookie",
         "tags": [
           "auth"
         ],
@@ -194,6 +202,72 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/UserListResponse"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/users/{id}/followers/{follower_id}": {
+      "post": {
+        "operationId": "addFollower",
+        "summary": "Add follower",
+        "tags": [
+          "users",
+          "relations"
+        ],
+        "security": [
+          {
+            "JwtBearerAuth": []
+          },
+          {
+            "JwtCookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          },
+          {
+            "$ref": "#/components/parameters/follower_id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Relation created successfully."
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "removeFollower",
+        "summary": "Remove follower",
+        "tags": [
+          "users",
+          "relations"
+        ],
+        "security": [
+          {
+            "JwtBearerAuth": []
+          },
+          {
+            "JwtCookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          },
+          {
+            "$ref": "#/components/parameters/follower_id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Relation removed successfully."
           },
           "422": {
             "$ref": "#/components/responses/ValidationError"
@@ -485,6 +559,16 @@
         },
         "required": false,
         "description": "Sorting direction. Used only when \"sort\" is defined."
+      },
+      "follower_id": {
+        "in": "path",
+        "name": "follower_id",
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "required": true,
+        "description": "Follower ID as UUID v4"
       }
     },
     "schemas": {
@@ -774,6 +858,18 @@
             }
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "JwtBearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "JwtCookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "connect.sid"
       }
     }
   },

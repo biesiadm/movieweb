@@ -4,7 +4,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import md5 from 'md5';
 import { Token, UserWeb } from '../api/users/api';
-import { loginApi, sessionConfig, usersApi } from '../config';
+import { loginApi, usersApi } from '../config';
 import { buildErrorPassthrough } from '../middleware';
 import { PublicUser } from '../openapi';
 import { requireLogInCredentials, TokenPayload } from '../session';
@@ -72,7 +72,7 @@ router.post("/authorize", async (req: express.Request, res: express.Response, ne
  * /auth/log-in:
  *   post:
  *     operationId: logIn
- *     summary: Start session
+ *     summary: Obtain JWT token in session cookie
  *     tags: [auth]
  *     requestBody:
  *       content:
@@ -86,6 +86,11 @@ router.post("/authorize", async (req: express.Request, res: express.Response, ne
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/User"
+ *         headers:
+ *           Set-Cookie:
+ *             schema:
+ *               type: string
+ *               example: connect.sid=abcde12345; Domain=localhost; Path=/; HttpOnly
  *       422:
  *         $ref: '#/components/responses/ValidationError'
  */
@@ -134,7 +139,7 @@ router.post("/log-in", async (req: express.Request, res: express.Response, next:
  * /auth/log-out:
  *   get:
  *     operationId: logOut
- *     summary: End session
+ *     summary: Drop JWT token session cookie
  *     tags: [auth]
  *     responses:
  *       200:

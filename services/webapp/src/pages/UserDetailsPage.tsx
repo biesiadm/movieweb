@@ -1,15 +1,17 @@
 import { AxiosPromise, AxiosResponse } from 'axios';
 import React, { Component } from 'react';
-import { BinocularsFill, PeopleFill, StarFill } from 'react-bootstrap-icons';
+import { PeopleFill, StarFill } from 'react-bootstrap-icons';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { BASE_URL, ReviewListResponse, UserListResponse } from '../config';
 import { usersApi } from '../config'
 import { ListInfo, SortDir, User } from '../api/public/api'
 import Avatar from '../components/Avatar';
 import Error from '../components/Error';
+import FollowButton from '../components/FollowButton';
 import { LoadingScreen } from '../components/Screen';
 import { ReviewList, UserList } from '../components/EntryList';
 import { PaginatedResponse } from '../utils';
+import { Emitter, Event } from '../events';
 
 interface Props extends RouteComponentProps<{login: string}> {
   user: User | null
@@ -54,6 +56,8 @@ class UserDetailsPage extends Component<Props, State> {
       return Promise.resolve();
     }
 
+    this.addEventListeners();
+
     try {
       const userResp = await usersApi.getUserById(login);
       const user = userResp.data;
@@ -61,6 +65,7 @@ class UserDetailsPage extends Component<Props, State> {
       const followsPromise = () => usersApi.getFollowedBy(user.id, 8, 0, 'created', SortDir.Desc);
       const topReviewsPromise = () => usersApi.getUserReviews(user.id, 8, 0, 'rating', SortDir.Desc);
       const recentReviewsPromise = () => usersApi.getUserReviews(user.id, 8, 0, 'created', SortDir.Desc);
+      // TODO(kantoniak): set initial follow button state
       this.setState({
         user: user,
         loading: false,
@@ -77,7 +82,6 @@ class UserDetailsPage extends Component<Props, State> {
         followersPromise().then((resp: PaginatedResponse) => resp.data.info),
         followsPromise().then((resp: PaginatedResponse) => resp.data.info)
       ]).then((infos: ListInfo[]) => {
-        console.log(infos);
         this.setState({
           totalRatings: infos[0].totalCount || 0,
           totalFollowers: infos[1].totalCount || 0,
@@ -96,6 +100,38 @@ class UserDetailsPage extends Component<Props, State> {
     return Promise.resolve();
   }
 
+  componentWillUnmount() {
+    this.removeEventListeners();
+  }
+
+  addEventListeners() {
+    Emitter.on(Event.Follow, (user: User, follower: User) => {
+      const sameUser = (user.id === this.state.user?.id);
+      const sameFollower = (follower.id === this.props.user?.id);
+      if (!sameUser || !sameFollower) {
+        return;
+      }
+      this.setState({
+        totalFollowers: this.state.totalFollowers + 1,
+      });
+    });
+    Emitter.on(Event.Unfollow, (user: User, follower: User) => {
+      const sameUser = (user.id === this.state.user?.id);
+      const sameFollower = (follower.id === this.props.user?.id);
+      if (!sameUser || !sameFollower) {
+        return;
+      }
+      this.setState({
+        totalFollowers: this.state.totalFollowers - 1,
+      });
+    });
+  }
+
+  removeEventListeners() {
+    Emitter.off(Event.Follow);
+    Emitter.off(Event.Unfollow);
+  }
+
   render(): React.ReactNode {
 
     if (this.state.loading) {
@@ -112,11 +148,8 @@ class UserDetailsPage extends Component<Props, State> {
       const profileUrl = new URL(BASE_URL + '/users/' + user.login);
 
       let followButton = null;
-      if (loggedInUser?.id != user.id) {
-        followButton = <a className="badge badge-btn badge-btn-light d-inline-flex ms-4 align-items-center pt-2 text-decoration-none">
-                        Follow
-                        <BinocularsFill className="ms-2 mb-1 me-1" color="#212529" />
-                      </a>
+      if (loggedInUser && loggedInUser?.id != user.id) {
+        followButton = <FollowButton user={user} follower={loggedInUser!} className="ms-4" />;
       }
 
       return <div>

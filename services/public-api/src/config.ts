@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from "axios";
+import { Algorithm } from 'jsonwebtoken';
 import { MoviesApiFactory } from './api/movies/api';
 import { Configuration as MoviesApiConfiguration } from './api/movies/configuration';
 import { RelationshipsApiFactory as RelationsApiFactory } from './api/relations/api';
@@ -24,6 +25,14 @@ const sessionConfig = {
       domain: 'localhost'
   }
   // TODO(kantoniak): Set up a secure store (Redis?) for prod. `express-session` uses memory by default.
+};
+
+const tokenConfig = {
+  // FIXME(kantoniak): Hardcoded secret
+  secret: 'my-secret-key',
+  options: {
+    algorithms: [<Algorithm>"HS256"]
+  }
 };
 
 const axiosInstance: AxiosInstance = axios.create({
@@ -61,4 +70,4 @@ const loginApi = LoginApiFactory(
   axiosInstance
 );
 
-export { loginApi, moviesApi, relsApi, reviewsApi, usersApi, corsConfig, sessionConfig };
+export { loginApi, moviesApi, relsApi, reviewsApi, usersApi, corsConfig, sessionConfig, tokenConfig };

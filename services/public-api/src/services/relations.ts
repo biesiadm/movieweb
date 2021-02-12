@@ -1,14 +1,40 @@
 import { AxiosResponse } from 'axios';
 import express from 'express';
 import md5 from 'md5';
-import { Relationship } from '../api/relations';
+import { Relationship, RelationshipCreate } from '../api/relations';
 import { UserWeb } from '../api/users';
 import { relsApi, usersApi } from '../config';
 import { PublicUser } from '../openapi';
-import { buildErrorPassthrough, buildSortingHandler, errorIfIdNotValid, handlePagination } from '../middleware';
+import { buildErrorPassthrough, buildIdHandler, buildSortingHandler, errorIfIdNotValid, handlePagination } from '../middleware';
+import { requireSessionOrToken } from '../session';
 
 const router = express.Router({ mergeParams: true });
 const handleSorting = buildSortingHandler(['created']);
+
+/**
+ * @swagger
+ * components:
+ *   parameters:
+ *     follower_id:
+ *       in: path
+ *       name: follower_id
+ *       schema:
+ *         type: string
+ *         format: uuid
+ *       required: true
+ *       description: Follower ID as UUID v4
+ */
+const errorIfFollowerIdNotValid = buildIdHandler('follower_id');
+
+function errorIfNotFollowersToken(req: express.Request, res: express.Response, next: express.NextFunction) {
+    const tokenOwnerId = req.token_payload?.sub;
+    const followerId = req.params.follower_id;
+    if (tokenOwnerId !== followerId) {
+        res.status(401).send();
+        return;
+    }
+    return next();
+}
 
 const fetchUsers = async (user_ids: string[]): Promise<PublicUser[]> => {
     return Promise
@@ -72,6 +98,93 @@ router.get("/followers", async (req: express.Request, res: express.Response, nex
             }
         };
         res.status(relsResp.status).json(responseBody);
+        return next();
+    } catch (reason) {
+        const handler = buildErrorPassthrough([400, 404, 422], res, next);
+        handler(reason);
+    }
+});
+
+/**
+ * @swagger
+ * /users/{id}/followers/{follower_id}:
+ *   post:
+ *     operationId: addFollower
+ *     summary: Add follower
+ *     tags: [users, relations]
+ *     security:
+ *       - JwtBearerAuth: []
+ *       - JwtCookieAuth: []
+ *     parameters:
+ *       - $ref: '#/components/parameters/id'
+ *       - $ref: '#/components/parameters/follower_id'
+ *     responses:
+ *       204:
+ *         description: Relation created successfully.
+ *       422:
+ *         $ref: '#/components/responses/ValidationError'
+ *
+ */
+router.post("/followers/:follower_id", errorIfIdNotValid);
+router.post("/followers/:follower_id", errorIfFollowerIdNotValid);
+router.post("/followers/:follower_id", requireSessionOrToken);
+router.post("/followers/:follower_id", errorIfNotFollowersToken);
+router.post("/followers/:follower_id", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        // Check if users exist
+        const user_id: string = req.params.id;
+        const follower_id: string = req.params.follower_id;
+        await fetchUsers([user_id, follower_id]);
+
+        // Add follower
+        await relsApi.addRelationshipApiRelationshipsFollowPost({
+            followed_user_id: user_id,
+            user_id: follower_id
+        });
+
+        res.status(204).send();
+        return next();
+    } catch (reason) {
+        const handler = buildErrorPassthrough([400, 404, 422], res, next);
+        handler(reason);
+    }
+});
+
+/**
+ * @swagger
+ * /users/{id}/followers/{follower_id}:
+ *   delete:
+ *     operationId: removeFollower
+ *     summary: Remove follower
+ *     tags: [users, relations]
+ *     security:
+ *       - JwtBearerAuth: []
+ *       - JwtCookieAuth: []
+ *     parameters:
+ *       - $ref: '#/components/parameters/id'
+ *       - $ref: '#/components/parameters/follower_id'
+ *     responses:
+ *       204:
+ *         description: Relation removed successfully.
+ *       422:
+ *         $ref: '#/components/responses/ValidationError'
+ *
+ */
+router.delete("/followers/:follower_id", errorIfIdNotValid);
+router.delete("/followers/:follower_id", errorIfFollowerIdNotValid);
+router.delete("/followers/:follower_id", requireSessionOrToken);
+router.delete("/followers/:follower_id", errorIfNotFollowersToken);
+router.delete("/followers/:follower_id", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        // Remove follower
+        const user_id: string = req.params.id;
+        const follower_id: string = req.params.follower_id;
+        await relsApi.deleteRelationshipApiRelationshipsUnfollowDelete({
+            followed_user_id: user_id,
+            user_id: follower_id
+        });
+
+        res.status(204).send();
         return next();
     } catch (reason) {
         const handler = buildErrorPassthrough([400, 404, 422], res, next);

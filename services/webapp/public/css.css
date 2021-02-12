@@ -166,6 +166,52 @@ html, body, body>div {
     background-color: #F0A96E;
 }
 
+.follow-btn {
+    display: inline-flex;
+    height: 100%;
+    font-size: 0.5em;
+    font-weight: 700;
+    color: #212529;
+    background-color: #F0A96E;
+    padding: 0.5rem 0.75rem 0.35rem 0.95rem;
+    align-items: center;
+    text-decoration: none;
+    cursor: pointer;
+    border: 2px solid rgba(1, 1, 1, 0);
+    border-radius: 50rem;
+}
+
+.follow-btn > .spinner-border {
+    width: 1.20rem;
+    height: 1.20rem;
+    border-width: 0.2em;
+    margin-top: -0.1rem;
+    margin-right: -0.1rem;
+    margin-left: 0.375rem;
+}
+
+.follow-btn:hover {
+    color: #212529;
+}
+
+.follow-btn > svg {
+    fill: #212529;
+}
+
+.follow-btn.following {
+    background: none;
+    color: #F0A96E;
+    border-color: #F0A96E;
+}
+
+.follow-btn.following:hover {
+    color: #F0A96E;
+}
+
+.follow-btn.following > svg {
+    fill: #F0A96E;
+}
+
 /* User details page */
 @media (min-width: 992px) { /* Large and above */
     .user-details-page-avatar {
