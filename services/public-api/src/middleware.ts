@@ -18,7 +18,6 @@ import { HTTPValidationError } from './api/movies/api';
 function errorIfIdNotValid(req: Request, res: Response, next: NextFunction) {
 
     const id: string = req.params.id;
-    console.log(id);
     if (!validateUuid(id)) {
         const err: HTTPValidationError = {
             detail: [
