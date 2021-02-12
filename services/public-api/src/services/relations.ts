@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
 import express from 'express';
 import md5 from 'md5';
-import { Relationship } from '../api/relationships';
+import { Relationship } from '../api/relations';
 import { UserWeb } from '../api/users';
 import { relsApi, usersApi } from '../config';
 import { PublicUser } from '../openapi';

@@ -1,8 +1,8 @@
 # API model
 src/api/movies/*
 !src/api/movies/.gitkeep
-src/api/relationships/*
-!src/api/relationships/.gitkeep
+src/api/relations/*
+!src/api/relations/.gitkeep
 src/api/reviews/*
 !src/api/reviews/.gitkeep
 src/api/users/*

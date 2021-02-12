@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import OpenapiSpec from './openapi';
 import AuthRouter from './services/auth';
 import MoviesRouter from './services/movies';
-import RelationshipsRouter from './services/relationships';
+import RelationsRouter from './services/relations';
 import ReviewsRouter, { MovieReviewsRouter, UserReviewsRouter } from './services/reviews';
 import UsersRouter from './services/users';
 import swaggerUi from 'swagger-ui-express';
@@ -27,7 +27,7 @@ app.use('/auth', AuthRouter);
 app.use('/movies/:id/reviews', MovieReviewsRouter);
 app.use('/movies', MoviesRouter);
 app.use('/reviews', ReviewsRouter);
-app.use('/users/:id', RelationshipsRouter);
+app.use('/users/:id', RelationsRouter);
 app.use('/users/:id/reviews', UserReviewsRouter);
 app.use('/users', UsersRouter);
 

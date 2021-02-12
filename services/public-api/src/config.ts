@@ -1,8 +1,8 @@
 import axios, { AxiosInstance } from "axios";
 import { MoviesApiFactory } from './api/movies/api';
 import { Configuration as MoviesApiConfiguration } from './api/movies/configuration';
-import { RelationshipsApiFactory } from './api/relationships/api';
-import { Configuration as RelationshipsApiConfiguration } from './api/relationships/configuration';
+import { RelationshipsApiFactory as RelationsApiFactory } from './api/relations/api';
+import { Configuration as RelationsApiConfiguration } from './api/relations/configuration';
 import { ReviewsApiFactory } from './api/reviews/api';
 import { Configuration as ReviewsApiConfiguration } from './api/reviews/configuration';
 import { LoginApiFactory, UsersApiFactory } from './api/users/api';
@@ -36,8 +36,8 @@ const moviesApi = MoviesApiFactory(
   axiosInstance
 );
 
-const relsApi = RelationshipsApiFactory(
-  new RelationshipsApiConfiguration(),
+const relsApi = RelationsApiFactory(
+  new RelationsApiConfiguration(),
   "http://relationships:80",
   axiosInstance
 );
