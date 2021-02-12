@@ -41,10 +41,22 @@ class App extends Component<EmptyProps, State> {
   }
 
   componentDidMount() {
+    // Load user from localStorage when loading page
+    const userString = window.localStorage.getItem('currentUser');
+    if (userString) {
+      this.setState({
+        user: JSON.parse(userString)
+      });
+    }
+
+    // FIXME(kantoniak): Handle refresh tokens and sync localStorage
+
     Emitter.on(UserEvent.LogIn, (user: User) => {
+      window.localStorage.setItem('currentUser', JSON.stringify(user));
       this.setState({ user: user });
     });
     Emitter.on(UserEvent.LogOut, (user: User) => {
+      window.localStorage.removeItem('currentUser');
       this.setState({ user: null });
     });
   }
