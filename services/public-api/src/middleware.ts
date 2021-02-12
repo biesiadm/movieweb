@@ -2,6 +2,27 @@ import { NextFunction, Response, Request } from 'express';
 import { validate as validateUuid } from 'uuid';
 import { HTTPValidationError } from './api/movies/api';
 
+function buildIdHandler(idField: string) {
+    return (req: Request, res: Response, next: NextFunction) => {
+        const id: string = req.params[idField];
+        if (!validateUuid(id)) {
+            const err: HTTPValidationError = {
+                detail: [
+                    {
+                        loc: ["path", idField],
+                        msg: `Parameter {${idField}} is not a valid UUID.`,
+                        type: "type_error.uuid"
+                    }
+                ]
+            };
+            res.status(422).json(err).send();
+            return;
+        }
+
+        next();
+    }
+}
+
 /**
  * @swagger
  * components:
@@ -15,25 +36,7 @@ import { HTTPValidationError } from './api/movies/api';
  *       required: true
  *       description: Object ID as UUID v4
  */
-function errorIfIdNotValid(req: Request, res: Response, next: NextFunction) {
-
-    const id: string = req.params.id;
-    if (!validateUuid(id)) {
-        const err: HTTPValidationError = {
-            detail: [
-                {
-                    loc: ["path", "id"],
-                    msg: "Parameter {id} is not a valid UUID.",
-                    type: "type_error.uuid"
-                }
-            ]
-        };
-        res.status(422).json(err).send();
-        return;
-    }
-
-    next();
-}
+const errorIfIdNotValid = buildIdHandler('id');
 
 
 // Adds pagination to request
@@ -173,4 +176,4 @@ function buildErrorPassthrough(codesToPass: Array<number>, res: Response, next: 
     }
 }
 
-export { buildSortingHandler, buildErrorPassthrough, errorIfIdNotValid, handlePagination };
+export { buildSortingHandler, buildErrorPassthrough, buildIdHandler, errorIfIdNotValid, handlePagination };
