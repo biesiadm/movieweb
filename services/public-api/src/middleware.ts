@@ -169,7 +169,6 @@ function buildErrorPassthrough(codesToPass: Array<number>, res: Response, next: 
             res.status(reason.response.status).json(reason.response.data);
             return next();
         } else {
-            console.log(reason);
             res.status(500).send();
             return next(reason);
         }

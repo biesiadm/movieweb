@@ -44,7 +44,7 @@
                   "title": "Response Read Users Api Users  Get",
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/User"
+                    "$ref": "#/components/schemas/UserWeb"
                   }
                 }
               }
@@ -60,12 +60,7 @@
               }
             }
           }
-        },
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ]
+        }
       }
     },
     "/api/users/me": {
@@ -121,7 +116,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "$ref": "#/components/schemas/UserWeb"
                 }
               }
             }
@@ -136,12 +131,7 @@
               }
             }
           }
-        },
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ]
+        }
       }
     },
     "/api/users/login/access-token": {
@@ -315,6 +305,25 @@
             "title": "Id",
             "type": "string",
             "format": "uuid"
+          }
+        }
+      },
+      "UserWeb": {
+        "title": "UserWeb",
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
           }
         }
       },

@@ -12,6 +12,80 @@
     }
   ],
   "paths": {
+    "/auth/authorize": {
+      "post": {
+        "operationId": "authorize",
+        "summary": "Obtain JWT token",
+        "description": "Creates a new JWT. Tokens are ignored if user has started a session.",
+        "tags": [
+          "auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/LogInCredentials"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/TokenResponse"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/auth/log-in": {
+      "post": {
+        "operationId": "logIn",
+        "summary": "Start session",
+        "tags": [
+          "auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogInCredentials"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/auth/log-out": {
+      "get": {
+        "operationId": "logOut",
+        "summary": "End session",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Logged out successfully."
+          }
+        }
+      }
+    },
     "/movies": {
       "get": {
         "operationId": "getMovies",
@@ -394,21 +468,9 @@
           "name": {
             "type": "string"
           },
-          "email": {
-            "type": "string",
-            "format": "email"
-          },
           "avatar_url": {
             "type": "string",
             "format": "url"
-          },
-          "is_active": {
-            "type": "boolean",
-            "default": true
-          },
-          "is_superuser": {
-            "type": "boolean",
-            "default": false
           }
         }
       },
@@ -451,6 +513,22 @@
             "type": "string"
           },
           "type": {
+            "type": "string"
+          }
+        }
+      },
+      "LogInCredentials": {
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
             "type": "string"
           }
         }
@@ -505,6 +583,31 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/ValidationErrorList"
+            }
+          }
+        }
+      },
+      "TokenResponse": {
+        "description": "JWT token.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "access_token",
+                "token_type"
+              ],
+              "properties": {
+                "access_token": {
+                  "type": "string"
+                },
+                "token_type": {
+                  "type": "string",
+                  "enum": [
+                    "bearer"
+                  ]
+                }
+              }
             }
           }
         }

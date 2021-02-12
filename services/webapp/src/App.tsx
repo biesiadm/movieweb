@@ -1,20 +1,73 @@
 import React, { Component } from 'react';
 import { Link, NavLink, Route, Switch } from 'react-router-dom';
-import { GenericNotFoundPage } from './pages/ErrorPage';
 
-import { LoadingScreen, ErrorScreen } from './components/Screen';
+import { EmptyProps } from './utils';
+import { Emitter, UserEvent } from './events';
+import { User } from './api/public';
+import CurrentUserBlock from './components/CurrentUserBlock';
+import { GenericNotFoundPage } from './pages/ErrorPage';
+import LoginPage from './pages/LoginPage';
+import LogoutPage from './pages/LogoutPage';
 import MovieListPage from './pages/MovieListPage';
 import MovieDetailsPage from './pages/MovieDetailsPage';
+import PublicHomepage from './pages/PublicHomepage';
 import UserListPage from './pages/UserListPage';
 import UserDetailsPage from './pages/UserDetailsPage';
-import PublicHomepage from './pages/PublicHomepage';
 
-type EmptyProps = Record<string, never>
-type EmptyState = Record<string, never>
+type State = {
+  user: User | null
+}
 
-class App extends Component<EmptyProps, EmptyState> {
+class App extends Component<EmptyProps, State> {
+
+  constructor(props: EmptyProps) {
+    super(props);
+    this.componentDidMount.bind(this);
+    this.componentWillUnmount.bind(this);
+
+    this.state = {
+      user: null
+    }
+  }
 
   render(): React.ReactNode {
+    return <Switch>
+      <Route exact path='/login' component={LoginPage} />
+      <Route exact path='/logout' component={LogoutPage} />
+      <Route>
+        {this.renderApp()}
+      </Route>
+    </Switch>;
+  }
+
+  componentDidMount() {
+    // Load user from localStorage when loading page
+    const userString = window.localStorage.getItem('currentUser');
+    if (userString) {
+      this.setState({
+        user: JSON.parse(userString)
+      });
+    }
+
+    // FIXME(kantoniak): Handle refresh tokens and sync localStorage
+
+    Emitter.on(UserEvent.LogIn, (user: User) => {
+      window.localStorage.setItem('currentUser', JSON.stringify(user));
+      this.setState({ user: user });
+    });
+    Emitter.on(UserEvent.LogOut, (user: User) => {
+      window.localStorage.removeItem('currentUser');
+      this.setState({ user: null });
+    });
+  }
+
+  componentWillUnmount() {
+    Emitter.off(UserEvent.LogIn);
+    Emitter.off(UserEvent.LogOut);
+  }
+
+  renderApp(): React.ReactNode {
+    const user = this.state.user;
     return  <div className="d-flex flex-column">
               <header id="main-menu" className="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div className="container">
@@ -22,8 +75,8 @@ class App extends Component<EmptyProps, EmptyState> {
                   <button className="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#main-menu-collapse" aria-controls="main-menu-collapse" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
                   </button>
-                  <nav className="navbar-collapse collapse" id="main-menu-collapse">
-                    <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                  <nav className="collapse navbar-collapse" id="main-menu-collapse">
+                    <ul className="navbar-nav me-auto">
                       <li className="nav-item">
                         <NavLink to='/movies' className="nav-link" aria-current="page">Movies</NavLink>
                       </li>
@@ -31,6 +84,7 @@ class App extends Component<EmptyProps, EmptyState> {
                         <NavLink to='/users' className="nav-link" aria-current="page">Users</NavLink>
                       </li>
                     </ul>
+                    <CurrentUserBlock user={user} />
                   </nav>
                 </div>
               </header>
@@ -42,10 +96,6 @@ class App extends Component<EmptyProps, EmptyState> {
                 <Route exact path='/users' component={UserListPage} />
                 {/* Key below is a quick fix for going from user page to another user page */}
                 <Route exact key={location.pathname} path='/users/:login' component={UserDetailsPage} />
-                <Route exact path='/loading' component={LoadingScreen} />
-                <Route exact path='/error'>
-                  <ErrorScreen className="bg-subtle" />
-                </Route>
                 <Route component={GenericNotFoundPage} />
               </Switch>
               </main>

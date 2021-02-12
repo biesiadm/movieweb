@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { AxiosPromise, AxiosResponse } from 'axios';
-import { InlineResponse200 as MovieListResponse, InlineResponse2001 as ReviewListResponse, InlineResponse2002 as UserListResponse, Movie, Review, User } from '../api/public/api';
+import { MovieListResponse, ReviewListResponse, UserListResponse } from '../config';
+import { Movie, Review, User } from '../api/public/api';
 import { ErrorScreen, LoadingScreen } from '../components/Screen';
 import MovieCard from './MovieCard';
 import ReviewCard from './ReviewCard';
