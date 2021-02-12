@@ -43,6 +43,6 @@ export { BASE_URL, authApi, moviesApi, reviewsApi, usersApi };
 export type {
   InlineResponse200 as TokenResponse,
   InlineResponse2001 as MovieListResponse,
-  InlineResponse2002 as ReviewListResponse,
-  InlineResponse2003 as UserListResponse
+  InlineResponse2003 as ReviewListResponse,
+  InlineResponse2002 as UserListResponse
 };

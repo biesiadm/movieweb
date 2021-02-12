@@ -35,6 +35,7 @@
     },
     "scripts": {
       "generate-api-client-movies": "openapi-generator-cli generate -g typescript-axios -i apis/movies.json -o src/api/movies/",
+      "generate-api-client-relations": "openapi-generator-cli generate -g typescript-axios -i apis/relations.json -o src/api/relations/",
       "generate-api-client-reviews": "openapi-generator-cli generate -g typescript-axios -i apis/reviews.json -o src/api/reviews/",
       "generate-api-client-users": "openapi-generator-cli generate -g typescript-axios -i apis/users.json -o src/api/users/",
       "generate-api-schema-public": "swagger-jsdoc -d openapi-definition.json src/*.ts src/services/*.ts -o generated/openapi.json",

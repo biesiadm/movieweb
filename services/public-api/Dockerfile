@@ -16,6 +16,7 @@ ADD . ./
 EXPOSE 8080
 RUN npm run generate-api-client-movies
 RUN npm run generate-api-client-reviews
+RUN npm run generate-api-client-relations
 RUN npm run generate-api-client-users
 RUN npm run generate-api-schema-public
 RUN npm run build
