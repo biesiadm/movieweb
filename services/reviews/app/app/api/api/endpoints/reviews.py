@@ -1,4 +1,4 @@
-from typing import List, Any
+from typing import List, Any, Optional
 from uuid import UUID
 
 from app import schemas, crud
@@ -16,11 +16,27 @@ def read_reviews(
         db: Session = Depends(deps.get_db),
         skip: int = 0,
         limit: int = 100,
+        sort: Optional[str] = None,
+        sort_dir: Optional[str] = None
 ) -> Any:
     """
     Retrieve reviews by movie.
     """
-    reviews = crud.review.get_by_movie(db, movie_id=movie_id, skip=skip, limit=limit)
+    try:
+        if sort:
+            schemas.SortingModel(sort)
+
+        if sort_dir:
+            schemas.SortingDir(sort_dir)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f'Invalid sorting method, available are'
+                   f' sort: {[e.value for e in schemas.SortingModel]} and'
+                   f' sort_dir: {[e.value for e in schemas.SortingDir]}.'
+        )
+
+    reviews = crud.review.get_by_movie(db, movie_id=movie_id, skip=skip, limit=limit, sort=sort, sort_dir=sort_dir)
     return reviews
 
 
@@ -30,11 +46,27 @@ def read_reviews(
         db: Session = Depends(deps.get_db),
         skip: int = 0,
         limit: int = 100,
+        sort: Optional[str] = None,
+        sort_dir: Optional[str] = None
 ) -> Any:
     """
     Retrieve reviews by movie.
     """
-    reviews = crud.review.get_by_user(db, user_id=user_id, skip=skip, limit=limit)
+    try:
+        if sort:
+            schemas.SortingModel(sort)
+
+        if sort_dir:
+            schemas.SortingDir(sort_dir)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f'Invalid sorting method, available are'
+                   f' sort: {[e.value for e in schemas.SortingModel]} and'
+                   f' sort_dir: {[e.value for e in schemas.SortingDir]}.'
+        )
+
+    reviews = crud.review.get_by_user(db, user_id=user_id, skip=skip, limit=limit, sort=sort, sort_dir=sort_dir)
     return reviews
 
 
