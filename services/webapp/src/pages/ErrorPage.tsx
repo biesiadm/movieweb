@@ -36,5 +36,4 @@ class GenericNotFoundPage extends ErrorPage {
   };
 }
 
-export default ErrorPage;
 export { GenericNotFoundPage };

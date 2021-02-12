@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link, NavLink, Route, Switch } from 'react-router-dom';
 import { GenericNotFoundPage } from './pages/ErrorPage';
 
+import CurrentUserBlock from './components/CurrentUserBlock';
 import { LoadingScreen, ErrorScreen } from './components/Screen';
 import MovieListPage from './pages/MovieListPage';
 import MovieDetailsPage from './pages/MovieDetailsPage';
@@ -9,7 +10,7 @@ import UserListPage from './pages/UserListPage';
 import UserDetailsPage from './pages/UserDetailsPage';
 import PublicHomepage from './pages/PublicHomepage';
 import LoginPage from './pages/LoginPage';
-import { EmptyProps, EmptyState, getLogInPath } from './utils';
+import { EmptyProps, EmptyState } from './utils';
 
 class App extends Component<EmptyProps, EmptyState> {
 
@@ -23,7 +24,6 @@ class App extends Component<EmptyProps, EmptyState> {
   }
 
   renderApp(): React.ReactNode {
-    const logInPath: string = getLogInPath(this.props.location);
     return  <div className="d-flex flex-column">
               <header id="main-menu" className="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div className="container">
@@ -41,7 +41,7 @@ class App extends Component<EmptyProps, EmptyState> {
                       </li>
                     </ul>
                   </nav>
-                  <Link to={logInPath} className="btn btn-primary flex-shrink-0">Log in</Link>
+                  <CurrentUserBlock user={null} />
                 </div>
               </header>
               <main className="pb-5 bg-light col">
@@ -52,10 +52,6 @@ class App extends Component<EmptyProps, EmptyState> {
                 <Route exact path='/users' component={UserListPage} />
                 {/* Key below is a quick fix for going from user page to another user page */}
                 <Route exact key={location.pathname} path='/users/:login' component={UserDetailsPage} />
-                <Route exact path='/loading' component={LoadingScreen} />
-                <Route exact path='/error'>
-                  <ErrorScreen className="bg-subtle" />
-                </Route>
                 <Route component={GenericNotFoundPage} />
               </Switch>
               </main>

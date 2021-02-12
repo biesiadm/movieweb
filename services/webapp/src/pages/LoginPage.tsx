@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 import { User } from '../api/public';
 import { authApi } from '../config';
 
@@ -166,5 +166,4 @@ class LoginPage extends Component<RouteComponentProps, State> {
   }
 }
 
-withRouter(LoginPage);
 export default LoginPage;
