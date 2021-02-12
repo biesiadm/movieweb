@@ -148,7 +148,7 @@ class UserDetailsPage extends Component<Props, State> {
       const profileUrl = new URL(BASE_URL + '/users/' + user.login);
 
       let followButton = null;
-      if (loggedInUser?.id != user.id) {
+      if (loggedInUser && loggedInUser?.id != user.id) {
         followButton = <FollowButton user={user} follower={loggedInUser!} className="ms-4" />;
       }
 
