@@ -55,13 +55,26 @@ def add_relationship(
 
     if relationship:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_204_NO_CONTENT,
             detail='Relationship already exists.'
         )
 
     relationship = crud.relationship.create(db=db, obj_in=relationship_in)
 
     return relationship
+
+
+@router.get("/users/{user_id}/followers/{followed_user_id}", response_model=bool)
+def check_relationship(
+        db: Session = Depends(deps.get_db),
+        *,
+        user_id: UUID,
+        followed_user_id: UUID
+) -> Any:
+    relationship = relationship = crud.relationship.get_relationship(db=db, user_id=user_id,
+                                                                     followed_user_id=followed_user_id)
+
+    return relationship is not None
 
 
 @router.delete("/unfollow", response_model=schemas.Relationship)

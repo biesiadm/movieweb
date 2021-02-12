@@ -1,6 +1,4 @@
-import secrets
-
-from pydantic import BaseSettings, AnyUrl, EmailStr
+from pydantic import BaseSettings, AnyUrl
 
 
 class Settings(BaseSettings):
