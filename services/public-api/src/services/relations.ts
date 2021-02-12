@@ -6,6 +6,7 @@ import { UserWeb } from '../api/users';
 import { relsApi, usersApi } from '../config';
 import { PublicUser } from '../openapi';
 import { buildErrorPassthrough, buildIdHandler, buildSortingHandler, errorIfIdNotValid, handlePagination } from '../middleware';
+import { requireSessionOrToken } from '../session';
 
 const router = express.Router({ mergeParams: true });
 const handleSorting = buildSortingHandler(['created']);
@@ -24,6 +25,16 @@ const handleSorting = buildSortingHandler(['created']);
  *       description: Follower ID as UUID v4
  */
 const errorIfFollowerIdNotValid = buildIdHandler('follower_id');
+
+function errorIfNotFollowersToken(req: express.Request, res: express.Response, next: express.NextFunction) {
+    const tokenOwnerId = req.token_payload?.sub;
+    const followerId = req.params.follower_id;
+    if (tokenOwnerId !== followerId) {
+        res.status(401).send();
+        return;
+    }
+    return next();
+}
 
 const fetchUsers = async (user_ids: string[]): Promise<PublicUser[]> => {
     return Promise
@@ -101,6 +112,9 @@ router.get("/followers", async (req: express.Request, res: express.Response, nex
  *     operationId: addFollower
  *     summary: Add follower
  *     tags: [users, relations]
+ *     security:
+ *       - JwtBearerAuth: []
+ *       - JwtCookieAuth: []
  *     parameters:
  *       - $ref: '#/components/parameters/id'
  *       - $ref: '#/components/parameters/follower_id'
@@ -113,12 +127,14 @@ router.get("/followers", async (req: express.Request, res: express.Response, nex
  */
 router.post("/followers/:follower_id", errorIfIdNotValid);
 router.post("/followers/:follower_id", errorIfFollowerIdNotValid);
+router.post("/followers/:follower_id", requireSessionOrToken);
+router.post("/followers/:follower_id", errorIfNotFollowersToken);
 router.post("/followers/:follower_id", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         // Check if users exist
         const user_id: string = req.params.id;
         const follower_id: string = req.params.follower_id;
-        const users = await fetchUsers([user_id, follower_id]);
+        await fetchUsers([user_id, follower_id]);
 
         // Add follower
         await relsApi.addRelationshipApiRelationshipsFollowPost({
@@ -141,6 +157,9 @@ router.post("/followers/:follower_id", async (req: express.Request, res: express
  *     operationId: removeFollower
  *     summary: Remove follower
  *     tags: [users, relations]
+ *     security:
+ *       - JwtBearerAuth: []
+ *       - JwtCookieAuth: []
  *     parameters:
  *       - $ref: '#/components/parameters/id'
  *       - $ref: '#/components/parameters/follower_id'
@@ -153,6 +172,8 @@ router.post("/followers/:follower_id", async (req: express.Request, res: express
  */
 router.delete("/followers/:follower_id", errorIfIdNotValid);
 router.delete("/followers/:follower_id", errorIfFollowerIdNotValid);
+router.delete("/followers/:follower_id", requireSessionOrToken);
+router.delete("/followers/:follower_id", errorIfNotFollowersToken);
 router.delete("/followers/:follower_id", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         // Remove follower

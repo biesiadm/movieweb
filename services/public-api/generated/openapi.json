@@ -42,7 +42,7 @@
     "/auth/log-in": {
       "post": {
         "operationId": "logIn",
-        "summary": "Start session",
+        "summary": "Obtain JWT token in session cookie",
         "tags": [
           "auth"
         ],
@@ -64,6 +64,14 @@
                   "$ref": "#/components/schemas/User"
                 }
               }
+            },
+            "headers": {
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string",
+                  "example": "connect.sid=abcde12345; Domain=localhost; Path=/; HttpOnly"
+                }
+              }
             }
           },
           "422": {
@@ -75,7 +83,7 @@
     "/auth/log-out": {
       "get": {
         "operationId": "logOut",
-        "summary": "End session",
+        "summary": "Drop JWT token session cookie",
         "tags": [
           "auth"
         ],
@@ -209,6 +217,14 @@
           "users",
           "relations"
         ],
+        "security": [
+          {
+            "JwtBearerAuth": []
+          },
+          {
+            "JwtCookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
@@ -232,6 +248,14 @@
         "tags": [
           "users",
           "relations"
+        ],
+        "security": [
+          {
+            "JwtBearerAuth": []
+          },
+          {
+            "JwtCookieAuth": []
+          }
         ],
         "parameters": [
           {
@@ -834,6 +858,18 @@
             }
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "JwtBearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "JwtCookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "connect.sid"
       }
     }
   },

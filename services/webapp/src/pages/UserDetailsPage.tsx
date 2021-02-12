@@ -82,7 +82,6 @@ class UserDetailsPage extends Component<Props, State> {
         followersPromise().then((resp: PaginatedResponse) => resp.data.info),
         followsPromise().then((resp: PaginatedResponse) => resp.data.info)
       ]).then((infos: ListInfo[]) => {
-        console.log(infos);
         this.setState({
           totalRatings: infos[0].totalCount || 0,
           totalFollowers: infos[1].totalCount || 0,
