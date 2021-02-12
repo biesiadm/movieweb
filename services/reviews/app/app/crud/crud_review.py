@@ -3,9 +3,20 @@ from uuid import UUID
 
 from app.crud.base import CRUDBase
 from app.db.models import Review
-from app.schemas import ReviewCreate, ReviewUpdate
+from app.schemas import ReviewCreate, ReviewUpdate, SortingModel, SortingDir
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone
+
+
+def determine_sorting_type(sort: SortingModel, sort_dir: SortingDir):
+    sorting_method = None
+
+    if sort == SortingModel.rating:
+        sorting_method = Review.rating.desc() if sort_dir == SortingDir.desc else Review.rating.asc()
+    elif sort == SortingModel.created:
+        sorting_method = Review.created.desc() if sort_dir == SortingDir.desc else Review.created.asc()
+
+    return sorting_method
 
 
 class CRUDReview(CRUDBase[Review, ReviewCreate, ReviewUpdate]):
@@ -36,14 +47,14 @@ class CRUDReview(CRUDBase[Review, ReviewCreate, ReviewUpdate]):
         return db_obj
 
     def get_by_user(self, db: Session, *, skip: int = 0,
-                    limit: int = 100, user_id: UUID) -> List[Review]:
-        return db.query(self.model).filter(Review.user_id == user_id) \
-            .offset(skip).limit(limit).all()
+                    limit: int = 100, user_id: UUID, sort: SortingModel, sort_dir: SortingDir) -> List[Review]:
+        return db.query(self.model).filter(Review.user_id == user_id)\
+            .order_by(determine_sorting_type(sort, sort_dir)).offset(skip).limit(limit).all()
 
     def get_by_movie(self, db: Session, *, skip: int = 0,
-                     limit: int = 100, movie_id: UUID) -> List[Review]:
+                     limit: int = 100, movie_id: UUID, sort: SortingModel, sort_dir: SortingDir) -> List[Review]:
         return db.query(self.model).filter(Review.movie_id == movie_id) \
-            .offset(skip).limit(limit).all()
+            .order_by(determine_sorting_type(sort, sort_dir)).offset(skip).limit(limit).all()
 
     def get_by_user_and_movie(self, db: Session, *, user_id: UUID, movie_id: UUID) -> Review:
         return db.query(self.model).filter(Review.user_id == user_id, Review.movie_id == movie_id).first()

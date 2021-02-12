@@ -121,7 +121,8 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
     // TODO(kantoniak): Load reviews for all movies
     // This ID changes with every restart of reviews service
     const movie_id = 'fab9d53d-d9ee-4f53-a9ec-32f0067682f2';
-    reviewsApi.readReviewsApiReviewsMovieMovieIdReviewsGet(movie_id, req.pagination!.skip, req.pagination!.limit)
+    reviewsApi.readReviewsApiReviewsMovieMovieIdReviewsGet(movie_id, req.pagination!.skip, req.pagination!.limit,
+        req.sorting?.by, req.sorting?.dir)
         .then((axiosResponse: AxiosResponse<Review[]>) => {
             axiosResponse.data = axiosResponse.data.map((review: Review) => <PublicReview>review);
             return <AxiosResponse<PublicReview[]>>axiosResponse;
@@ -227,7 +228,8 @@ movieRouter.get("/", (req: express.Request, res: express.Response, next: express
     // TODO(biesiadm): Handle sorting in reviews API
     // TODO(biesiadm): Can we tame these OpenAPI operation names? It's just an extra declaration: https://fastapi.tiangolo.com/advanced/path-operation-advanced-configuration/#openapi-operationid
     const movie_id: string = req.params.id;
-    reviewsApi.readReviewsApiReviewsMovieMovieIdReviewsGet(movie_id, req.pagination!.skip, req.pagination!.limit)
+    reviewsApi.readReviewsApiReviewsMovieMovieIdReviewsGet(movie_id, req.pagination!.skip, req.pagination!.limit,
+        req.sorting?.by, req.sorting?.dir)
         .then((axiosResponse: AxiosResponse<Review[]>) => {
             axiosResponse.data = axiosResponse.data.map((review: Review) => <PublicReview>review);
             return <AxiosResponse<PublicReview[]>>axiosResponse;
@@ -306,7 +308,8 @@ userRouter.get("/", (req: express.Request, res: express.Response, next: express.
 
     // TODO(biesiadm): Handle sorting in reviews API
     const user_id: string = req.params.id;
-    reviewsApi.readReviewsApiReviewsUserUserIdReviewsGet(user_id, req.pagination!.skip, req.pagination!.limit)
+    reviewsApi.readReviewsApiReviewsUserUserIdReviewsGet(user_id, req.pagination!.skip, req.pagination!.limit,
+        req.sorting?.by, req.sorting?.dir)
         .then((axiosResponse: AxiosResponse<Review[]>) => {
             axiosResponse.data = axiosResponse.data.map((review: Review) => <PublicReview>review);
             return <AxiosResponse<PublicReview[]>>axiosResponse;
