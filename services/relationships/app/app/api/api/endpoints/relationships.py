@@ -88,7 +88,7 @@ def delete_relationship(
 
     if not relationship:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_204_NO_CONTENT,
             detail=f'You are not following user {relationship_in.followed_user_id}.'
         )
 
