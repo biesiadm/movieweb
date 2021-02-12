@@ -18,6 +18,7 @@ import { HTTPValidationError } from './api/movies/api';
 function errorIfIdNotValid(req: Request, res: Response, next: NextFunction) {
 
     const id: string = req.params.id;
+    console.log(id);
     if (!validateUuid(id)) {
         const err: HTTPValidationError = {
             detail: [
@@ -28,8 +29,8 @@ function errorIfIdNotValid(req: Request, res: Response, next: NextFunction) {
                 }
             ]
         };
-        res.status(422).json(err);
-        next(err);
+        res.status(422).json(err).send();
+        return;
     }
 
     next();
@@ -167,10 +168,8 @@ function buildErrorPassthrough(codesToPass: Array<number>, res: Response, next: 
     return (reason: any) => {
         if (reason.response && codesToPass.includes(reason.response.status)) {
             res.status(reason.response.status).json(reason.response.data);
-            return next();
         } else {
             res.status(500).send();
-            return next(reason);
         }
     }
 }
