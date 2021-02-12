@@ -9,9 +9,7 @@ import UserListPage from './pages/UserListPage';
 import UserDetailsPage from './pages/UserDetailsPage';
 import PublicHomepage from './pages/PublicHomepage';
 import LoginPage from './pages/LoginPage';
-
-type EmptyProps = Record<string, never>
-type EmptyState = Record<string, never>
+import { EmptyProps, EmptyState, getLogInPath } from './utils';
 
 class App extends Component<EmptyProps, EmptyState> {
 
@@ -25,6 +23,7 @@ class App extends Component<EmptyProps, EmptyState> {
   }
 
   renderApp(): React.ReactNode {
+    const logInPath: string = getLogInPath(this.props.location);
     return  <div className="d-flex flex-column">
               <header id="main-menu" className="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div className="container">
@@ -42,7 +41,7 @@ class App extends Component<EmptyProps, EmptyState> {
                       </li>
                     </ul>
                   </nav>
-                  <Link to="/login" className="btn btn-primary flex-shrink-0">Log in</Link>
+                  <Link to={logInPath} className="btn btn-primary flex-shrink-0">Log in</Link>
                 </div>
               </header>
               <main className="pb-5 bg-light col">

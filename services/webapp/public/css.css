@@ -192,6 +192,11 @@ html, body, body>div {
 }
 
 /* Log in page */
+.login-screen h1 a {
+    color: #F0A96E;
+    text-decoration: none;
+}
+
 .login-screen .spinner-border {
     width: 1em;
     height: 1em;
