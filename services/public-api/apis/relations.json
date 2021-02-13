@@ -182,6 +182,60 @@
         }
       }
     },
+    "/api/relationships/users/{user_id}/followers/{followed_user_id}": {
+      "get": {
+        "tags": [
+          "relationships"
+        ],
+        "summary": "Check Relationship",
+        "operationId": "check_relationship_api_relationships_users__user_id__followers__followed_user_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "user_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Followed User Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "followed_user_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Check Relationship Api Relationships Users  User Id  Followers  Followed User Id  Get",
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/relationships/unfollow": {
       "delete": {
         "tags": [
