@@ -10,6 +10,10 @@ class Settings(BaseSettings):
 
     USERS_SERVICE_NAME: str
 
+    POOL_SIZE: int
+    POOL_MAX_OVERFLOW: int
+    POOL_TIMEOUT: int
+
     class Config:
         case_sensitive = True
 

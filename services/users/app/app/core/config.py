@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     ADMIN_PASSWORD: str
     ADMIN_NAME: str
 
+    POOL_SIZE: int
+    POOL_MAX_OVERFLOW: int
+    POOL_TIMEOUT: int
+
     class Config:
         case_sensitive = True
 

@@ -7,6 +7,10 @@ class Settings(BaseSettings):
 
     DATABASE_URL: AnyUrl
 
+    POOL_SIZE: int
+    POOL_MAX_OVERFLOW: int
+    POOL_TIMEOUT: int
+
     class Config:
         case_sensitive = True
 
