@@ -1,2 +1,2 @@
 from .review import Review, ReviewCreate, ReviewUpdate
-from .sorting import SortingDir, SortingModel
+from .sorting import SortingDir, SortingModel, SortingSettings
