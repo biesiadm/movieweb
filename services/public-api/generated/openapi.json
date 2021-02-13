@@ -358,6 +358,75 @@
             "$ref": "#/components/responses/ValidationError"
           }
         }
+      },
+      "post": {
+        "operationId": "addReview",
+        "summary": "Add review",
+        "tags": [
+          "reviews"
+        ],
+        "security": [
+          {
+            "JwtBearerAuth": []
+          },
+          {
+            "JwtCookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReview"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Review created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/reviews/{id}": {
+      "delete": {
+        "operationId": "removeReview",
+        "summary": "Remove review",
+        "tags": [
+          "reviews"
+        ],
+        "security": [
+          {
+            "JwtBearerAuth": []
+          },
+          {
+            "JwtCookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Review removed successfully."
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
       }
     },
     "/movies/{id}/reviews": {
@@ -718,10 +787,9 @@
           }
         }
       },
-      "Review": {
+      "CreateReview": {
         "type": "object",
         "required": [
-          "id",
           "user_id",
           "movie_id",
           "rating",
@@ -747,18 +815,33 @@
           },
           "comment": {
             "type": "string"
-          },
-          "created": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "movie": {
-            "$ref": "#/components/schemas/Movie"
-          },
-          "user": {
-            "$ref": "#/components/schemas/User"
           }
         }
+      },
+      "Review": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CreateReview"
+          },
+          {
+            "type": "object",
+            "required": [
+              "created"
+            ],
+            "properties": {
+              "created": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "movie": {
+                "$ref": "#/components/schemas/Movie"
+              },
+              "user": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        ]
       }
     },
     "responses": {

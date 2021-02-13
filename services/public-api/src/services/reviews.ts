@@ -1,25 +1,38 @@
 import { AxiosResponse } from 'axios';
+import bodyParser from 'body-parser';
 import express from 'express';
 import md5 from 'md5';
 import slugify from 'slugify';
-import { Review } from '../api/reviews/api';
+import { HTTPValidationError, Review, ReviewCreate } from '../api/reviews/api';
 import { moviesApi, reviewsApi, usersApi } from '../config';
 import { PublicMovie, PublicUser } from '../openapi';
 import { buildSortingHandler, buildErrorPassthrough, errorIfIdNotValid, handlePagination } from '../middleware';
 import { Movie } from '../api/movies';
 import { UserWeb } from '../api/users';
+import { requireToken } from '../token';
+import { fetchUsers } from '../providers/users';
+import { fetchMovies } from '../providers/movies';
 
 const router = express.Router();
 const handleReviewSorting = buildSortingHandler(['created', 'rating']);
+
+function errorIfNotUserToken(req: express.Request, res: express.Response, next: express.NextFunction) {
+    const tokenOwnerId = req.token_payload?.sub;
+    const userId = req.body.user_id;
+    if (tokenOwnerId !== userId) {
+        res.status(401).send();
+        return;
+    }
+    return next();
+}
 
 /**
  * @swagger
  * components:
  *   schemas:
- *     Review:
+ *     CreateReview:
  *       type: "object"
  *       required:
- *         - id
  *         - user_id
  *         - movie_id
  *         - rating
@@ -40,13 +53,20 @@ const handleReviewSorting = buildSortingHandler(['created', 'rating']);
  *           maximum: 10
  *         comment:
  *           type: "string"
- *         created:
- *           type: "string"
- *           format: "date-time"
- *         movie:
- *           $ref: "#/components/schemas/Movie"
- *         user:
- *           $ref: "#/components/schemas/User"
+ *     Review:
+ *       allOf:
+ *         - $ref: '#/components/schemas/CreateReview'
+ *         -  type: "object"
+ *            required:
+ *              - created
+ *            properties:
+ *              created:
+ *                type: "string"
+ *                format: "date-time"
+ *              movie:
+ *                $ref: "#/components/schemas/Movie"
+ *              user:
+ *                $ref: "#/components/schemas/User"
  */
 interface PublicReview extends Review {
 
@@ -185,6 +205,111 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
         })
         .catch(buildErrorPassthrough([422], res, next));
     return res;
+});
+
+/**
+ * @swagger
+ * /reviews:
+ *   post:
+ *     operationId: addReview
+ *     summary: Add review
+ *     tags: [reviews]
+ *     security:
+ *       - JwtBearerAuth: []
+ *       - JwtCookieAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateReview'
+ *     responses:
+ *       200:
+ *         description: Review created successfully.
+ *         content:
+ *           application/json:
+ *            schema:
+ *             $ref: '#/components/schemas/Review'
+ *       422:
+ *         $ref: '#/components/responses/ValidationError'
+ *
+ */
+router.post("/", requireToken);
+router.post("/", bodyParser.json());
+router.post("/", errorIfNotUserToken);
+router.post("/", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        // Check if user exist
+        const user_id: string = req.body?.user_id;
+        await fetchUsers([user_id]);
+
+        // Check if movie exists
+        const movie_id: string = req.body?.movie_id;
+        await fetchMovies([movie_id]);
+
+        // Validate rating
+        const rating = Number(req.body?.rating);
+        if (isNaN(rating) || !Number.isInteger(rating) || rating < 1 || 10 < rating) {
+            const err: HTTPValidationError = {
+                detail: [
+                    {
+                        loc: ['body', 'rating'],
+                        msg: 'Parameter rating not valid.',
+                        type: 'param'
+                    }
+                ]
+            };
+            res.status(422).json(err).send();
+            return;
+        }
+
+        // Add review
+        const reqBody = <ReviewCreate>req.body;
+        const reviewResp = await reviewsApi.addReviewApiReviewsNewPost(reqBody);
+
+        res.status(200).json(reviewResp.data);
+        return next();
+    } catch (reason) {
+        const handler = buildErrorPassthrough([400, 404, 422], res, next);
+        handler(reason);
+    }
+});
+
+/**
+ * @swagger
+ * /reviews/{id}:
+ *   delete:
+ *     operationId: removeReview
+ *     summary: Remove review
+ *     tags: [reviews]
+ *     security:
+ *       - JwtBearerAuth: []
+ *       - JwtCookieAuth: []
+ *     parameters:
+ *       - $ref: '#/components/parameters/id'
+ *     responses:
+ *       204:
+ *         description: Review removed successfully.
+ *       422:
+ *         $ref: '#/components/responses/ValidationError'
+ *
+ */
+router.delete("/:id", errorIfIdNotValid);
+router.delete("/:id", requireToken);
+router.delete("/:id", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        // TODO(kantoniak): Check if user owns the review
+        //const user_id = req.token_payload?.sub;
+        const review_id = req.params.id;
+
+        // Remove review
+        await reviewsApi.deleteReviewApiReviewsReviewReviewIdDeleteDelete(review_id);
+
+        res.status(204).send();
+        return next();
+    } catch (reason) {
+        const handler = buildErrorPassthrough([400, 404, 422], res, next);
+        handler(reason);
+    }
 });
 
 /**
