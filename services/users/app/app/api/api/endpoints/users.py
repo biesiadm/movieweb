@@ -43,4 +43,11 @@ def read_user_by_id(
     Get a specific user by id.
     """
     user = crud.user.get(db=db, id=user_id)
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f'User with id: {user_id} does not exist.'
+        )
+
     return user

@@ -133,3 +133,19 @@ def delete_review(
     review = crud.review.remove(db=db, id=review_id)
 
     return review
+
+
+@router.get("/review/{review_id}", response_model=schemas.Review)
+def read_review(
+        review_id: UUID,
+        db: Session = Depends(deps.get_db)
+) -> Any:
+    review = crud.review.get(db=db, id=review_id)
+
+    if not review:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Review does not exist.'
+        )
+
+    return review
