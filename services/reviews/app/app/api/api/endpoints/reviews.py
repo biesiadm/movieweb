@@ -149,3 +149,20 @@ def read_review(
         )
 
     return review
+
+
+@router.get("/movie/{movie_id}/user/{user_id}", response_model=schemas.Review)
+def read_review_by_user_and_movie(
+        movie_id: UUID,
+        user_id: UUID,
+        db: Session = Depends(deps.get_db)
+) -> Any:
+    review = crud.review.get_by_user_and_movie(db=db, user_id=user_id, movie_id=movie_id)
+
+    if not review:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Review does not exist.'
+        )
+
+    return review

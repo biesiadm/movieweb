@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     POOL_MAX_OVERFLOW: int
     POOL_TIMEOUT: int
 
+    NUMBER_OF_USERS: int
+
     class Config:
         case_sensitive = True
 
