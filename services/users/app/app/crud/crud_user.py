@@ -16,6 +16,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             email=obj_in.email,
             password_hash=get_password_hash(obj_in.email + obj_in.password),
             name=obj_in.name,
+            login=obj_in.login,
+            avatar_url=obj_in.avatar_url,
             is_active=obj_in.is_active,
             is_superuser=obj_in.is_superuser
         )
