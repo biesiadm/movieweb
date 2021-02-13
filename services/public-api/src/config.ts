@@ -14,25 +14,10 @@ const corsConfig = {
   credentials: true
 };
 
-const sessionConfig = {
-  // FIXME(kantoniak): Hardcoded secret
-  secret: 'session-secret',
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-      httpOnly: true,
-      //secure: true, // Set only if HTTPS
-      domain: 'localhost'
-  }
-  // TODO(kantoniak): Set up a secure store (Redis?) for prod. `express-session` uses memory by default.
-};
-
 const tokenConfig = {
   // FIXME(kantoniak): Hardcoded secret
   secret: 'my-secret-key',
-  options: {
-    algorithms: [<Algorithm>"HS256"]
-  }
+  algorithms: [<Algorithm>"HS256"]
 };
 
 const axiosInstance: AxiosInstance = axios.create({
@@ -70,4 +55,4 @@ const loginApi = LoginApiFactory(
   axiosInstance
 );
 
-export { loginApi, moviesApi, relsApi, reviewsApi, usersApi, corsConfig, sessionConfig, tokenConfig };
+export { loginApi, moviesApi, relsApi, reviewsApi, usersApi, corsConfig, tokenConfig };

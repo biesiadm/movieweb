@@ -42,7 +42,7 @@
     "/auth/log-in": {
       "post": {
         "operationId": "logIn",
-        "summary": "Obtain JWT token in session cookie",
+        "summary": "Obtain JWT token as cookie",
         "tags": [
           "auth"
         ],
@@ -83,7 +83,7 @@
     "/auth/log-out": {
       "get": {
         "operationId": "logOut",
-        "summary": "Drop JWT token session cookie",
+        "summary": "Drop JWT token cookie",
         "tags": [
           "auth"
         ],
