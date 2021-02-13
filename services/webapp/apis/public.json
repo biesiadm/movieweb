@@ -696,6 +696,9 @@
           },
           "category": {
             "type": "string"
+          },
+          "review": {
+            "$ref": "#/components/schemas/Review"
           }
         }
       },

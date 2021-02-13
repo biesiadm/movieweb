@@ -161,7 +161,7 @@ def read_review_by_user_and_movie(
 
     if not review:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail='Review does not exist.'
         )
 

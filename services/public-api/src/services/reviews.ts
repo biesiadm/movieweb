@@ -12,6 +12,7 @@ import { UserWeb } from '../api/users';
 import { requireToken } from '../token';
 import { fetchUsers } from '../providers/users';
 import { fetchMovies } from '../providers/movies';
+import { fetchReview } from '../providers/reviews';
 
 const router = express.Router();
 const handleReviewSorting = buildSortingHandler(['created', 'rating']);
@@ -306,13 +307,18 @@ router.delete("/:id", errorIfIdNotValid);
 router.delete("/:id", requireToken);
 router.delete("/:id", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        // TODO(kantoniak): Check if user owns the review
-        //const user_id = req.token_payload?.sub;
+        // Check if user owns the review
+        const user_id: string = req.token_payload!.sub;
         const review_id = req.params.id;
+        const review: Review = await fetchReview(review_id);
+
+        if (review.user_id != user_id) {
+            res.status(401).send();
+            return;
+        }
 
         // Remove review
         await reviewsApi.deleteReviewApiReviewsReviewReviewIdDeleteDelete(review_id);
-
         res.status(204).send();
         return next();
     } catch (reason) {

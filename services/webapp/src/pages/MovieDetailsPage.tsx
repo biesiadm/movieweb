@@ -50,8 +50,12 @@ class MovieDetailsPage extends Component<Props, State> {
     // Get movie details
     moviesApi.getMovieById(movie_id)
       .then((response: AxiosResponse<Movie>) => {
+        let movie = response.data;
+        if (movie.review) {
+          movie.review.created! += 'Z';
+        }
         this.setState({
-          movie: response.data,
+          movie: movie,
           loading: false,
           error: null
         });

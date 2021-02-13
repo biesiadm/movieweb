@@ -5,6 +5,8 @@ import { Movie } from '../api/movies/api';
 import { moviesApi } from '../config';
 import { PublicMovie } from '../openapi';
 import { buildSortingHandler, buildErrorPassthrough, errorIfIdNotValid, handlePagination } from '../middleware';
+import { optionalToken } from '../token';
+import { fetchNullableReviewByMovieUser } from '../providers/reviews';
 
 const router = express.Router();
 
@@ -114,6 +116,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
  *
  */
 router.get("/:id", errorIfIdNotValid);
+router.get("/:id", optionalToken);
 router.get("/:id", (req: express.Request, res: express.Response, next: express.NextFunction) => {
 
     const movie_id: string = req.params.id;
@@ -127,8 +130,22 @@ router.get("/:id", (req: express.Request, res: express.Response, next: express.N
             });
             return <AxiosResponse<PublicMovie>>newResponse;
         })
-        .then((axiosResponse: AxiosResponse<PublicMovie>) => {
-            res.status(axiosResponse.status).json(axiosResponse.data);
+        .then(async (axiosResponse: AxiosResponse<PublicMovie>) => {
+            let movie = axiosResponse.data;
+
+            if (req.token_payload) {
+                const user_id = req.token_payload.sub;
+                try {
+                    const review = await fetchNullableReviewByMovieUser(movie.id, user_id);
+                    if (review) {
+                        movie.review = review;
+                    }
+                } catch (error) {
+                    // Don't do anything
+                }
+            }
+
+            res.status(axiosResponse.status).json(movie);
             return next();
         })
         .catch(buildErrorPassthrough([404, 422], res, next));

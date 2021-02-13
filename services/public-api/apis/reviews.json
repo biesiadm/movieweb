@@ -511,6 +511,102 @@
           }
         }
       }
+    },
+    "/api/reviews/review/{review_id}": {
+      "get": {
+        "tags": [
+          "reviews"
+        ],
+        "summary": "Read Review",
+        "operationId": "read_review_api_reviews_review__review_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Review Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "review_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reviews/movie/{movie_id}/user/{user_id}": {
+      "get": {
+        "tags": [
+          "reviews"
+        ],
+        "summary": "Read Review By User And Movie",
+        "operationId": "read_review_by_user_and_movie_api_reviews_movie__movie_id__user__user_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Movie Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "movie_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "user_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {

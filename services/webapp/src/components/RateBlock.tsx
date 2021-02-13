@@ -43,15 +43,29 @@ class RateBlock extends Component<Props, State> {
     this.clearReview.bind(this);
     this.render.bind(this);
 
-    this.state = {
-      state: ReviewState.New,
-      hoveredStars: null,
-      review: {
-        rating: null,
-        comment: null,
-        created: null
-      },
-      reviewObject: null
+    if (props.movie.review) {
+      const review = props.movie.review;
+      this.state = {
+        state: ReviewState.Saved,
+        hoveredStars: null,
+        review: {
+          rating: review.rating,
+          comment: review.comment || null,
+          created: review.created
+        },
+        reviewObject: review
+      }
+    } else {
+      this.state = {
+        state: ReviewState.New,
+        hoveredStars: null,
+        review: {
+          rating: null,
+          comment: null,
+          created: null
+        },
+        reviewObject: null
+      }
     }
   }
 
