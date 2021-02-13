@@ -44,6 +44,14 @@ declare global {
     }
 }
 
+function invalidTokenHandler(err: any, req: Request, res: Response, next: NextFunction) {
+    if (err.name === 'UnauthorizedError') {
+      res.status(401).send();
+      return;
+    }
+    next(err);
+}
+
 function errorIfNoToken(req: Request, res: Response, next: NextFunction) {
 
     if (req.token_payload) {
@@ -66,13 +74,17 @@ const requireToken = [
         ...jwtBaseOptions,
         credentialsRequired: true
     }),
+    invalidTokenHandler,
     errorIfNoToken
 ];
 
-const optionalToken = jwt({
+const optionalToken = [
+    jwt({
     ...jwtBaseOptions,
     credentialsRequired: false
-});
+    }),
+    invalidTokenHandler
+];
 
 export { requireToken, optionalToken };
 export type { TokenPayload };

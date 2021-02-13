@@ -5,7 +5,8 @@ import { UserWeb } from '../api/users/api';
 import { relsApi, usersApi } from '../config';
 import { PublicUser } from '../openapi';
 import { buildErrorPassthrough, errorIfIdNotValid, handlePagination } from '../middleware';
-import { optionalToken } from '../token';
+import { optionalToken, requireToken } from '../token';
+import { fetchUser } from '../providers/users';
 
 const router = express.Router();
 
@@ -116,6 +117,37 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
         })
         .catch(buildErrorPassthrough([401, 404, 422], res, next));
     return res;
+});
+
+/**
+ * @swagger
+ * /users/me:
+ *   get:
+ *     operationId: getCurrentUser
+ *     summary: Get current user using token
+ *     tags: [users]
+ *     security:
+ *       - JwtBearerAuth: []
+ *       - JwtCookieAuth: []
+ *     responses:
+ *       200:
+ *         description: User details.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/User"
+ */
+router.get("/me", requireToken);
+router.get("/me", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        const user_id: string = req.token_payload!.sub!;
+        const user = await fetchUser(user_id);
+        res.status(200).json(user);
+        return next();
+    } catch (reason) {
+        const handler = buildErrorPassthrough([400, 404, 422], res, next);
+        handler(reason);
+    }
 });
 
 /**

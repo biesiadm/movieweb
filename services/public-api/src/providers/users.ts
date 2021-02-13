@@ -21,4 +21,23 @@ const fetchUsers = async (user_ids: string[]): Promise<PublicUser[]> => {
         });
 }
 
-export { fetchUsers };
+const fetchUser = async (id: string): Promise<PublicUser> => {
+    return (await fetchUsers([id]))[0];
+}
+
+// Currently unused
+const fetchNullableUser = async (id:string): Promise<PublicUser | null> => {
+    // TODO(kantoniak): Validate UUID
+    try {
+        const users = await fetchUsers([id]);
+        return users[0];
+    } catch (error) {
+        if (error.response?.status && error.response.status == 404) {
+            return null;
+        } else {
+            throw error;
+        }
+    }
+}
+
+export { fetchUser, fetchNullableUser, fetchUsers };
