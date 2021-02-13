@@ -268,3 +268,65 @@ html, body, body>div {
         position: relative !important;
     }
 }
+
+/* Movie details page */
+.rating-block-stars {
+    margin-bottom: 0.2em;
+}
+
+.rating-block h4 > .spinner-border {
+    width: 0.8em;
+    height: 0.8em;
+    border-width: 0.17em;
+    margin-right: -0.05em;
+    margin-left: 0.375em;
+}
+
+.rating-block-number {
+    display: block;
+    flex: 3rem 0 0 !important;
+    width: 3rem;
+    height: 3rem;
+    text-align: center;
+    line-height: 3rem;
+}
+
+.rating-block-stars svg {
+    fill: #F0A96E;
+    width: 1.40em;
+    height: 1.40em;
+}
+
+.rating-block-stars svg.empty {
+    display: none;
+}
+
+.rating-block-stars[data-rating="0"] > div > .filled { display: none; }
+.rating-block-stars[data-rating="0"] > div > .empty { display: inline; }
+
+.rating-block-stars[data-rating="1"] > :nth-child(1) ~ div > .filled { display: none; }
+.rating-block-stars[data-rating="1"] > :nth-child(1) ~ div > .empty { display: inline; }
+
+.rating-block-stars[data-rating="2"] > :nth-child(2) ~ div > .filled { display: none; }
+.rating-block-stars[data-rating="2"] > :nth-child(2) ~ div > .empty { display: inline; }
+
+.rating-block-stars[data-rating="3"] > :nth-child(3) ~ div > .filled { display: none; }
+.rating-block-stars[data-rating="3"] > :nth-child(3) ~ div > .empty { display: inline; }
+
+.rating-block-stars[data-rating="4"] > :nth-child(4) ~ div > .filled { display: none; }
+.rating-block-stars[data-rating="4"] > :nth-child(4) ~ div > .empty { display: inline; }
+
+.rating-block-stars[data-rating="5"] > :nth-child(5) ~ div > .filled { display: none; }
+.rating-block-stars[data-rating="5"] > :nth-child(5) ~ div > .empty { display: inline; }
+
+.rating-block-stars[data-rating="6"] > :nth-child(6) ~ div > .filled { display: none; }
+.rating-block-stars[data-rating="6"] > :nth-child(6) ~ div > .empty { display: inline; }
+
+.rating-block-stars[data-rating="7"] > :nth-child(7) ~ div > .filled { display: none; }
+.rating-block-stars[data-rating="7"] > :nth-child(7) ~ div > .empty { display: inline; }
+
+.rating-block-stars[data-rating="8"] > :nth-child(8) ~ div > .filled { display: none; }
+.rating-block-stars[data-rating="8"] > :nth-child(8) ~ div > .empty { display: inline; }
+
+.rating-block-stars[data-rating="9"] > :nth-child(9) ~ div > .filled { display: none; }
+.rating-block-stars[data-rating="9"] > :nth-child(9) ~ div > .empty { display: inline; }

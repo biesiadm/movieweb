@@ -1,6 +1,7 @@
 import swaggerJSDoc from 'swagger-jsdoc';
 import OpenapiDef from '../openapi-definition.json';
 import { Movie } from './api/movies';
+import { Review } from './api/reviews';
 import { UserWeb } from './api/users';
 
 const OpenapiSpec = swaggerJSDoc({
@@ -44,15 +45,15 @@ const OpenapiSpec = swaggerJSDoc({
  *           type: "string"
  *         category:
  *           type: "string"
+ *         review:
+ *           $ref: "#/components/schemas/Review"
  */
 interface PublicMovie extends Movie {
 
-    /**
-     *
-     * @type {string}
-     * @memberof PublicMovie
-     */
+    // TODO(biesiadm): Move to user API
     slug: string;
+
+    review?: Review;
 }
 
 /**

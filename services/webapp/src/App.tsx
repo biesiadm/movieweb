@@ -92,9 +92,11 @@ class App extends Component<EmptyProps, State> {
               <Switch>
                 <Route exact path='/' component={PublicHomepage} />
                 <Route exact path='/movies' component={MovieListPage} />
-                <Route exact path='/movies/:slug_id' component={MovieDetailsPage} />
+                <Route exact
+                  key={location.pathname}
+                  path='/movies/:slug_id'
+                  render={(props: RouteComponentProps<{slug_id: string}>) => <MovieDetailsPage {...props} user={user}/>} />
                 <Route exact path='/users' component={UserListPage} />
-                {/* Key below is a quick fix for going from user page to another user page */}
                 <Route exact
                   key={location.pathname}
                   path='/users/:login'

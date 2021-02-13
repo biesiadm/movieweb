@@ -3,15 +3,17 @@ import { RouteComponentProps } from 'react-router-dom';
 import { AxiosResponse } from 'axios';
 import { validate as validateUuid } from 'uuid';
 import { moviesApi } from '../config'
-import { Movie, Review, SortDir } from '../api/public/api'
+import { Movie, Review, SortDir, User } from '../api/public/api'
 import Error from '../components/Error';
 import Poster from '../components/Poster';
-import InfoScreen, { LoadingScreen } from '../components/Screen';
+import { LoadingScreen } from '../components/Screen';
 import { ReviewList } from '../components/EntryList';
+import RateBlock from '../components/RateBlock';
 
-type Props = RouteComponentProps<{
-  slug_id: string
-}>
+interface Props extends RouteComponentProps<{slug_id: string}> {
+  user: User | null
+}
+
 
 type State = {
   movie: Movie | null,
@@ -48,8 +50,12 @@ class MovieDetailsPage extends Component<Props, State> {
     // Get movie details
     moviesApi.getMovieById(movie_id)
       .then((response: AxiosResponse<Movie>) => {
+        let movie = response.data;
+        if (movie.review) {
+          movie.review.created! += 'Z';
+        }
         this.setState({
-          movie: response.data,
+          movie: movie,
           loading: false,
           error: null
         });
@@ -88,6 +94,7 @@ class MovieDetailsPage extends Component<Props, State> {
 
     if (this.state.movie !== null) {
       const movie: Movie = this.state.movie;
+      const user: User | null = this.props.user;
       const recentReviewsPromise = () => moviesApi.getMovieReviews(movie.id, 8, 0, 'rating', SortDir.Desc);
       const featuredStyle = {
         backgroundImage: "linear-gradient(90deg, rgba(20,23,26,1) 0%, rgba(20,23,26,0.8) 8rem, rgba(20,23,26,0.8) calc(100% - 8rem), rgba(20,23,26,1) 100%), url(" + movie.background_url + ")",
@@ -116,9 +123,7 @@ class MovieDetailsPage extends Component<Props, State> {
                         </div>
                       </div>
                       <div className="col-xl-4 pt-4 pt-lg-5 pt-xl-0 ps-xl-5">
-                        <InfoScreen className="bg-subtle h-100 py-0">
-                          Your rating block
-                        </InfoScreen>
+                        <RateBlock {...this.props} className="rounded" movie={movie} user={user} />
                       </div>
                     </div>
                   </div>

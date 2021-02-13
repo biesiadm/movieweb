@@ -5,14 +5,265 @@
     "version": "0.1.0"
   },
   "paths": {
+    "/api/reviews/reviews": {
+      "get": {
+        "tags": [
+          "reviews"
+        ],
+        "summary": "Read All Reviews",
+        "operationId": "read_all_reviews_api_reviews_reviews_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Sort",
+              "type": "string"
+            },
+            "name": "sort",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Sort Dir",
+              "type": "string"
+            },
+            "name": "sort_dir",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Read All Reviews Api Reviews Reviews Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Review"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reviews/movie/{movie_id}/avg": {
+      "get": {
+        "tags": [
+          "reviews"
+        ],
+        "summary": "Read Avg By Movie",
+        "operationId": "read_avg_by_movie_api_reviews_movie__movie_id__avg_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Movie Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "movie_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Read Avg By Movie Api Reviews Movie  Movie Id  Avg Get",
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reviews/movie/{movie_id}/count": {
+      "get": {
+        "tags": [
+          "reviews"
+        ],
+        "summary": "Read Count By Movie",
+        "operationId": "read_count_by_movie_api_reviews_movie__movie_id__count_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Movie Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "movie_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Read Count By Movie Api Reviews Movie  Movie Id  Count Get",
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reviews/user/{user_id}/avg": {
+      "get": {
+        "tags": [
+          "reviews"
+        ],
+        "summary": "Read Avg By User",
+        "operationId": "read_avg_by_user_api_reviews_user__user_id__avg_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "user_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Read Avg By User Api Reviews User  User Id  Avg Get",
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reviews/user/{user_id}/count": {
+      "get": {
+        "tags": [
+          "reviews"
+        ],
+        "summary": "Read Count By User",
+        "operationId": "read_count_by_user_api_reviews_user__user_id__count_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "user_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Read Count By User Api Reviews User  User Id  Count Get",
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/reviews/movie/{movie_id}/reviews": {
       "get": {
         "tags": [
           "reviews"
         ],
-        "summary": "Read Reviews",
+        "summary": "Read Movie Reviews",
         "description": "Retrieve reviews by movie.",
-        "operationId": "read_reviews_api_reviews_movie__movie_id__reviews_get",
+        "operationId": "read_movie_reviews_api_reviews_movie__movie_id__reviews_get",
         "parameters": [
           {
             "required": true,
@@ -69,7 +320,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "title": "Response Read Reviews Api Reviews Movie  Movie Id  Reviews Get",
+                  "title": "Response Read Movie Reviews Api Reviews Movie  Movie Id  Reviews Get",
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Review"
@@ -96,9 +347,9 @@
         "tags": [
           "reviews"
         ],
-        "summary": "Read Reviews",
+        "summary": "Read User Reviews",
         "description": "Retrieve reviews by movie.",
-        "operationId": "read_reviews_api_reviews_user__user_id__reviews_get",
+        "operationId": "read_user_reviews_api_reviews_user__user_id__reviews_get",
         "parameters": [
           {
             "required": true,
@@ -155,7 +406,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "title": "Response Read Reviews Api Reviews User  User Id  Reviews Get",
+                  "title": "Response Read User Reviews Api Reviews User  User Id  Reviews Get",
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Review"
@@ -194,6 +445,145 @@
           },
           "required": true
         },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reviews/review/{review_id}/delete": {
+      "delete": {
+        "tags": [
+          "reviews"
+        ],
+        "summary": "Delete Review",
+        "operationId": "delete_review_api_reviews_review__review_id__delete_delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Review Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "review_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reviews/review/{review_id}": {
+      "get": {
+        "tags": [
+          "reviews"
+        ],
+        "summary": "Read Review",
+        "operationId": "read_review_api_reviews_review__review_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Review Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "review_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reviews/movie/{movie_id}/user/{user_id}": {
+      "get": {
+        "tags": [
+          "reviews"
+        ],
+        "summary": "Read Review By User And Movie",
+        "operationId": "read_review_by_user_and_movie_api_reviews_movie__movie_id__user__user_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Movie Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "movie_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "user_id",
+            "in": "path"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
