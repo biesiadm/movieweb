@@ -45,8 +45,30 @@ def read_count_by_movie(
     return rating_count[0]
 
 
+@router.get("/user/{user_id}/avg", response_model=Optional[float])
+def read_avg_by_user(
+        db: Session = Depends(deps.get_db),
+        *,
+        user_id: UUID
+) -> Any:
+    avg_rating = crud.review.get_average_by_user(db=db, user_id=user_id)
+
+    return avg_rating[0]
+
+
+@router.get("/user/{user_id}/count", response_model=Optional[int])
+def read_count_by_user(
+        db: Session = Depends(deps.get_db),
+        *,
+        user_id: UUID
+) -> Any:
+    rating_count = crud.review.get_count_by_user(db=db, user_id=user_id)
+
+    return rating_count[0]
+
+
 @router.get("/movie/{movie_id}/reviews", response_model=List[schemas.Review])
-def read_reviews(
+def read_movie_reviews(
         movie_id: UUID,
         db: Session = Depends(deps.get_db),
         skip: int = 0,
@@ -62,7 +84,7 @@ def read_reviews(
 
 
 @router.get("/user/{user_id}/reviews", response_model=List[schemas.Review])
-def read_reviews(
+def read_user_reviews(
         user_id: UUID,
         db: Session = Depends(deps.get_db),
         skip: int = 0,
@@ -92,4 +114,22 @@ def add_review(
         )
 
     review = crud.review.create(db=db, obj_in=review_in)
+    return review
+
+
+@router.delete("/review/{review_id}/delete", response_model=schemas.Review)
+def delete_review(
+        review_id: UUID,
+        db: Session = Depends(deps.get_db)
+) -> Any:
+    review = crud.review.get(db=db, id=review_id)
+
+    if not review:
+        raise HTTPException(
+            status_code=status.HTTP_204_NO_CONTENT,
+            detail='Review already deleted.'
+        )
+
+    review = crud.review.remove(db=db, id=review_id)
+
     return review
