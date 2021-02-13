@@ -7,6 +7,8 @@ from uuid import UUID
 class UserBase(BaseModel):
     email: EmailStr
     name: str
+    login: str
+    avatar_url: Optional[str] = None
     is_active: Optional[bool] = True
     is_superuser: bool = False
 
@@ -29,6 +31,8 @@ class User(UserBase):
 class UserWeb(BaseModel):
     id: UUID
     name: str
+    login: str
+    avatar_url: str
 
     class Config:
         orm_mode = True

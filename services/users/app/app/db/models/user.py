@@ -9,6 +9,8 @@ class User(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
     email = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
+    login = Column(String, unique=True, index=True, nullable=False)
     name = Column(String, unique=True, nullable=False)
+    avatar_img = Column(String)
     is_active = Column(Boolean(), default=True)
     is_superuser = Column(Boolean(), default=False)
