@@ -2,21 +2,6 @@ import { NextFunction, Response, Request } from 'express';
 import jwt from 'express-jwt';
 import { tokenConfig } from './config';
 
-interface TokenPayload {
-    /** Expiration date as unix timestamp. */
-    exp: Number;
-
-    /** Subject - user guid as UUID v4. */
-    sub: string;
-}
-
-// TODO(kantoniak): Drop session usage
-declare module 'express-session' {
-    interface SessionData {
-        token: string
-    }
-}
-
 /**
  * @swagger
  * components:
@@ -35,12 +20,19 @@ function getTokenFromHeaderOrCookie(req: Request) {
         return req.headers.authorization.split(' ')[1];
     }
 
-    // TODO(kantoniak): Drop session usage
-    if (req.session?.token) {
-        return req.session?.token;
+    if (req.cookies['token']) {
+        return req.cookies['token'];
     }
 
     return null;
+}
+
+interface TokenPayload {
+    /** Expiration date as unix timestamp. */
+    exp: Number;
+
+    /** Subject - user guid as UUID v4. */
+    sub: string;
 }
 
 // Adds token to request

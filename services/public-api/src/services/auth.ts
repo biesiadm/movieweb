@@ -109,7 +109,7 @@ router.post("/authorize", async (req: express.Request, res: express.Response, ne
  * /auth/log-in:
  *   post:
  *     operationId: logIn
- *     summary: Obtain JWT token in session cookie
+ *     summary: Obtain JWT token as cookie
  *     tags: [auth]
  *     requestBody:
  *       content:
@@ -135,7 +135,7 @@ router.post("/log-in", bodyParser.json());
 router.post("/log-in", requireLogInCredentials);
 router.post("/log-in", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
 
-    if (req.session?.token) {
+    if (req.cookies['token']) {
         const error = {
             detail: "Already logged in."
         };
@@ -150,7 +150,7 @@ router.post("/log-in", async (req: express.Request, res: express.Response, next:
             await loginApi.loginAccessTokenApiUsersLoginAccessTokenPost(email, password);
 
         const token = tokenResp.data.access_token;
-        req.session.token = token;
+        res.cookie('token', token, { httpOnly: true });
 
         const payload: TokenPayload = <any>jwt.decode(token);
         const userId = payload.sub;
@@ -176,15 +176,16 @@ router.post("/log-in", async (req: express.Request, res: express.Response, next:
  * /auth/log-out:
  *   get:
  *     operationId: logOut
- *     summary: Drop JWT token session cookie
+ *     summary: Drop JWT token cookie
  *     tags: [auth]
  *     responses:
  *       200:
  *         description: Logged out successfully.
  */
 router.get("/log-out", (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    if (req.session?.token) {
-        delete req.session.token;
+    if (req.cookies['token']) {
+        delete req.cookies['token'];
+        res.clearCookie('token');
     }
 
     res.status(200).send();

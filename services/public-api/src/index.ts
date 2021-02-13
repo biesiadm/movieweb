@@ -1,6 +1,6 @@
 import express from 'express';
-import session from 'express-session';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import OpenapiSpec from './openapi';
 import AuthRouter from './services/auth';
@@ -9,14 +9,14 @@ import RelationsRouter from './services/relations';
 import ReviewsRouter, { MovieReviewsRouter, UserReviewsRouter } from './services/reviews';
 import UsersRouter from './services/users';
 import swaggerUi from 'swagger-ui-express';
-import { corsConfig, sessionConfig } from './config';
+import { corsConfig } from './config';
 
 const app = express();
 
 // TODO(kantoniak): Don't log in prod
 app.use(morgan('combined'));
 app.use(cors(corsConfig));
-app.use(session(sessionConfig));
+app.use(cookieParser());
 
 // Routes (handled in order of appearance)
 app.use('/auth', AuthRouter);
