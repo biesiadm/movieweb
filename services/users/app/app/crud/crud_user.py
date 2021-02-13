@@ -11,6 +11,9 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     def get_by_email(self, db: Session, *, email: str) -> User:
         return db.query(self.model).filter(User.email == email).first()
 
+    def get_by_login(self, db: Session, *, login: str) -> User:
+        return db.query(self.model).filter(User.login == login).first()
+
     def create(self, db: Session, *, obj_in: UserCreate) -> User:
         db_obj = User(
             email=obj_in.email,
