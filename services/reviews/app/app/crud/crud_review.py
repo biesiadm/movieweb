@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from uuid import UUID
 
 from app.crud.base import CRUDBase
@@ -18,6 +18,19 @@ def determine_sorting_type(sort: SortingModel, sort_dir: SortingDir):
         sorting_method = Review.created.desc() if sort_dir == SortingDir.desc else Review.created.asc()
 
     return sorting_method
+
+
+def determine_filter_type(created_gte: Optional[datetime], user_id: Optional[List[UUID]]):
+    filter_type = None
+
+    if created_gte and user_id:
+        filter_type = [Review.created >= created_gte, Review.user_id.in_(user_id)]
+    elif created_gte:
+        filter_type = [Review.created >= created_gte]
+    elif user_id:
+        filter_type = [Review.user_id.in_(user_id)]
+
+    return filter_type
 
 
 class CRUDReview(CRUDBase[Review, ReviewCreate, ReviewUpdate]):
@@ -61,9 +74,14 @@ class CRUDReview(CRUDBase[Review, ReviewCreate, ReviewUpdate]):
         return db.query(self.model).filter(Review.user_id == user_id, Review.movie_id == movie_id).first()
 
     def get_multi_sort(self, db: Session, *, skip: int = 0, limit: int = 100,
-                       sort: SortingModel, sort_dir: SortingDir) -> List[Review]:
-        return db.query(self.model).order_by(determine_sorting_type(sort, sort_dir)) \
-            .offset(skip).limit(limit).all()
+                       sort: SortingModel, sort_dir: SortingDir,
+                       created_gte: Optional[datetime], user_id: Optional[List[UUID]]) -> List[Review]:
+        if not user_id and not created_gte:
+            return db.query(self.model).order_by(determine_sorting_type(sort, sort_dir)) \
+                .offset(skip).limit(limit).all()
+        else:
+            return db.query(self.model).filter(*determine_filter_type(created_gte, user_id)) \
+                .order_by(determine_sorting_type(sort, sort_dir)).offset(skip).limit(limit).all()
 
     def get_average_by_movie(self, db: Session, *, movie_id: UUID):
         return db.query(self.model).with_entities(func.avg(Review.rating)).filter(Review.movie_id == movie_id).first()

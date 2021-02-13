@@ -4,7 +4,8 @@ from uuid import UUID
 from app import schemas, crud
 from app.api import deps
 from app.db import models
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
+from pydantic.schema import datetime
 from sqlalchemy.orm import Session
 
 router = APIRouter()
@@ -16,10 +17,13 @@ def read_all_reviews(
         *,
         skip: int = 0,
         limit: int = 100,
-        sort_settings: schemas.SortingSettings = Depends(deps.check_sorting)
+        sort_settings: schemas.SortingSettings = Depends(deps.check_sorting),
+        created_gte: Optional[datetime] = None,
+        user_id: Optional[List[UUID]] = Query(None)
 ) -> Any:
     reviews = crud.review.get_multi_sort(db=db, skip=skip, limit=limit,
-                                         sort=sort_settings.sort, sort_dir=sort_settings.sort_dir)
+                                         sort=sort_settings.sort, sort_dir=sort_settings.sort_dir,
+                                         created_gte=created_gte, user_id=user_id)
     return reviews
 
 
