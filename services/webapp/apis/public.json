@@ -494,6 +494,15 @@
         "tags": [
           "users"
         ],
+        "security": [
+          {},
+          {
+            "JwtBearerAuth": []
+          },
+          {
+            "JwtCookieAuth": []
+          }
+        ],
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
@@ -643,6 +652,10 @@
           "avatar_url": {
             "type": "string",
             "format": "url"
+          },
+          "following": {
+            "type": "boolean",
+            "description": "Set on selected requests when client authenticated. Says if current user is a follower."
           }
         }
       },

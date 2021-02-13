@@ -11,6 +11,7 @@ type Props = {
 }
 
 type State = {
+  disabled: boolean,
   following: boolean,
   loading: boolean
 }
@@ -24,14 +25,21 @@ class FollowButton extends Component<Props, State> {
     this.tryUnfollow.bind(this);
     this.render.bind(this);
 
+    const initialState = (props.user.following === undefined ? false : props.user.following);
+
     this.state = {
-      following: false,
+      disabled: (props.user.following === undefined),
+      following: initialState,
       loading: false
     }
   }
 
   handleClick(e: React.SyntheticEvent): void {
     e.preventDefault();
+
+    if (this.state.disabled) {
+      return;
+    }
 
     if (this.state.following) {
       this.tryUnfollow();
@@ -91,13 +99,22 @@ class FollowButton extends Component<Props, State> {
   render(): React.ReactNode {
     const following = this.state.following;
     const loading = this.state.loading;
+    const disabled = this.state.disabled;
 
     let outerClasses = "follow-btn";
     if (following) {
       outerClasses += " following";
     }
+    if (disabled) {
+      outerClasses += " disabled";
+    }
     if (this.props.className) {
       outerClasses += " " + this.props.className;
+    }
+
+    let clickHandler = this.handleClick.bind(this);
+    if (disabled) {
+      clickHandler = (e) => { return; };
     }
 
     let loadingSpinner = null;
@@ -108,7 +125,7 @@ class FollowButton extends Component<Props, State> {
     }
 
     const label = following ? "Following" : "Follow";
-    return <a className={outerClasses} onClick={this.handleClick.bind(this)}>
+    return <a className={outerClasses} onClick={clickHandler}>
             {label}
             <BinocularsFill className="ms-2 mb-1 me-1" />
             {loadingSpinner}
