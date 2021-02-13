@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { Star, StarFill } from 'react-bootstrap-icons';
+import { RouteComponentProps } from 'react-router';
+import { Link } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
+import { User } from '../api/public';
+import { getLogInPath } from '../utils';
 
 enum ReviewState {
   New = "NEW",
@@ -9,8 +13,9 @@ enum ReviewState {
   Clearing = "CLEARING"
 }
 
-type Props = {
+interface Props extends RouteComponentProps {
   className?: string,
+  user: User | null
 }
 
 type State = {
@@ -130,6 +135,35 @@ class RateBlock extends Component<Props, State> {
   }
 
   render(): React.ReactNode {
+    if (this.props.user) {
+      return this.renderBlock();
+    } else {
+      return this.renderLogInRedirect();
+    }
+  }
+
+  renderLogInRedirect(): React.ReactNode {
+    let outerClasses = "rating-block bg-white";
+    if (this.props.className) {
+      outerClasses += " " + this.props.className;
+    }
+
+    const logInPath: string = getLogInPath(this.props.location);
+
+    return <div className={outerClasses}>
+            <div className="py-3 px-4 border-bottom d-flex align-items-center justify-content-between">
+              <h4 className="my-2 d-flex align-items-center">
+                Your rating
+              </h4>
+            </div>
+            <div className="p-4 d-flex flex-column align-items-center">
+              <p>Log in to rate movies!</p>
+              <Link to={logInPath} className="btn btn-primary mb-2">Log in</Link>
+            </div>
+          </div>;
+  }
+
+  renderBlock(): React.ReactNode {
     const loading = [ReviewState.Saving, ReviewState.Clearing].includes(this.state.state);
     const review = this.state.review;
 

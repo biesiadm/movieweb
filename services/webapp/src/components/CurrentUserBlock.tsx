@@ -3,7 +3,6 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
 import { User } from '../api/public/api';
 import { EmptyState, getLogInPath } from '../utils';
-import Avatar from './Avatar';
 
 interface Props extends RouteComponentProps {
   user: User | null
