@@ -10,33 +10,54 @@ from sqlalchemy.orm import Session
 router = APIRouter()
 
 
+@router.get("/reviews", response_model=List[schemas.Review])
+def read_all_reviews(
+        db: Session = Depends(deps.get_db),
+        *,
+        skip: int = 0,
+        limit: int = 100,
+        sort_settings: schemas.SortingSettings = Depends(deps.check_sorting)
+) -> Any:
+    reviews = crud.review.get_multi_sort(db=db, skip=skip, limit=limit,
+                                         sort=sort_settings.sort, sort_dir=sort_settings.sort_dir)
+    return reviews
+
+
+@router.get("/movie/{movie_id}/avg", response_model=Optional[float])
+def read_avg_by_movie(
+        db: Session = Depends(deps.get_db),
+        *,
+        movie_id: UUID
+) -> Any:
+    avg_rating = crud.review.get_average_by_movie(db=db, movie_id=movie_id)
+
+    return avg_rating[0]
+
+
+@router.get("/movie/{movie_id}/count", response_model=Optional[int])
+def read_count_by_movie(
+        db: Session = Depends(deps.get_db),
+        *,
+        movie_id: UUID
+) -> Any:
+    rating_count = crud.review.get_count_by_movie(db=db, movie_id=movie_id)
+
+    return rating_count[0]
+
+
 @router.get("/movie/{movie_id}/reviews", response_model=List[schemas.Review])
 def read_reviews(
         movie_id: UUID,
         db: Session = Depends(deps.get_db),
         skip: int = 0,
         limit: int = 100,
-        sort: Optional[str] = None,
-        sort_dir: Optional[str] = None
+        sort_settings: schemas.SortingSettings = Depends(deps.check_sorting)
 ) -> Any:
     """
     Retrieve reviews by movie.
     """
-    try:
-        if sort:
-            schemas.SortingModel(sort)
-
-        if sort_dir:
-            schemas.SortingDir(sort_dir)
-    except ValueError:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f'Invalid sorting method, available are'
-                   f' sort: {[e.value for e in schemas.SortingModel]} and'
-                   f' sort_dir: {[e.value for e in schemas.SortingDir]}.'
-        )
-
-    reviews = crud.review.get_by_movie(db, movie_id=movie_id, skip=skip, limit=limit, sort=sort, sort_dir=sort_dir)
+    reviews = crud.review.get_by_movie(db, movie_id=movie_id, skip=skip, limit=limit,
+                                       sort=sort_settings.sort, sort_dir=sort_settings.sort_dir)
     return reviews
 
 
@@ -46,27 +67,13 @@ def read_reviews(
         db: Session = Depends(deps.get_db),
         skip: int = 0,
         limit: int = 100,
-        sort: Optional[str] = None,
-        sort_dir: Optional[str] = None
+        sort_settings: schemas.SortingSettings = Depends(deps.check_sorting)
 ) -> Any:
     """
     Retrieve reviews by movie.
     """
-    try:
-        if sort:
-            schemas.SortingModel(sort)
-
-        if sort_dir:
-            schemas.SortingDir(sort_dir)
-    except ValueError:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f'Invalid sorting method, available are'
-                   f' sort: {[e.value for e in schemas.SortingModel]} and'
-                   f' sort_dir: {[e.value for e in schemas.SortingDir]}.'
-        )
-
-    reviews = crud.review.get_by_user(db, user_id=user_id, skip=skip, limit=limit, sort=sort, sort_dir=sort_dir)
+    reviews = crud.review.get_by_user(db, user_id=user_id, skip=skip, limit=limit,
+                                      sort=sort_settings.sort, sort_dir=sort_settings.sort_dir)
     return reviews
 
 
