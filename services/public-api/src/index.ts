@@ -9,7 +9,6 @@ import RelationsRouter from './services/relations';
 import ReviewsRouter, { MovieReviewsRouter, UserReviewsRouter } from './services/reviews';
 import UsersRouter from './services/users';
 import swaggerUi from 'swagger-ui-express';
-import { handleToken } from './session';
 import { corsConfig, sessionConfig } from './config';
 
 const app = express();
@@ -18,9 +17,6 @@ const app = express();
 app.use(morgan('combined'));
 app.use(cors(corsConfig));
 app.use(session(sessionConfig));
-
-// Custom middleware
-app.use(handleToken);
 
 // Routes (handled in order of appearance)
 app.use('/auth', AuthRouter);

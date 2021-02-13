@@ -30,9 +30,7 @@ const sessionConfig = {
 const tokenConfig = {
   // FIXME(kantoniak): Hardcoded secret
   secret: 'my-secret-key',
-  options: {
-    algorithms: [<Algorithm>"HS256"]
-  }
+  algorithms: [<Algorithm>"HS256"]
 };
 
 const axiosInstance: AxiosInstance = axios.create({

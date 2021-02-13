@@ -3,13 +3,50 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import md5 from 'md5';
-import { Token, UserWeb } from '../api/users/api';
+import { Token, UserWeb, HTTPValidationError } from '../api/users/api';
 import { loginApi, usersApi } from '../config';
 import { buildErrorPassthrough } from '../middleware';
 import { PublicUser } from '../openapi';
-import { requireLogInCredentials, TokenPayload } from '../session';
+import { TokenPayload } from '../token';
 
 const router = express.Router();
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     LogInCredentials:
+ *       type: "object"
+ *       required:
+ *         - username
+ *         - password
+ *       properties:
+ *         username:
+ *           type: string
+ *           format: email
+ *         password:
+ *           type: string
+ */
+function requireLogInCredentials(req: express.Request, res: express.Response, next: express.NextFunction) {
+
+    const email = req.body?.username;
+    const password = req.body?.password;
+    if (!email || !password) {
+        const error: HTTPValidationError = {
+            detail: [
+                {
+                    loc: ["body"],
+                    msg: "Missing required parameters.",
+                    type: "parameter"
+                }
+            ]
+        };
+        res.status(422).json(error);
+        return next(error);
+    }
+
+    next();
+}
 
 /**
  * @swagger
@@ -98,7 +135,7 @@ router.post("/log-in", bodyParser.json());
 router.post("/log-in", requireLogInCredentials);
 router.post("/log-in", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
 
-    if (req.session?.token_payload) {
+    if (req.session?.token) {
         const error = {
             detail: "Already logged in."
         };
@@ -113,9 +150,9 @@ router.post("/log-in", async (req: express.Request, res: express.Response, next:
             await loginApi.loginAccessTokenApiUsersLoginAccessTokenPost(email, password);
 
         const token = tokenResp.data.access_token;
-        const payload: TokenPayload = <any>jwt.decode(token);
-        req.session.token_payload = payload;
+        req.session.token = token;
 
+        const payload: TokenPayload = <any>jwt.decode(token);
         const userId = payload.sub;
         const userResp: AxiosResponse<UserWeb> = await usersApi.readUserByIdApiUsersUserIdGet(userId);
 
@@ -146,8 +183,8 @@ router.post("/log-in", async (req: express.Request, res: express.Response, next:
  *         description: Logged out successfully.
  */
 router.get("/log-out", (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    if (req.session?.token_payload) {
-        delete req.session.token_payload;
+    if (req.session?.token) {
+        delete req.session.token;
     }
 
     res.status(200).send();

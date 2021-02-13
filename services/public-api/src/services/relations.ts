@@ -6,7 +6,7 @@ import { UserWeb } from '../api/users';
 import { relsApi, usersApi } from '../config';
 import { PublicUser } from '../openapi';
 import { buildErrorPassthrough, buildIdHandler, buildSortingHandler, errorIfIdNotValid, handlePagination } from '../middleware';
-import { requireSessionOrToken } from '../session';
+import { requireToken } from '../token';
 
 const router = express.Router({ mergeParams: true });
 const handleSorting = buildSortingHandler(['created']);
@@ -127,7 +127,7 @@ router.get("/followers", async (req: express.Request, res: express.Response, nex
  */
 router.post("/followers/:follower_id", errorIfIdNotValid);
 router.post("/followers/:follower_id", errorIfFollowerIdNotValid);
-router.post("/followers/:follower_id", requireSessionOrToken);
+router.post("/followers/:follower_id", requireToken);
 router.post("/followers/:follower_id", errorIfNotFollowersToken);
 router.post("/followers/:follower_id", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
@@ -172,7 +172,7 @@ router.post("/followers/:follower_id", async (req: express.Request, res: express
  */
 router.delete("/followers/:follower_id", errorIfIdNotValid);
 router.delete("/followers/:follower_id", errorIfFollowerIdNotValid);
-router.delete("/followers/:follower_id", requireSessionOrToken);
+router.delete("/followers/:follower_id", requireToken);
 router.delete("/followers/:follower_id", errorIfNotFollowersToken);
 router.delete("/followers/:follower_id", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {

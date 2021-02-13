@@ -5,6 +5,7 @@ import { UserWeb } from '../api/users/api';
 import { relsApi, usersApi } from '../config';
 import { PublicUser } from '../openapi';
 import { buildErrorPassthrough, errorIfIdNotValid, handlePagination } from '../middleware';
+import { optionalToken } from '../token';
 
 const router = express.Router();
 
@@ -141,6 +142,7 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
  *         $ref: '#/components/responses/ValidationError'
  */
 router.get("/:id", errorIfIdNotValid);
+router.get("/:id", optionalToken);
 router.get("/:id", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const user_id: string = req.params.id;
