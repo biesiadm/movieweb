@@ -142,6 +142,12 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
             return <AxiosResponse<PublicReview[]>>axiosResponse;
         })
         .then((axiosResponse: AxiosResponse<PublicReview[]>) => {
+            axiosResponse.data.forEach((review: PublicReview) => {
+                review.created += 'Z'
+            });
+            return axiosResponse;
+        })
+        .then((axiosResponse: AxiosResponse<PublicReview[]>) => {
             const reviews: PublicReview[] = axiosResponse.data;
             return Promise
                 .all(reviews
@@ -266,6 +272,9 @@ router.post("/", async (req: express.Request, res: express.Response, next: expre
         const reqBody = <ReviewCreate>req.body;
         const reviewResp = await reviewsApi.addReviewApiReviewsNewPost(reqBody);
 
+        // Fix missing GMT timestamp
+        reviewResp.data.created += 'Z';
+
         res.status(200).json(reviewResp.data);
         return next();
     } catch (reason) {
@@ -354,6 +363,12 @@ movieRouter.get("/", (req: express.Request, res: express.Response, next: express
             return <AxiosResponse<PublicReview[]>>axiosResponse;
         })
         .then((axiosResponse: AxiosResponse<PublicReview[]>) => {
+            axiosResponse.data.forEach((review: PublicReview) => {
+                review.created += 'Z'
+            });
+            return axiosResponse;
+        })
+        .then((axiosResponse: AxiosResponse<PublicReview[]>) => {
             const reviews: PublicReview[] = axiosResponse.data;
             return Promise
                 .all(reviews
@@ -432,6 +447,12 @@ userRouter.get("/", (req: express.Request, res: express.Response, next: express.
         .then((axiosResponse: AxiosResponse<Review[]>) => {
             axiosResponse.data = axiosResponse.data.map((review: Review) => <PublicReview>review);
             return <AxiosResponse<PublicReview[]>>axiosResponse;
+        })
+        .then((axiosResponse: AxiosResponse<PublicReview[]>) => {
+            axiosResponse.data.forEach((review: PublicReview) => {
+                review.created += 'Z'
+            });
+            return axiosResponse;
         })
         .then((axiosResponse: AxiosResponse<PublicReview[]>) => {
             const reviews: PublicReview[] = axiosResponse.data;

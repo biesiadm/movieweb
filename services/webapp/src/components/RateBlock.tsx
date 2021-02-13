@@ -1,9 +1,11 @@
+import { AxiosResponse } from 'axios';
 import React, { Component } from 'react';
 import { Star, StarFill } from 'react-bootstrap-icons';
 import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
-import { User } from '../api/public';
+import { CreateReview, Movie, Review, User } from '../api/public';
+import { reviewsApi } from '../config';
 import { getLogInPath } from '../utils';
 
 enum ReviewState {
@@ -15,6 +17,7 @@ enum ReviewState {
 
 interface Props extends RouteComponentProps {
   className?: string,
+  movie: Movie,
   user: User | null
 }
 
@@ -26,6 +29,7 @@ type State = {
     comment: null | string,
     created: null | string
   }
+  reviewObject: Review | null
 }
 
 class RateBlock extends Component<Props, State> {
@@ -46,7 +50,8 @@ class RateBlock extends Component<Props, State> {
         rating: null,
         comment: null,
         created: null
-      }
+      },
+      reviewObject: null
     }
   }
 
@@ -91,6 +96,10 @@ class RateBlock extends Component<Props, State> {
   }
 
   saveReview():void {
+    if (!this.props.user) {
+      return;
+    }
+
     this.setState({
       state: ReviewState.Saving,
       review: {
@@ -100,38 +109,65 @@ class RateBlock extends Component<Props, State> {
       }
     })
 
-    new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(null);
-      }, 1000)
-    })
-    .then(() => {
-      this.setState({
-        state: ReviewState.Saved
+
+    const create: CreateReview = {
+      user_id: this.props.user.id,
+      movie_id: this.props.movie.id,
+      rating: this.state.review.rating!
+    };
+    if (this.state.review.comment) {
+      create.comment = this.state.review.comment;
+    }
+    reviewsApi.addReview(create)
+      .then((resp: AxiosResponse<Review>) => {
+        const reviewObject: Review = resp.data;
+        this.setState({
+          state: ReviewState.Saved,
+          review: {
+            rating: reviewObject.rating,
+            comment: reviewObject.comment || null,
+            created: reviewObject.created
+          },
+          reviewObject: reviewObject
+        })
       })
-    });
+      .catch(() => {
+        this.setState({
+          state: ReviewState.New,
+          review: {
+            rating: this.state.review.rating,
+            comment: this.state.review.comment,
+            created: null
+          }
+        })
+      });
   }
 
   clearReview():void {
+    if (!this.state?.reviewObject?.id) {
+      return;
+    }
+
     this.setState({
       state: ReviewState.Clearing
     })
 
-    new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(null);
-      }, 1000)
-    })
-    .then(() => {
-      this.setState({
-        state: ReviewState.New,
-        review: {
-          rating: null,
-          comment: null,
-          created: null
-        }
+    reviewsApi.removeReview(this.state.reviewObject.id)
+      .then(() => {
+        this.setState({
+          state: ReviewState.New,
+          review: {
+            rating: null,
+            comment: null,
+            created: null
+          }
+        })
       })
-    });
+      .catch(() => {
+        this.setState({
+          state: ReviewState.Saved
+        })
+      });
   }
 
   render(): React.ReactNode {

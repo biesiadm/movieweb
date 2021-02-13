@@ -90,6 +90,7 @@ class MovieDetailsPage extends Component<Props, State> {
 
     if (this.state.movie !== null) {
       const movie: Movie = this.state.movie;
+      const user: User | null = this.props.user;
       const recentReviewsPromise = () => moviesApi.getMovieReviews(movie.id, 8, 0, 'rating', SortDir.Desc);
       const featuredStyle = {
         backgroundImage: "linear-gradient(90deg, rgba(20,23,26,1) 0%, rgba(20,23,26,0.8) 8rem, rgba(20,23,26,0.8) calc(100% - 8rem), rgba(20,23,26,1) 100%), url(" + movie.background_url + ")",
@@ -118,7 +119,7 @@ class MovieDetailsPage extends Component<Props, State> {
                         </div>
                       </div>
                       <div className="col-xl-4 pt-4 pt-lg-5 pt-xl-0 ps-xl-5">
-                        <RateBlock {...this.props} className="rounded" user={this.props.user} />
+                        <RateBlock {...this.props} className="rounded" movie={movie} user={user} />
                       </div>
                     </div>
                   </div>
