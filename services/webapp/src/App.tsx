@@ -13,8 +13,15 @@ import MovieDetailsPage from './pages/MovieDetailsPage';
 import PublicHomepage from './pages/PublicHomepage';
 import UserListPage from './pages/UserListPage';
 import UserDetailsPage from './pages/UserDetailsPage';
+import { usersApi } from './config';
+
+enum StartupState {
+  Loading = "LOADING",
+  Ready = "READY"
+}
 
 type State = {
+  state: StartupState,
   user: User | null
 }
 
@@ -26,26 +33,41 @@ class App extends Component<EmptyProps, State> {
     this.componentWillUnmount.bind(this);
 
     this.state = {
+      state: StartupState.Loading,
       user: null
     }
   }
 
   render(): React.ReactNode {
-    return <Switch>
-      <Route exact path='/login' component={LoginPage} />
-      <Route exact path='/logout' component={LogoutPage} />
-      <Route>
-        {this.renderApp()}
-      </Route>
-    </Switch>;
+    if (this.state.state == StartupState.Loading) {
+      return  <div className="w-100 d-flex justify-content-center align-items-center py-5 text-secondary" style={{ 'minHeight': '100vh'}}>
+                <div className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></div>
+              </div>;
+    } else {
+      return <Switch>
+        <Route exact path='/login' component={LoginPage} />
+        <Route exact path='/logout' component={LogoutPage} />
+        <Route>
+          {this.renderApp()}
+        </Route>
+      </Switch>;
+    }
   }
 
-  componentDidMount() {
-    // Load user from localStorage when loading page
-    const userString = window.localStorage.getItem('currentUser');
-    if (userString) {
+  async componentDidMount(): Promise<void> {
+    try {
+      const userResp = await usersApi.getCurrentUser();
+      const user: User = userResp.data;
+      window.localStorage.setItem('currentUser', JSON.stringify(user));
       this.setState({
-        user: JSON.parse(userString)
+        state: StartupState.Ready,
+        user: user
+      });
+    } catch (error) {
+      window.localStorage.removeItem('currentUser');
+      this.setState({
+        state: StartupState.Ready,
+        user: null
       });
     }
 
@@ -59,6 +81,8 @@ class App extends Component<EmptyProps, State> {
       window.localStorage.removeItem('currentUser');
       this.setState({ user: null });
     });
+
+    return Promise.resolve();
   }
 
   componentWillUnmount() {

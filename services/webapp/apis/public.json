@@ -556,6 +556,35 @@
         }
       }
     },
+    "/users/me": {
+      "get": {
+        "operationId": "getCurrentUser",
+        "summary": "Get current user using token",
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "JwtBearerAuth": []
+          },
+          {
+            "JwtCookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/users/{id}": {
       "get": {
         "operationId": "getUserById",
