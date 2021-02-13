@@ -77,24 +77,19 @@ interface PublicMovie extends Movie {
  *         avatar_url:
  *           type: "string"
  *           format: "url"
+ *         following:
+ *           type: boolean
+ *           description: Set on selected requests when client authenticated. Says if current user is a follower.
  */
 interface PublicUser extends UserWeb {
 
     // TODO(biesiadm): Move to user API
-    /**
-     *
-     * @type {string}
-     * @memberof PublicUser
-     */
     login: string;
 
     // TODO(biesiadm): Move to user API
-    /**
-     *
-     * @type {string}
-     * @memberof PublicUser
-     */
     avatar_url: string;
+
+    following?: boolean;
 }
 
 /**

@@ -54,20 +54,39 @@ function requireLogInCredentials(req: Request, res: Response, next: NextFunction
     next();
 }
 
-function handleTokenExpiration(req: Request, res: Response, next: NextFunction) {
+function handleToken(req: Request, res: Response, next: NextFunction) {
 
-    // Skip if no token
-    if (!req.session?.token_payload) {
-        return next();
+    // Handle session token expiration
+    if (req.session?.token_payload) {
+        const token: TokenPayload = req.session.token_payload;
+
+        // TODO(kantoniak): Handle token refreshing
+
+        // Remove payload if token expired
+        if (token.exp < new Date().getTime()/1000) {
+            delete req.session.token_payload;
+        }
     }
 
-    const token: TokenPayload = req.session.token_payload;
+    // Extract bearer token if exists
+    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+        const token = req.headers.authorization.split(' ')[1];
+        try {
+            const payload: TokenPayload = <any>jwt.verify(token, tokenConfig.secret, tokenConfig.options);
+            req.token_payload = payload;
+            return next();
+        } catch(err) {
+            const error = { detail: 'Invalid token' };
+            res.status(401).json(error).send();
+            return;
+        }
+    }
 
-    // TODO(kantoniak): Handle token refreshing
-
-    // Remove payload if token expired
-    if (token.exp < new Date().getTime()/1000) {
-        delete req.session.token_payload;
+    // Use session token
+    if (req.session?.token_payload) {
+        // Token checked already
+        const token: TokenPayload = req.session.token_payload;
+        req.token_payload = token;
         return next();
     }
 
@@ -98,25 +117,7 @@ declare global {
  */
 function requireSessionOrToken(req: Request, res: Response, next: NextFunction) {
 
-    // Extract bearer token if exists
-    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-        const token = req.headers.authorization.split(' ')[1];
-        try {
-            const payload: TokenPayload = <any>jwt.verify(token, tokenConfig.secret, tokenConfig.options);
-            req.token_payload = payload;
-            return next();
-        } catch(err) {
-            const error = { detail: 'Invalid token' };
-            res.status(401).json(error).send();
-            return;
-        }
-    }
-
-    // Use session token
-    if (req.session?.token_payload) {
-        // HandleTokenExpiration checked everything already
-        const token: TokenPayload = req.session.token_payload;
-        req.token_payload = token;
+    if (req.token_payload) {
         return next();
     }
 
@@ -126,5 +127,5 @@ function requireSessionOrToken(req: Request, res: Response, next: NextFunction) 
 }
 
 
-export { requireLogInCredentials, handleTokenExpiration, requireSessionOrToken };
+export { requireLogInCredentials, handleToken, requireSessionOrToken };
 export type { TokenPayload };

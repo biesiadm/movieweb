@@ -212,6 +212,16 @@ html, body, body>div {
     fill: #F0A96E;
 }
 
+.follow-btn.disabled {
+    filter: grayscale(1);
+    color: #6C757D;
+    cursor: default;
+}
+
+.follow-btn.disabled > svg {
+    fill: #6C757D;
+}
+
 /* User details page */
 @media (min-width: 992px) { /* Large and above */
     .user-details-page-avatar {

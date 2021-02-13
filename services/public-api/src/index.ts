@@ -9,7 +9,7 @@ import RelationsRouter from './services/relations';
 import ReviewsRouter, { MovieReviewsRouter, UserReviewsRouter } from './services/reviews';
 import UsersRouter from './services/users';
 import swaggerUi from 'swagger-ui-express';
-import { handleTokenExpiration } from './session';
+import { handleToken } from './session';
 import { corsConfig, sessionConfig } from './config';
 
 const app = express();
@@ -20,7 +20,7 @@ app.use(cors(corsConfig));
 app.use(session(sessionConfig));
 
 // Custom middleware
-app.use(handleTokenExpiration);
+app.use(handleToken);
 
 // Routes (handled in order of appearance)
 app.use('/auth', AuthRouter);
