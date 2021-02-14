@@ -47,7 +47,7 @@ def read_user_by_id(
 
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=f'User with id: {user_id} does not exist.'
         )
 
@@ -66,7 +66,7 @@ def read_user_by_login(
 
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=f'User with login: {user_login} does not exist.'
         )
 

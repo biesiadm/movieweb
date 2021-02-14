@@ -2,7 +2,7 @@ import express from 'express';
 import asyncHandler from 'express-async-handler';
 import { errorIfIdNotValid, handlePagination } from '../middleware';
 import { optionalToken, requireToken } from '../token';
-import { fetchUserById, fetchUsers } from '../providers/users';
+import { fetchNullableUserById, fetchUserById, fetchUsers } from '../providers/users';
 import { isFollowing } from '../providers/relations';
 
 const router = express.Router();
@@ -92,11 +92,25 @@ router.get("/", asyncHandler(async (req: express.Request, res: express.Response,
  *             schema:
  *               $ref: "#/components/schemas/User"
  */
-router.get("/me", requireToken);
+router.get("/me", optionalToken);
 router.get("/me", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+
+    if (!req.token_payload) {
+        res.status(404).send();
+    }
+
     const user_id: string = req.token_payload!.sub!;
-    const user = await fetchUserById(user_id);
-    res.status(200).json(user);
+    const user = await fetchNullableUserById(user_id);
+    if (user) {
+        res.status(200).json(user);
+    } else {
+        // Clear invalid cookie
+        if (req.cookies['token']) {
+            delete req.cookies['token'];
+            res.clearCookie('token');
+        }
+        res.status(404).send();
+    }
     return next();
 }));
 
