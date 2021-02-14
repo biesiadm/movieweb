@@ -1,4 +1,5 @@
-from typing import Optional
+from typing import Optional, List
+from uuid import UUID
 
 from app.crud.base import CRUDBase
 from app.db.models import User
@@ -42,6 +43,13 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
     def is_superuser(self, user: User) -> bool:
         return user.is_superuser
+
+    def get_multi_filter(self, db: Session, *, skip: int, limit: int, user_id: Optional[List[UUID]] = None):
+        if user_id:
+            return db.query(self.model).filter(User.id.in_(user_id)) \
+                .offset(skip).limit(limit).all()
+        else:
+            return db.query(self.model).offset(skip).limit(limit).all()
 
 
 user = CRUDUser(User)
