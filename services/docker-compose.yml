@@ -69,22 +69,22 @@ services:
       - 5433:5432
 
 
-#  public-api:
-#    depends_on:
-#      - movies
-#      - users
-#    build: public-api/
-#    env_file: .env
-#    ports:
-#      - ${PUBLIC_API_PORT}:8080
-#
-#  webapp:
-#    depends_on:
-#      - public-api
-#    build: webapp/
-#    env_file: .env
-#    ports:
-#      - ${WEBAPP_PORT}:8080
+  public-api:
+    depends_on:
+      - movies
+      - users
+    build: public-api/
+    env_file: .env
+    ports:
+      - ${PUBLIC_API_PORT}:8080
+
+  webapp:
+    depends_on:
+      - public-api
+    build: webapp/
+    env_file: .env
+    ports:
+      - ${WEBAPP_PORT}:8080
 
 volumes:
   movies-db-data:
