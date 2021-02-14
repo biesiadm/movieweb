@@ -33,6 +33,19 @@
             },
             "name": "limit",
             "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "User Id",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "name": "user_id",
+            "in": "query"
           }
         ],
         "responses": {
@@ -107,6 +120,49 @@
               "format": "uuid"
             },
             "name": "user_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserWeb"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/user/{user_login}": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Read User By Login",
+        "description": "Get a specific user by login.",
+        "operationId": "read_user_by_login_api_users_user__user_login__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "User Login",
+              "type": "string"
+            },
+            "name": "user_login",
             "in": "path"
           }
         ],
