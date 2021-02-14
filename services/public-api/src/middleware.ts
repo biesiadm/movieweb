@@ -38,15 +38,16 @@ function buildIdHandler(idField: string) {
  */
 const errorIfIdNotValid = buildIdHandler('id');
 
+type Pagination = {
+    limit: number,
+    skip: number
+};
 
 // Adds pagination to request
 declare global {
     namespace Express {
         interface Request {
-            pagination?: {
-                limit: number,
-                skip: number
-            }
+            pagination?: Pagination
         }
     }
 }
@@ -105,7 +106,7 @@ enum SortDir {
     Descending = 'desc'
 }
 
-type SortingInfo = {
+type Sorting = {
     by: string,
     dir: SortDir
 }
@@ -113,7 +114,7 @@ type SortingInfo = {
 declare global {
     namespace Express {
         interface Request {
-            sorting?: SortingInfo
+            sorting?: Sorting
         }
     }
 }
@@ -159,21 +160,37 @@ function buildSortingHandler(sortBy: string[], defaultCriteria?: string) {
         }
 
         if (sorting.by !== undefined) {
-            req.sorting = <SortingInfo>sorting;
+            req.sorting = <Sorting>sorting;
         }
 
         next();
     }
 }
 
-function buildErrorPassthrough(codesToPass: Array<number>, res: Response, next: NextFunction) {
-    return (reason: any) => {
-        if (reason.response && codesToPass.includes(reason.response.status)) {
-            res.status(reason.response.status).json(reason.response.data);
-        } else {
-            res.status(500).send();
-        }
+const handleValidationErrors = (error: any, req: Request, res: Response, next: NextFunction) => {
+    if (error.detail?.msg) {
+        res.status(422).json(error).send();
+        return;
+    } else {
+        next(error);
     }
 }
 
-export { buildSortingHandler, buildErrorPassthrough, buildIdHandler, errorIfIdNotValid, handlePagination };
+const sendBackHttp4xxOr500 = (error: any, req: Request, res: Response, next: NextFunction) => {
+    const status = error?.response?.status;
+    if (status && Number.isInteger(status) && 400 <= status && status < 500) {
+        res.status(status).json(error.response.data);
+    } else {
+        res.status(500).send();
+    }
+}
+
+export {
+    buildIdHandler,
+    buildSortingHandler,
+    errorIfIdNotValid,
+    handlePagination,
+    handleValidationErrors,
+    sendBackHttp4xxOr500
+};
+export type { Pagination, Sorting };

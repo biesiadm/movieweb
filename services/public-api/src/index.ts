@@ -10,6 +10,7 @@ import ReviewsRouter, { MovieReviewsRouter, UserReviewsRouter } from './services
 import UsersRouter from './services/users';
 import swaggerUi from 'swagger-ui-express';
 import { corsConfig } from './config';
+import { handleValidationErrors, sendBackHttp4xxOr500 } from './middleware';
 
 const app = express();
 
@@ -41,6 +42,10 @@ app.get('/openapi.json', (req: express.Request, res: express.Response) => {
     res.setHeader('Content-Type', 'application/json');
     res.send(OpenapiSpec);
 });
+
+// Error handlers
+app.use(handleValidationErrors);
+app.use(sendBackHttp4xxOr500);
 
 app.listen(8080, () => {
     console.log(`public-api started on port 8080!`);

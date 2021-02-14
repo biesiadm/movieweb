@@ -1,15 +1,20 @@
 import { AxiosResponse } from 'axios';
+import { validate as validateUuid } from 'uuid';
 import { UserWeb } from '../api/users';
 import { usersApi } from '../config';
+import { Pagination } from '../middleware';
 import { PublicUser } from '../openapi';
+import { throwOnInvalidUuid } from '../utils';
 
-const fetchUsers = async (skip?: number, limit?: number): Promise<PublicUser[]> => {
+const fetchUsers = async (paging?: Pagination): Promise<PublicUser[]> => {
+    const skip = paging?.skip;
+    const limit = paging?.limit;
     const usersResp = await usersApi.readUsersApiUsersGet(skip, limit);
     return usersResp.data.map((u: UserWeb) => <PublicUser>u);
 }
 
 const fetchUsersById = async (user_ids: string[]): Promise<PublicUser[]> => {
-    // TODO(kantoniak): Validate UUIDs
+    user_ids.forEach(throwOnInvalidUuid);
     const userResps = await Promise.all(user_ids.map(usersApi.readUserByIdApiUsersUserIdGet));
     return userResps.map((r: AxiosResponse<UserWeb>) => <PublicUser>(r.data));
 }
@@ -20,7 +25,10 @@ const fetchUserById = async (id: string): Promise<PublicUser> => {
 
 // Currently unused
 const fetchNullableUserById = async (id:string): Promise<PublicUser | null> => {
-    // TODO(kantoniak): Validate UUID
+    if (!validateUuid(id)) {
+        return null;
+    }
+
     try {
         const users = await fetchUsersById([id]);
         return users[0];
@@ -33,4 +41,9 @@ const fetchNullableUserById = async (id:string): Promise<PublicUser | null> => {
     }
 }
 
-export { fetchUsers, fetchUserById, fetchNullableUserById, fetchUsersById };
+export {
+    fetchNullableUserById,
+    fetchUserById,
+    fetchUsers,
+    fetchUsersById
+};

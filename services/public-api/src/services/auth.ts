@@ -1,10 +1,10 @@
 import { AxiosResponse } from 'axios';
 import bodyParser from 'body-parser';
 import express from 'express';
+import asyncHandler from 'express-async-handler'
 import jwt from 'jsonwebtoken';
 import { Token, HTTPValidationError } from '../api/users/api';
 import { loginApi } from '../config';
-import { buildErrorPassthrough } from '../middleware';
 import { fetchUserById } from '../providers/users';
 import { TokenPayload } from '../token';
 
@@ -89,19 +89,14 @@ function requireLogInCredentials(req: express.Request, res: express.Response, ne
  */
 router.post("/authorize", bodyParser.urlencoded({ extended: false, parameterLimit: 2 }));
 router.post("/authorize", requireLogInCredentials);
-router.post("/authorize", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.post("/authorize", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     const email = req.body.username;
     const password = req.body.password;
-    try {
-        const tokenResp: AxiosResponse<Token> =
-            await loginApi.loginAccessTokenApiUsersLoginAccessTokenPost(email, password);
-        res.status(tokenResp.status).json(tokenResp.data);
-        return next();
-    } catch (reason) {
-        const handler = buildErrorPassthrough([400, 413, 422], res, next);
-        return handler(reason);
-    }
-});
+    const tokenResp: AxiosResponse<Token> =
+        await loginApi.loginAccessTokenApiUsersLoginAccessTokenPost(email, password);
+    res.status(tokenResp.status).json(tokenResp.data);
+    return next();
+}));
 
 /**
  * @swagger
@@ -132,7 +127,7 @@ router.post("/authorize", async (req: express.Request, res: express.Response, ne
  */
 router.post("/log-in", bodyParser.json());
 router.post("/log-in", requireLogInCredentials);
-router.post("/log-in", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.post("/log-in", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
 
     if (req.cookies['token']) {
         const error = {
@@ -144,22 +139,17 @@ router.post("/log-in", async (req: express.Request, res: express.Response, next:
 
     const email = req.body.username;
     const password = req.body.password;
-    try {
-        const tokenResp: AxiosResponse<Token> =
-            await loginApi.loginAccessTokenApiUsersLoginAccessTokenPost(email, password);
+    const tokenResp: AxiosResponse<Token> =
+        await loginApi.loginAccessTokenApiUsersLoginAccessTokenPost(email, password);
 
-        const token = tokenResp.data.access_token;
-        res.cookie('token', token, { httpOnly: true });
+    const token = tokenResp.data.access_token;
+    res.cookie('token', token, { httpOnly: true });
 
-        const payload: TokenPayload = <any>jwt.decode(token);
-        const user = await fetchUserById(payload.sub);
-        res.status(200).json(user);
-        return next();
-    } catch (reason) {
-        const handler = buildErrorPassthrough([400, 413, 422], res, next);
-        return handler(reason);
-    }
-});
+    const payload: TokenPayload = <any>jwt.decode(token);
+    const user = await fetchUserById(payload.sub);
+    res.status(200).json(user);
+    return next();
+}));
 
 /**
  * @swagger

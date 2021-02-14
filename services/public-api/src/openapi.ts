@@ -53,7 +53,54 @@ interface PublicMovie extends Movie {
     // TODO(biesiadm): Move to user API
     slug: string;
 
-    review?: Review;
+    review?: PublicReview;
+}
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     CreateReview:
+ *       type: "object"
+ *       required:
+ *         - user_id
+ *         - movie_id
+ *         - rating
+ *         - created
+ *       properties:
+ *         id:
+ *           type: "string"
+ *           format: "uuid"
+ *         user_id:
+ *           type: "string"
+ *           format: "uuid"
+ *         movie_id:
+ *           type: "string"
+ *           format: "uuid"
+ *         rating:
+ *           type: "integer"
+ *           minimum: 1
+ *           maximum: 10
+ *         comment:
+ *           type: "string"
+ *     Review:
+ *       allOf:
+ *         - $ref: '#/components/schemas/CreateReview'
+ *         -  type: "object"
+ *            required:
+ *              - created
+ *            properties:
+ *              created:
+ *                type: "string"
+ *                format: "date-time"
+ *              movie:
+ *                $ref: "#/components/schemas/Movie"
+ *              user:
+ *                $ref: "#/components/schemas/User"
+ */
+interface PublicReview extends Review {
+    movie?: PublicMovie;
+    user?: PublicUser;
 }
 
 /**
@@ -83,7 +130,6 @@ interface PublicMovie extends Movie {
  *           description: Set on selected requests when client authenticated. Says if current user is a follower.
  */
 interface PublicUser extends UserWeb {
-
     following?: boolean;
 }
 
@@ -130,4 +176,4 @@ interface PublicUser extends UserWeb {
  */
 
 export default OpenapiSpec;
-export type { PublicMovie, PublicUser };
+export type { PublicMovie, PublicReview, PublicUser };

@@ -1,7 +1,8 @@
-import express from 'express'
-import { buildSortingHandler, buildErrorPassthrough, errorIfIdNotValid, handlePagination } from '../middleware';
+import express from 'express';
+import asyncHandler from 'express-async-handler';
+import { buildSortingHandler, errorIfIdNotValid, handlePagination } from '../middleware';
 import { optionalToken } from '../token';
-import { fetchNullableReviewByMovieUser } from '../providers/reviews';
+import { fetchNullableReviewByMovieIdUserId } from '../providers/reviews';
 import { fetchMovieById, fetchMovies } from '../providers/movies';
 
 const router = express.Router();
@@ -55,35 +56,28 @@ const router = express.Router();
  */
 router.get("/", handlePagination);
 router.get("/", buildSortingHandler(['year', 'avg_rating', 'rating_count']));
-router.get("/", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.get("/", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
 
     const ratingBasedSorts = ['avg_rating', 'rating_count'];
     if (req.sorting?.by && ratingBasedSorts.includes(req.sorting.by)) {
         // TODO(kantoniak): Fetch ids from movie service and then get movie details
     }
 
-    try {
-        // Fetch all movies
-        const skip = req.pagination!.skip;
-        const limit = req.pagination!.limit;
-        const movies = await fetchMovies(skip, limit);
+    // Fetch all movies
+    const movies = await fetchMovies(req.pagination!);
 
-        // TODO(biesiadm): Pass info from the service
-        const responseBody = {
-            movies: movies,
-            info: {
-                count: movies.length,
-                totalCount: 16
-            }
-        };
+    // TODO(biesiadm): Pass info from the service
+    const responseBody = {
+        movies: movies,
+        info: {
+            count: movies.length,
+            totalCount: 16
+        }
+    };
 
-        res.status(200).json(responseBody);
-        return next();
-    } catch (reason) {
-        const handler = buildErrorPassthrough([404, 422], res, next);
-        handler(reason);
-    }
-});
+    res.status(200).json(responseBody);
+    return next();
+}));
 
 /**
  * @swagger
@@ -107,29 +101,24 @@ router.get("/", async (req: express.Request, res: express.Response, next: expres
  */
 router.get("/:id", errorIfIdNotValid);
 router.get("/:id", optionalToken);
-router.get("/:id", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {
-        const movie_id: string = req.params.id;
-        const movie = await fetchMovieById(movie_id);
+router.get("/:id", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    const movie_id: string = req.params.id;
+    const movie = await fetchMovieById(movie_id);
 
-        if (req.token_payload) {
-            const user_id = req.token_payload.sub;
-            try {
-                const review = await fetchNullableReviewByMovieUser(movie.id, user_id);
-                if (review) {
-                    movie.review = review;
-                }
-            } catch (error) {
-                // Don't do anything
+    if (req.token_payload) {
+        const user_id = req.token_payload.sub;
+        try {
+            const review = await fetchNullableReviewByMovieIdUserId(movie.id, user_id);
+            if (review) {
+                movie.review = review;
             }
+        } catch (error) {
+            // Don't do anything
         }
-
-        res.status(200).json(movie);
-        next();
-    } catch (reason) {
-        const handler = buildErrorPassthrough([404, 422], res, next);
-        handler(reason);
     }
-});
+
+    res.status(200).json(movie);
+    next();
+}));
 
 export default router;

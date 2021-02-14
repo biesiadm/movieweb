@@ -731,6 +731,62 @@
           }
         }
       },
+      "CreateReview": {
+        "type": "object",
+        "required": [
+          "user_id",
+          "movie_id",
+          "rating",
+          "created"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "movie_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "comment": {
+            "type": "string"
+          }
+        }
+      },
+      "Review": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CreateReview"
+          },
+          {
+            "type": "object",
+            "required": [
+              "created"
+            ],
+            "properties": {
+              "created": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "movie": {
+                "$ref": "#/components/schemas/Movie"
+              },
+              "user": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        ]
+      },
       "User": {
         "type": "object",
         "required": [
@@ -818,62 +874,6 @@
             "type": "string"
           }
         }
-      },
-      "CreateReview": {
-        "type": "object",
-        "required": [
-          "user_id",
-          "movie_id",
-          "rating",
-          "created"
-        ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "user_id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "movie_id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "rating": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 10
-          },
-          "comment": {
-            "type": "string"
-          }
-        }
-      },
-      "Review": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/CreateReview"
-          },
-          {
-            "type": "object",
-            "required": [
-              "created"
-            ],
-            "properties": {
-              "created": {
-                "type": "string",
-                "format": "date-time"
-              },
-              "movie": {
-                "$ref": "#/components/schemas/Movie"
-              },
-              "user": {
-                "$ref": "#/components/schemas/User"
-              }
-            }
-          }
-        ]
       }
     },
     "responses": {
