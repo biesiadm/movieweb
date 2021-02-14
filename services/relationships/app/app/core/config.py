@@ -6,7 +6,8 @@ class Settings(BaseSettings):
     API_USERS: str
     SERVICE_NAME: str
 
-    DATABASE_URL: AnyUrl
+    DATABASE1_URL: AnyUrl
+    DATABASE2_URL: AnyUrl
 
     USERS_SERVICE_NAME: str
 

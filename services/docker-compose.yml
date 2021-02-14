@@ -45,17 +45,28 @@ services:
 
   relationships:
     depends_on:
-      - relationships-db
+      - relationships-db1
+      - relationships-db2
     build: relationships/
     env_file:
       - .env
       - relationships.env
 
-  relationships-db:
+  relationships-db1:
     image: postgres:13-alpine
-    env_file: relationships.env
+    env_file: relationships-db1.env
     volumes:
-      - relationships-db-data:/var/lib/postgresql/data/
+      - relationships-db1-data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+
+  relationships-db2:
+    image: postgres:13-alpine
+    env_file: relationships-db2.env
+    volumes:
+      - relationships-db2-data:/var/lib/postgresql/data/
+    ports:
+      - 5433:5432
 
 
   public-api:
@@ -79,4 +90,5 @@ volumes:
   movies-db-data:
   users-db-data:
   reviews-db-data:
-  relationships-db-data:
+  relationships-db1-data:
+  relationships-db2-data:
