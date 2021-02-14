@@ -23,13 +23,13 @@ const fillInGaps = (movies: Movie[]): PublicMovie[] => {
 const fetchMovies = async (paging?: Pagination): Promise<PublicMovie[]> => {
     const skip = paging?.skip;
     const limit = paging?.limit;
-    const resp = await moviesApi.readMoviesMoviesGet(skip, limit);
+    const resp = await moviesApi.readMoviesApiMoviesGet(skip, limit);
     return fillInGaps(resp.data);
 }
 
 const fetchMoviesById = async (ids: string[]): Promise<PublicMovie[]> => {
     ids.forEach(throwOnInvalidUuid);
-    const movieResps = await Promise.all(ids.map(moviesApi.readMovieByIdMoviesMovieIdGet))
+    const movieResps = await Promise.all(ids.map(moviesApi.readMovieByIdApiMoviesMovieIdGet))
     const movies = movieResps.map((r: AxiosResponse<Movie>) => r.data);
     return fillInGaps(movies);
 }
