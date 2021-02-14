@@ -34,8 +34,8 @@ const fetchReviews = async (paging?: Pagination, sorting?: Sorting): Promise<Pub
     const skip = paging?.skip;
     const limit = paging?.limit;
     const sort = sorting?.by;
-    const sortDir = sorting?.dir;
-    const resp = await reviewsApi.readAllReviewsApiReviewsReviewsGet(skip, limit, sort, sortDir);
+    const sortDir = <string>(sorting?.dir);
+    const resp = await reviewsApi.readAllReviewsApiReviewsReviewsGet(skip, limit, sort, <any>sortDir);
     return resp.data.map(convertToPublic);
 }
 
@@ -52,7 +52,7 @@ const fetchReviewsByMovieId = async (movie_id: string, paging?: Pagination, sort
     const skip = paging?.skip;
     const limit = paging?.limit;
     const sort = sorting?.by;
-    const sortDir = sorting?.dir;
+    const sortDir = <string>(sorting?.dir);
 
     const resp = await reviewsApi.readMovieReviewsApiReviewsMovieMovieIdReviewsGet(movie_id, skip, limit, sort, sortDir);
     return resp.data.map(convertToPublic);
@@ -64,7 +64,7 @@ const fetchReviewsByUserId = async (user_id: string, paging?: Pagination, sortin
     const skip = paging?.skip;
     const limit = paging?.limit;
     const sort = sorting?.by;
-    const sortDir = sorting?.dir;
+    const sortDir = <string>(sorting?.dir);
 
     const resp = await reviewsApi.readUserReviewsApiReviewsUserUserIdReviewsGet(user_id, skip, limit, sort, sortDir);
     return resp.data.map(convertToPublic);
