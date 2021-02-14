@@ -1,12 +1,8 @@
-import { AxiosResponse } from 'axios';
-import express from 'express';
-import slugify from 'slugify';
-import { Movie } from '../api/movies/api';
-import { moviesApi } from '../config';
-import { PublicMovie } from '../openapi';
+import express from 'express'
 import { buildSortingHandler, buildErrorPassthrough, errorIfIdNotValid, handlePagination } from '../middleware';
 import { optionalToken } from '../token';
 import { fetchNullableReviewByMovieUser } from '../providers/reviews';
+import { fetchMovieById, fetchMovies } from '../providers/movies';
 
 const router = express.Router();
 
@@ -59,40 +55,34 @@ const router = express.Router();
  */
 router.get("/", handlePagination);
 router.get("/", buildSortingHandler(['year', 'avg_rating', 'rating_count']));
-router.get("/", (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.get("/", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
 
     const ratingBasedSorts = ['avg_rating', 'rating_count'];
     if (req.sorting?.by && ratingBasedSorts.includes(req.sorting.by)) {
         // TODO(kantoniak): Fetch ids from movie service and then get movie details
     }
 
-    moviesApi.readMoviesMoviesGet(req.pagination!.skip, req.pagination!.limit)
-        .then((axiosResponse: AxiosResponse<Movie[]>) => {
-            axiosResponse.data = axiosResponse.data.map((movie: Movie) => {
-                let result: Partial<PublicMovie> = movie;
-                result.slug = slugify(movie.title, {
-                    lower: true,
-                    strict: true,
-                    locale: 'en'
-                });
-                return <PublicMovie>result;
-            });
-            return <AxiosResponse<PublicMovie[]>>axiosResponse;
-        })
-        .then((axiosResponse: AxiosResponse<PublicMovie[]>) => {
-            // TODO(biesiadm): Pass info from the service
-            const responseBody = {
-                movies: axiosResponse.data,
-                info: {
-                    count: axiosResponse.data.length,
-                    totalCount: 16
-                }
-            };
-            res.status(axiosResponse.status).json(responseBody);
-            return next();
-        })
-        .catch(buildErrorPassthrough([404, 422], res, next));
-    return res;
+    try {
+        // Fetch all movies
+        const skip = req.pagination!.skip;
+        const limit = req.pagination!.limit;
+        const movies = await fetchMovies(skip, limit);
+
+        // TODO(biesiadm): Pass info from the service
+        const responseBody = {
+            movies: movies,
+            info: {
+                count: movies.length,
+                totalCount: 16
+            }
+        };
+
+        res.status(200).json(responseBody);
+        return next();
+    } catch (reason) {
+        const handler = buildErrorPassthrough([404, 422], res, next);
+        handler(reason);
+    }
 });
 
 /**
@@ -117,39 +107,29 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
  */
 router.get("/:id", errorIfIdNotValid);
 router.get("/:id", optionalToken);
-router.get("/:id", (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.get("/:id", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        const movie_id: string = req.params.id;
+        const movie = await fetchMovieById(movie_id);
 
-    const movie_id: string = req.params.id;
-    moviesApi.readMovieByIdMoviesMovieIdGet(movie_id)
-        .then((axiosResponse: AxiosResponse<Movie>) => {
-            let newResponse: AxiosResponse<Partial<PublicMovie>> = axiosResponse;
-            newResponse.data.slug = slugify(axiosResponse.data.title, {
-                lower: true,
-                strict: true,
-                locale: 'en'
-            });
-            return <AxiosResponse<PublicMovie>>newResponse;
-        })
-        .then(async (axiosResponse: AxiosResponse<PublicMovie>) => {
-            let movie = axiosResponse.data;
-
-            if (req.token_payload) {
-                const user_id = req.token_payload.sub;
-                try {
-                    const review = await fetchNullableReviewByMovieUser(movie.id, user_id);
-                    if (review) {
-                        movie.review = review;
-                    }
-                } catch (error) {
-                    // Don't do anything
+        if (req.token_payload) {
+            const user_id = req.token_payload.sub;
+            try {
+                const review = await fetchNullableReviewByMovieUser(movie.id, user_id);
+                if (review) {
+                    movie.review = review;
                 }
+            } catch (error) {
+                // Don't do anything
             }
+        }
 
-            res.status(axiosResponse.status).json(movie);
-            return next();
-        })
-        .catch(buildErrorPassthrough([404, 422], res, next));
-    return res;
+        res.status(200).json(movie);
+        next();
+    } catch (reason) {
+        const handler = buildErrorPassthrough([404, 422], res, next);
+        handler(reason);
+    }
 });
 
 export default router;

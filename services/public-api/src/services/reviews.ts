@@ -10,7 +10,7 @@ import { Movie } from '../api/movies';
 import { UserWeb } from '../api/users';
 import { requireToken } from '../token';
 import { fetchUserById } from '../providers/users';
-import { fetchMovies } from '../providers/movies';
+import { fetchMoviesById } from '../providers/movies';
 import { fetchReview } from '../providers/reviews';
 
 const router = express.Router();
@@ -245,7 +245,7 @@ router.post("/", async (req: express.Request, res: express.Response, next: expre
 
         // Check if movie exists
         const movie_id: string = req.body?.movie_id;
-        await fetchMovies([movie_id]);
+        await fetchMoviesById([movie_id]);
 
         // Validate rating
         const rating = Number(req.body?.rating);
