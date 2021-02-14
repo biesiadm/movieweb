@@ -2,11 +2,10 @@ import { AxiosResponse } from 'axios';
 import bodyParser from 'body-parser';
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import md5 from 'md5';
-import { Token, UserWeb, HTTPValidationError } from '../api/users/api';
-import { loginApi, usersApi } from '../config';
+import { Token, HTTPValidationError } from '../api/users/api';
+import { loginApi } from '../config';
 import { buildErrorPassthrough } from '../middleware';
-import { PublicUser } from '../openapi';
+import { fetchUserById } from '../providers/users';
 import { TokenPayload } from '../token';
 
 const router = express.Router();
@@ -153,16 +152,7 @@ router.post("/log-in", async (req: express.Request, res: express.Response, next:
         res.cookie('token', token, { httpOnly: true });
 
         const payload: TokenPayload = <any>jwt.decode(token);
-        const userId = payload.sub;
-        const userResp: AxiosResponse<UserWeb> = await usersApi.readUserByIdApiUsersUserIdGet(userId);
-
-        // TODO: Remove this block when we have things in the API
-        let user: Partial<PublicUser> = userResp.data;
-        user.login = user.id;
-        // TODO: There should be an email istead of hash, but we don't have it in public-api.
-        const gravatarHash = md5(user.login!.trim().toLowerCase());
-        user.avatar_url = `https://www.gravatar.com/avatar/${gravatarHash}?d=identicon&s=512&r=g`;
-
+        const user = await fetchUserById(payload.sub);
         res.status(200).json(user);
         return next();
     } catch (reason) {

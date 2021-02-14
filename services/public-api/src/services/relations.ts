@@ -3,7 +3,7 @@ import { Relationship, RelationshipCreate } from '../api/relations';
 import { relsApi, usersApi } from '../config';
 import { buildErrorPassthrough, buildIdHandler, buildSortingHandler, errorIfIdNotValid, handlePagination } from '../middleware';
 import { requireToken } from '../token';
-import { fetchUsers } from '../providers/users';
+import { fetchUsersById } from '../providers/users';
 
 const router = express.Router({ mergeParams: true });
 const handleSorting = buildSortingHandler(['created']);
@@ -70,7 +70,7 @@ router.get("/followers", async (req: express.Request, res: express.Response, nex
         const user_id: string = req.params.id;
         const relsResp = await relsApi.readUserFollowersApiRelationshipsFollowingUserIdGet(user_id);
         const follower_ids = relsResp.data.map((r: Relationship) => r.user_id);
-        const users = await fetchUsers(follower_ids);
+        const users = await fetchUsersById(follower_ids);
 
         // TODO(biesiadm): Pass info from the service
         const responseBody = {
@@ -117,7 +117,7 @@ router.post("/followers/:follower_id", async (req: express.Request, res: express
         // Check if users exist
         const user_id: string = req.params.id;
         const follower_id: string = req.params.follower_id;
-        await fetchUsers([user_id, follower_id]);
+        await fetchUsersById([user_id, follower_id]);
 
         // Add follower
         await relsApi.addRelationshipApiRelationshipsFollowPost({
@@ -210,7 +210,7 @@ router.get("/follows", async (req: express.Request, res: express.Response, next:
         const user_id: string = req.params.id;
         const relsResp = await relsApi.readFollowingByUserApiRelationshipsFollowedByUserIdGet(user_id);
         const followed_ids = relsResp.data.map((r: Relationship) => r.followed_user_id);
-        const users = await fetchUsers(followed_ids);
+        const users = await fetchUsersById(followed_ids);
 
         // TODO(biesiadm): Pass info from the service
         const responseBody = {

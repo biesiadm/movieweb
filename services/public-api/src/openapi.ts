@@ -84,12 +84,6 @@ interface PublicMovie extends Movie {
  */
 interface PublicUser extends UserWeb {
 
-    // TODO(biesiadm): Move to user API
-    login: string;
-
-    // TODO(biesiadm): Move to user API
-    avatar_url: string;
-
     following?: boolean;
 }
 

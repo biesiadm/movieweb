@@ -1,7 +1,6 @@
 import { AxiosResponse } from 'axios';
 import bodyParser from 'body-parser';
 import express from 'express';
-import md5 from 'md5';
 import slugify from 'slugify';
 import { HTTPValidationError, Review, ReviewCreate } from '../api/reviews/api';
 import { moviesApi, reviewsApi, usersApi } from '../config';
@@ -10,7 +9,7 @@ import { buildSortingHandler, buildErrorPassthrough, errorIfIdNotValid, handlePa
 import { Movie } from '../api/movies';
 import { UserWeb } from '../api/users';
 import { requireToken } from '../token';
-import { fetchUsers } from '../providers/users';
+import { fetchUserById } from '../providers/users';
 import { fetchMovies } from '../providers/movies';
 import { fetchReview } from '../providers/reviews';
 
@@ -183,11 +182,6 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
                     .then((responses: AxiosResponse<UserWeb>[]) => {
                         return responses.map(response => {
                             let user: Partial<PublicUser> = response.data;
-                            user.login = response.data.id;
-                            // TODO(kantoniak): Get rid of md5 when we move slugs to service API
-                            // There should be an email istead of hash, but we don't have it in public-api.
-                            const gravatarHash = md5(user.login!.trim().toLowerCase());
-                            user.avatar_url = `https://www.gravatar.com/avatar/${gravatarHash}?d=identicon&s=512&r=g`;
                             return <PublicUser>user;
                         });
                     })
@@ -247,7 +241,7 @@ router.post("/", async (req: express.Request, res: express.Response, next: expre
     try {
         // Check if user exist
         const user_id: string = req.body?.user_id;
-        await fetchUsers([user_id]);
+        await fetchUserById(user_id);
 
         // Check if movie exists
         const movie_id: string = req.body?.movie_id;
@@ -383,11 +377,6 @@ movieRouter.get("/", (req: express.Request, res: express.Response, next: express
                     .then((responses: AxiosResponse<UserWeb>[]) => {
                         return responses.map(response => {
                             let user: Partial<PublicUser> = response.data;
-                            user.login = response.data.id;
-                            // TODO(kantoniak): Get rid of md5 when we move slugs to service API
-                            // There should be an email istead of hash, but we don't have it in public-api.
-                            const gravatarHash = md5(user.login!.trim().toLowerCase());
-                            user.avatar_url = `https://www.gravatar.com/avatar/${gravatarHash}?d=identicon&s=128&r=g`;
                             return <PublicUser>user;
                         });
                     })
