@@ -1,10 +1,10 @@
-from typing import List, Any
+from typing import List, Any, Optional
 from uuid import UUID
 
 from app import schemas, crud
 from app.api import deps
 from app.db import models
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 
 router = APIRouter()
@@ -15,11 +15,12 @@ def read_users(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
+    user_id: Optional[List[UUID]] = Query(None)
 ) -> Any:
     """
     Retrieve users.
     """
-    users = crud.user.get_multi(db, skip=skip, limit=limit)
+    users = crud.user.get_multi_filter(db, skip=skip, limit=limit, user_id=user_id)
     return users
 
 
@@ -48,6 +49,25 @@ def read_user_by_id(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f'User with id: {user_id} does not exist.'
+        )
+
+    return user
+
+
+@router.get("/user/{user_login}", response_model=schemas.UserWeb)
+def read_user_by_login(
+        user_login: str,
+        db: Session = Depends(deps.get_db),
+) -> Any:
+    """
+    Get a specific user by login.
+    """
+    user = crud.user.get_by_login(db=db, login=user_login)
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f'User with login: {user_login} does not exist.'
         )
 
     return user
