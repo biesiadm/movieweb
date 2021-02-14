@@ -57,17 +57,12 @@ services:
     env_file: relationships-db1.env
     volumes:
       - relationships-db1-data:/var/lib/postgresql/data/
-    ports:
-      - 5432:5432
 
   relationships-db2:
     image: postgres:13-alpine
     env_file: relationships-db2.env
     volumes:
       - relationships-db2-data:/var/lib/postgresql/data/
-    ports:
-      - 5433:5432
-
 
   public-api:
     depends_on:

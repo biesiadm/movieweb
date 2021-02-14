@@ -1,20 +1,11 @@
-import { AxiosResponse } from 'axios';
 import express from 'express';
-import md5 from 'md5';
-import { UserWeb } from '../api/users/api';
-import { relsApi, usersApi } from '../config';
-import { PublicUser } from '../openapi';
-import { buildErrorPassthrough, errorIfIdNotValid, handlePagination } from '../middleware';
+import asyncHandler from 'express-async-handler';
+import { errorIfIdNotValid, handlePagination } from '../middleware';
 import { optionalToken, requireToken } from '../token';
-import { fetchUser } from '../providers/users';
+import { fetchNullableUserById, fetchUserById, fetchUsers } from '../providers/users';
+import { isFollowing } from '../providers/relations';
 
 const router = express.Router();
-
-/** Throws */
-const isFollowing = async (follower_id: string, user_id: string): Promise<boolean> => {
-    const followResp = await relsApi.checkRelationshipApiRelationshipsUsersUserIdFollowersFollowedUserIdGet(follower_id, user_id);
-    return followResp.data;
-}
 
 /**
  * @swagger
@@ -63,61 +54,25 @@ const isFollowing = async (follower_id: string, user_id: string): Promise<boolea
  *         $ref: '#/components/responses/ValidationError'
  */
 router.get("/", handlePagination);
-router.get("/", (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.get("/", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
 
-    // TODO: Pass logins to the service instead of handling them here. Temporarily
-    // logins are treated as IDs.
-    // TODO(kantoniak): Handle pagination in this case
-    if (req.query.login !== undefined) {
-        let loginList: any[] = [];
-        if (Array.isArray(req.query.login)) {
-            loginList = req.query.login;
-        } else {
-            loginList = [req.query.login];
-        }
-
-        Promise
-            .all(loginList.map(usersApi.readUserByIdApiUsersUserIdGet))
-            .then((responses): UserWeb[] => {
-                return responses.map((response) => response.data);
-            })
-            .then((users: UserWeb[]): void => {
-                res.status(200).json(users);
-                return next();
-            })
-            .catch(buildErrorPassthrough([401, 404, 422], res, next));
-        return res;
-    }
+    // TODO(biesiadm): Fetch users by login
 
     // Fetch all users
-    usersApi.readUsersApiUsersGet(req.pagination!.skip, req.pagination!.limit)
-        .then((axiosResponse: AxiosResponse<UserWeb[]>) => {
-            axiosResponse.data = axiosResponse.data.map((movie: UserWeb) => {
-                let result: Partial<PublicUser> = movie;
-                result.login = result.id;
+    const users = await fetchUsers(req.pagination!);
 
-                // There should be an email istead of hash, but we don't have it in public-api.
-                const gravatarHash = md5(result.login!.trim().toLowerCase());
-                result.avatar_url = `https://www.gravatar.com/avatar/${gravatarHash}?d=identicon&s=512&r=g`;
-                return <PublicUser>result;
-            });
-            return <AxiosResponse<PublicUser[]>>axiosResponse;
-        })
-        .then((axiosResponse: AxiosResponse<PublicUser[]>) => {
-            // TODO(biesiadm): Pass info from the service
-            const responseBody = {
-                users: axiosResponse.data,
-                info: {
-                    count: axiosResponse.data.length,
-                    totalCount: 5
-                }
-            };
-            res.status(axiosResponse.status).json(responseBody);
-            return next();
-        })
-        .catch(buildErrorPassthrough([401, 404, 422], res, next));
-    return res;
-});
+    // TODO(biesiadm): Pass info from the service
+    const responseBody = {
+        users: users,
+        info: {
+            count: users.length,
+            totalCount: req.pagination!.skip + users.length
+        }
+    };
+
+    res.status(200).json(responseBody);
+    return next();
+}));
 
 /**
  * @swagger
@@ -137,18 +92,27 @@ router.get("/", (req: express.Request, res: express.Response, next: express.Next
  *             schema:
  *               $ref: "#/components/schemas/User"
  */
-router.get("/me", requireToken);
-router.get("/me", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {
-        const user_id: string = req.token_payload!.sub!;
-        const user = await fetchUser(user_id);
-        res.status(200).json(user);
-        return next();
-    } catch (reason) {
-        const handler = buildErrorPassthrough([400, 404, 422], res, next);
-        handler(reason);
+router.get("/me", optionalToken);
+router.get("/me", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+
+    if (!req.token_payload) {
+        res.status(404).send();
     }
-});
+
+    const user_id: string = req.token_payload!.sub!;
+    const user = await fetchNullableUserById(user_id);
+    if (user) {
+        res.status(200).json(user);
+    } else {
+        // Clear invalid cookie
+        if (req.cookies['token']) {
+            delete req.cookies['token'];
+            res.clearCookie('token');
+        }
+        res.status(404).send();
+    }
+    return next();
+}));
 
 /**
  * @swagger
@@ -175,29 +139,17 @@ router.get("/me", async (req: express.Request, res: express.Response, next: expr
  */
 router.get("/:id", errorIfIdNotValid);
 router.get("/:id", optionalToken);
-router.get("/:id", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {
-        const user_id: string = req.params.id;
-        const userResp = await usersApi.readUserByIdApiUsersUserIdGet(user_id);
+router.get("/:id", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    const user_id: string = req.params.id;
+    const user = await fetchUserById(user_id);
 
-        // TODO(biesiadm): Move to user API
-        const partialUser = <Partial<PublicUser>>userResp.data;
-        partialUser.login = partialUser.id;
-        const gravatarHash = md5(partialUser.login!.trim().toLowerCase()); // Should use email, not login. We don't have emails in the public API, though.
-        partialUser.avatar_url = `https://www.gravatar.com/avatar/${gravatarHash}?d=identicon&s=512&r=g`;
-
-        const user = <PublicUser>partialUser;
-        if (req.token_payload) {
-            const follower_id = req.token_payload.sub;
-            user.following = await isFollowing(follower_id, user_id);
-        }
-
-        res.status(userResp.status).json(user);
-        next();
-    } catch (reason) {
-        const handler = buildErrorPassthrough([400, 404, 422], res, next);
-        handler(reason);
+    if (req.token_payload) {
+        const follower_id = req.token_payload.sub;
+        user.following = await isFollowing(follower_id, user_id);
     }
-});
+
+    res.status(200).json(user);
+    next();
+}));
 
 export default router;

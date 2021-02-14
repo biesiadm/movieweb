@@ -36,6 +36,29 @@
           {
             "required": false,
             "schema": {
+              "title": "Created Gte",
+              "type": "string",
+              "format": "date-time"
+            },
+            "name": "created_gte",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "User Id",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "name": "user_id",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
               "title": "Sort",
               "type": "string"
             },

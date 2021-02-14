@@ -2,23 +2,45 @@ import { AxiosResponse } from 'axios';
 import slugify from 'slugify';
 import { Movie } from '../api/movies';
 import { moviesApi } from '../config';
+import { Pagination } from '../middleware';
 import { PublicMovie } from '../openapi';
+import { throwOnInvalidUuid } from '../utils';
 
-const fetchMovies = async (movie_ids: string[]): Promise<PublicMovie[]> => {
-    // TODO(kantoniak): Validate UUID
-    return Promise
-        .all(movie_ids.map(moviesApi.readMovieByIdMoviesMovieIdGet))
-        .then((responses: AxiosResponse<Movie>[]) => {
-            return responses.map(response => {
-                let movie: Partial<PublicMovie> = response.data;
-                movie.slug = slugify(movie.title!, {
-                    lower: true,
-                    strict: true,
-                    locale: 'en'
-                });
-                return <PublicMovie>movie;
-            });
+const fillInGaps = (movies: Movie[]): PublicMovie[] => {
+    return movies.map((m: Movie) => {
+        let movie: Partial<PublicMovie> = m;
+
+        // TODO(biesiadm): Move to movie service
+        movie.slug = slugify(movie.title!, {
+            lower: true,
+            strict: true,
+            locale: 'en'
         });
+        return <PublicMovie>movie;
+    });
 }
 
-export { fetchMovies };
+const fetchMovies = async (paging?: Pagination): Promise<PublicMovie[]> => {
+    const skip = paging?.skip;
+    const limit = paging?.limit;
+    const resp = await moviesApi.readMoviesApiMoviesGet(skip, limit);
+    return fillInGaps(resp.data);
+}
+
+const fetchMoviesById = async (ids: string[]): Promise<PublicMovie[]> => {
+    ids.forEach(throwOnInvalidUuid);
+    const movieResps = await Promise.all(ids.map(moviesApi.readMovieByIdApiMoviesMovieIdGet))
+    const movies = movieResps.map((r: AxiosResponse<Movie>) => r.data);
+    return fillInGaps(movies);
+}
+
+const fetchMovieById = async (id: string): Promise<PublicMovie> => {
+    throwOnInvalidUuid(id);
+    return (await fetchMoviesById([id]))[0];
+}
+
+export {
+    fetchMovieById,
+    fetchMovies,
+    fetchMoviesById
+};
