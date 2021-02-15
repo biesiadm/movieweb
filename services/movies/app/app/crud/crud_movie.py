@@ -46,5 +46,22 @@ class CRUDMovie(CRUDBase[Movie, MovieCreate, MovieUpdate]):
     def count(self, db: Session) -> int:
         return db.query(func.count(Movie.id)).first()[0]
 
+    def create(self, db: Session, *, obj_in: MovieCreate) -> Movie:
+        slug = slugify(obj_in.title)
+        db_obj = Movie(
+            title=obj_in.title,
+            poster_url=obj_in.poster_url,
+            background_url=obj_in.background_url,
+            director=obj_in.director,
+            year=obj_in.year,
+            country=obj_in.country,
+            category=obj_in.category,
+            slug=slug
+        )
+        db.add(db_obj)
+        db.commit()
+        db.refresh(db_obj)
+        return db_obj
+
 
 movie = CRUDMovie(Movie)

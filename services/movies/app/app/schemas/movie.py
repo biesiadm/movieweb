@@ -17,6 +17,7 @@ class MovieBase(BaseModel):
     year: int
     country: str
     category: str
+    slug: Optional[str] = None
 
 
 class MovieCreate(MovieBase):
