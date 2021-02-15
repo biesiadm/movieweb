@@ -1,9 +1,14 @@
 upstream api-gateway {
-    server public-api:8080 weight=1;
+    ip_hash;
+    server public-api-a:8080 max_fails=10 fail_timeout=5s;
+    server public-api-b:8080 max_fails=10 fail_timeout=5s;
+    server public-api-c:8080 max_fails=10 fail_timeout=5s;
 }
 
 upstream webapp {
-    server webapp:8080 weight=1;
+    least_conn;
+    server webapp-a:8080;
+    server webapp-b:8080;
 }
 
 # Redirect to HTTPS
@@ -22,7 +27,10 @@ server {
     ssl_certificate_key /etc/nginx/certs/${PUBLIC_DOMAIN}.key;
 
     location / {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
         proxy_pass http://webapp/;
+        add_header X-Upstream $upstream_addr;
     }
 }
 
@@ -43,6 +51,9 @@ server {
     ssl_certificate_key /etc/nginx/certs/${PUBLIC_DOMAIN}.key;
 
     location / {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
         proxy_pass http://api-gateway/;
+        add_header X-Upstream $upstream_addr;
     }
 }

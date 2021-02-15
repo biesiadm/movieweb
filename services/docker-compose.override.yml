@@ -46,7 +46,7 @@ services:
     volumes:
       - ./redis/redis.dev.conf:/usr/local/etc/redis/redis.dev.conf
 
-  public-api:
+  public-api-a:
     build:
       context: public-api/
       dockerfile: Dockerfile.dev
@@ -57,12 +57,39 @@ services:
       - ./public-api/generated:/usr/src/app/generated
       - ./public-api/src:/usr/src/app/src
 
-  webapp:
+  public-api-b:
+    build:
+      context: public-api/
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./public-api/apis:/usr/src/app/apis
+      - ./public-api/generated:/usr/src/app/generated
+      - ./public-api/src:/usr/src/app/src
+
+  public-api-c:
+    build:
+      context: public-api/
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./public-api/apis:/usr/src/app/apis
+      - ./public-api/generated:/usr/src/app/generated
+      - ./public-api/src:/usr/src/app/src
+
+  webapp-a:
     build:
       context: webapp/
       dockerfile: Dockerfile.dev
     ports:
       - ${WEBAPP_PORT}:8080
+    volumes:
+      - ./webapp/apis:/usr/src/app/apis
+      - ./webapp/public:/usr/src/app/public
+      - ./webapp/src:/usr/src/app/src
+
+  webapp-b:
+    build:
+      context: webapp/
+      dockerfile: Dockerfile.dev
     volumes:
       - ./webapp/apis:/usr/src/app/apis
       - ./webapp/public:/usr/src/app/public
