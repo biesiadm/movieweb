@@ -19,6 +19,11 @@ const fetchUsersById = async (user_ids: string[]): Promise<PublicUser[]> => {
     return userResps.map((r: AxiosResponse<UserWeb>) => <PublicUser>(r.data));
 }
 
+const fetchUsersByLogin = async (logins: string[]): Promise<PublicUser[]> => {
+    const userResps = await Promise.all(logins.map(usersApi.readUserByLoginApiUsersUserUserLoginGet));
+    return userResps.map((r: AxiosResponse<UserWeb>) => <PublicUser>(r.data));
+}
+
 const fetchUserById = async (id: string): Promise<PublicUser> => {
     return (await fetchUsersById([id]))[0];
 }
@@ -45,5 +50,6 @@ export {
     fetchNullableUserById,
     fetchUserById,
     fetchUsers,
-    fetchUsersById
+    fetchUsersById,
+    fetchUsersByLogin
 };

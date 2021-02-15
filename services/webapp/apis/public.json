@@ -348,6 +348,29 @@
           },
           {
             "$ref": "#/components/parameters/sort_dir"
+          },
+          {
+            "in": "query",
+            "name": "created_gte",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "required": false,
+            "description": "Limits to reviews created at given time or later."
+          },
+          {
+            "in": "query",
+            "name": "user_id",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "required": false,
+            "description": "Limits to reviews created by users. Maximum 50 IDs."
           }
         ],
         "responses": {
@@ -543,7 +566,7 @@
               }
             },
             "required": false,
-            "description": "Limits results to provided login or logins."
+            "description": "Limits results to provided login or logins. Max 50 entries."
           }
         ],
         "responses": {
@@ -731,6 +754,62 @@
           }
         }
       },
+      "CreateReview": {
+        "type": "object",
+        "required": [
+          "user_id",
+          "movie_id",
+          "rating",
+          "created"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "movie_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "comment": {
+            "type": "string"
+          }
+        }
+      },
+      "Review": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CreateReview"
+          },
+          {
+            "type": "object",
+            "required": [
+              "created"
+            ],
+            "properties": {
+              "created": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "movie": {
+                "$ref": "#/components/schemas/Movie"
+              },
+              "user": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        ]
+      },
       "User": {
         "type": "object",
         "required": [
@@ -818,62 +897,6 @@
             "type": "string"
           }
         }
-      },
-      "CreateReview": {
-        "type": "object",
-        "required": [
-          "user_id",
-          "movie_id",
-          "rating",
-          "created"
-        ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "user_id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "movie_id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "rating": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 10
-          },
-          "comment": {
-            "type": "string"
-          }
-        }
-      },
-      "Review": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/CreateReview"
-          },
-          {
-            "type": "object",
-            "required": [
-              "created"
-            ],
-            "properties": {
-              "created": {
-                "type": "string",
-                "format": "date-time"
-              },
-              "movie": {
-                "$ref": "#/components/schemas/Movie"
-              },
-              "user": {
-                "$ref": "#/components/schemas/User"
-              }
-            }
-          }
-        ]
       }
     },
     "responses": {

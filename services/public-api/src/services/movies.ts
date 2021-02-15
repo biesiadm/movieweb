@@ -60,6 +60,8 @@ router.get("/", asyncHandler(async (req: express.Request, res: express.Response,
 
     const ratingBasedSorts = ['avg_rating', 'rating_count'];
     if (req.sorting?.by && ratingBasedSorts.includes(req.sorting.by)) {
+        // TODO(biesiadm): /api/reviews/movies?sort=avg_rating&sort_dir=desc, zwraca listę [movie_id]
+        // TODO(biesiadm): /api/reviews/movies?sort=rating_count&sort_dir=desc, zwraca listę [movie_id]
         // TODO(kantoniak): Fetch ids from movie service and then get movie details
     }
 

@@ -30,12 +30,16 @@ const deleteReview = async (id: string): Promise<void> => {
     await reviewsApi.deleteReviewApiReviewsReviewReviewIdDeleteDelete(id);
 }
 
-const fetchReviews = async (paging?: Pagination, sorting?: Sorting): Promise<PublicReview[]> => {
+const fetchReviews = async (paging?: Pagination, sorting?: Sorting, createdGte?: Date, userIds?: string[]): Promise<PublicReview[]> => {
     const skip = paging?.skip;
     const limit = paging?.limit;
     const sort = sorting?.by;
     const sortDir = <string>(sorting?.dir);
-    const resp = await reviewsApi.readAllReviewsApiReviewsReviewsGet(skip, limit, sort, <any>sortDir);
+    const created_gte = createdGte?.toISOString();
+    if (userIds) {
+        userIds.forEach(throwOnInvalidUuid);
+    }
+    const resp = await reviewsApi.readAllReviewsApiReviewsReviewsGet(skip, limit, created_gte, userIds, sort, <any>sortDir);
     return resp.data.map(convertToPublic);
 }
 
