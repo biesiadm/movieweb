@@ -2,8 +2,8 @@ import axios, { AxiosInstance } from "axios";
 import { AuthApiFactory, MoviesApiFactory, ReviewsApiFactory, UsersApiFactory, InlineResponse200, InlineResponse2001, InlineResponse2002, InlineResponse2003 } from './api/public/api'
 import { Configuration } from './api/public/configuration';
 
-const BASE_URL = 'http://localhost:8080';
-const API_URL = 'http://localhost:8081';
+const BASE_URL = process.env.REACT_APP_WEBAPP_URL as string;
+const API_URL = process.env.REACT_APP_API_URL as string;
 
 const axiosInstance: AxiosInstance = axios.create({
   responseType: "json",

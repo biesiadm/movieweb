@@ -67,22 +67,35 @@ services:
   redis:
     build: redis/
 
-  public-api:
-    depends_on:
-      - movies
-      - users
+  public-api-a:
     build: public-api/
     env_file: .env
-    ports:
-      - ${PUBLIC_API_PORT}:8080
 
-  webapp:
-    depends_on:
-      - public-api
+  public-api-b:
+    build: public-api/
+    env_file: .env
+
+  public-api-c:
+    build: public-api/
+    env_file: .env
+
+  webapp-a:
     build: webapp/
+    environment:
+      - REACT_APP_WEBAPP_URL=${PUBLIC_SCHEME}://${PUBLIC_DOMAIN}
+      - REACT_APP_API_URL=${PUBLIC_SCHEME}://api.${PUBLIC_DOMAIN}
+
+  webapp-b:
+    build: webapp/
+    environment:
+      - REACT_APP_WEBAPP_URL=${PUBLIC_SCHEME}://${PUBLIC_DOMAIN}
+      - REACT_APP_API_URL=${PUBLIC_SCHEME}://api.${PUBLIC_DOMAIN}
+
+  load-balancer:
+    build: load-balancer/
     env_file: .env
     ports:
-      - ${WEBAPP_PORT}:8080
+      - 443:443
 
 volumes:
   movies-db-data:

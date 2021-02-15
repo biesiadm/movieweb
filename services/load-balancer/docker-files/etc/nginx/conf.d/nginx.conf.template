@@ -1,0 +1,59 @@
+upstream api-gateway {
+    ip_hash;
+    server public-api-a:8080 max_fails=10 fail_timeout=5s;
+    server public-api-b:8080 max_fails=10 fail_timeout=5s;
+    server public-api-c:8080 max_fails=10 fail_timeout=5s;
+}
+
+upstream webapp {
+    least_conn;
+    server webapp-a:8080;
+    server webapp-b:8080;
+}
+
+# Redirect to HTTPS
+server {
+    listen 80;
+    server_name ${PUBLIC_DOMAIN};
+    return 301 https://${PUBLIC_DOMAIN}$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name ${PUBLIC_DOMAIN};
+
+    ssl_password_file /etc/nginx/certs/${PUBLIC_DOMAIN}.pass;
+    ssl_certificate /etc/nginx/certs/${PUBLIC_DOMAIN}.crt;
+    ssl_certificate_key /etc/nginx/certs/${PUBLIC_DOMAIN}.key;
+
+    location / {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_pass http://webapp/;
+        add_header X-Upstream $upstream_addr;
+    }
+}
+
+# Redirect to HTTPS
+server {
+    listen 80;
+    server_name api.${PUBLIC_DOMAIN};
+    return 301 https://api.${PUBLIC_DOMAIN}$request_uri;
+}
+
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name api.${PUBLIC_DOMAIN};
+
+    ssl_password_file /etc/nginx/certs/${PUBLIC_DOMAIN}.pass;
+    ssl_certificate /etc/nginx/certs/${PUBLIC_DOMAIN}.crt;
+    ssl_certificate_key /etc/nginx/certs/${PUBLIC_DOMAIN}.key;
+
+    location / {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_pass http://api-gateway/;
+        add_header X-Upstream $upstream_addr;
+    }
+}

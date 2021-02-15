@@ -10,21 +10,19 @@ import { LoginApiFactory, UsersApiFactory } from './api/users/api';
 import { Configuration as UsersApiConfiguration } from './api/users/configuration';
 
 const corsConfig = {
-  origin: new RegExp('localhost'),
+  origin: new RegExp(<string>process.env.PUBLIC_DOMAIN),
   credentials: true
 };
 
 const tokenConfig = {
-  // FIXME(kantoniak): Hardcoded secret
-  secret: 'my-secret-key',
+  secret: <string>process.env.SECRET_KEY,
   algorithms: [<Algorithm>"HS256"]
 };
 
 const redisConfig = {
-  port: 6379,
-  host: "redis",
-  // FIXME(kantoniak): Hardcoded secret
-  password: "redis-password"
+  host: <string>process.env.REDIS_HOST,
+  port: parseInt(<string>process.env.REDIS_PORT),
+  password: <string>process.env.REDIS_SECRET
 };
 
 const axiosInstance: AxiosInstance = axios.create({

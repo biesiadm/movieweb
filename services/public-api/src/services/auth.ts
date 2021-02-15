@@ -143,9 +143,19 @@ router.post("/log-in", asyncHandler(async (req: express.Request, res: express.Re
         await loginApi.loginAccessTokenApiUsersLoginAccessTokenPost(email, password);
 
     const token = tokenResp.data.access_token;
-    res.cookie('token', token, { httpOnly: true });
-
     const payload: TokenPayload = <any>jwt.decode(token);
+    console.log(payload.exp);
+    res.cookie(
+        'token',
+        token,
+        {
+            httpOnly: true,
+            secure: true,
+            domain: <string>process.env.PUBLIC_DOMAIN,
+            expires: new Date(<number>payload.exp * 1000)
+        }
+    );
+
     const user = await fetchUserById(payload.sub);
     res.status(200).json(user);
     return next();
