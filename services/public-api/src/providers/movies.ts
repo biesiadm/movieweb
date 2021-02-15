@@ -10,13 +10,6 @@ import { throwOnInvalidUuid } from '../utils';
 const fillInGaps = (movies: Movie[]): PublicMovie[] => {
     return movies.map((m: Movie) => {
         let movie: Partial<PublicMovie> = m;
-
-        // TODO(biesiadm): Move to movie service
-        movie.slug = slugify(movie.title!, {
-            lower: true,
-            strict: true,
-            locale: 'en'
-        });
         return <PublicMovie>movie;
     });
 }
