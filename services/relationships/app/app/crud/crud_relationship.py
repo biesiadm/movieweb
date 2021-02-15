@@ -1,11 +1,28 @@
+from operator import attrgetter
 from typing import List
 from uuid import UUID
 
 from app.crud.base import CRUDBase
 from app.db.models import Relationship
-from app.schemas import RelationshipCreate, RelationshipUpdate
+from app.schemas import RelationshipCreate, RelationshipUpdate, SortingDir, RelationshipsSortingModel
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone
+
+
+def determine_relationships_sorting_type(sort: RelationshipsSortingModel, sort_dir: SortingDir):
+    sorting_method = None
+
+    if sort == RelationshipsSortingModel.created:
+        sorting_method = Relationship.created.desc() if sort_dir == SortingDir.desc else Relationship.created.asc()
+
+    return sorting_method
+
+
+def sort_relationships_manually(query_result, sort: RelationshipsSortingModel, sort_dir: SortingDir):
+    if sort == RelationshipsSortingModel.created:
+        query_result = sorted(query_result, key=attrgetter('created'), reverse=(sort_dir == SortingDir.desc))
+
+    return query_result
 
 
 class CRUDReview(CRUDBase[Relationship, RelationshipCreate, RelationshipUpdate]):
@@ -21,14 +38,18 @@ class CRUDReview(CRUDBase[Relationship, RelationshipCreate, RelationshipUpdate])
         return db_obj
 
     def get_user_followers(self, db: Session, *, skip: int = 0,
-                           limit: int = 100, user_id: UUID) -> List[Relationship]:
-        return db.query(self.model).filter(Relationship.followed_user_id == user_id) \
+                           limit: int = 100, user_id: UUID,
+                           sort: RelationshipsSortingModel, sort_dir: SortingDir) -> List[Relationship]:
+        query_result = db.query(self.model).filter(Relationship.followed_user_id == user_id) \
             .offset(skip).limit(limit).all()
 
+        return sort_relationships_manually(query_result, sort, sort_dir)
+
     def get_following_by_user(self, db: Session, *, skip: int = 0,
-                              limit: int = 100, user_id: UUID) -> List[Relationship]:
+                              limit: int = 100, user_id: UUID,
+                              sort: RelationshipsSortingModel, sort_dir: SortingDir) -> List[Relationship]:
         return db.query(self.model).filter(Relationship.user_id == user_id) \
-            .offset(skip).limit(limit).all()
+            .order_by(determine_relationships_sorting_type(sort, sort_dir)).offset(skip).limit(limit).all()
 
     def get_relationship(self, db: Session, *, user_id: UUID, followed_user_id: UUID):
         return db.query(self.model).filter(Relationship.user_id == user_id,
