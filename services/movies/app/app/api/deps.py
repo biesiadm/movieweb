@@ -2,8 +2,7 @@ from typing import Generator, Optional
 
 from app.db.session import SessionLocal
 from app.schemas import SortingDir, MoviesSortingModel, SortingMovies
-from fastapi import HTTPException
-from starlette import status
+from fastapi import HTTPException, status
 
 
 def get_db() -> Generator:
