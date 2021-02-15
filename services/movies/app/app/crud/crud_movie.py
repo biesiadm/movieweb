@@ -1,5 +1,7 @@
 from typing import List
 
+from slugify import slugify
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from app.crud.base import CRUDBase
 from app.db.models.movie import Movie
@@ -40,6 +42,9 @@ class CRUDMovie(CRUDBase[Movie, MovieCreate, MovieUpdate]):
                        sort: MoviesSortingModel, sort_dir: SortingDir):
         return db.query(self.model).order_by(determine_movies_sorting_type(sort, sort_dir)) \
             .offset(skip).limit(limit).all()
+
+    def count(self, db: Session) -> int:
+        return db.query(func.count(Movie.id)).first()[0]
 
 
 movie = CRUDMovie(Movie)
