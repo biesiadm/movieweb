@@ -2,7 +2,7 @@ import { AxiosResponse } from 'axios';
 import slugify from 'slugify';
 import { Movie } from '../api/movies';
 import { moviesApi } from '../config';
-import { Pagination } from '../middleware';
+import { Pagination, Sorting } from '../middleware';
 import { PublicMovie } from '../openapi';
 import { throwOnInvalidUuid } from '../utils';
 
@@ -20,9 +20,13 @@ const fillInGaps = (movies: Movie[]): PublicMovie[] => {
     });
 }
 
-const fetchMovies = async (paging?: Pagination): Promise<PublicMovie[]> => {
+const fetchMovies = async (paging?: Pagination, sorting?: Sorting): Promise<PublicMovie[]> => {
     const skip = paging?.skip;
     const limit = paging?.limit;
+    const sort = sorting?.by;
+    const sortDir = <string>(sorting?.dir);
+
+    // TODO(biesiadm): /api/movies?sort=year&sort_dir=desc
     const resp = await moviesApi.readMoviesApiMoviesGet(skip, limit);
     return fillInGaps(resp.data);
 }

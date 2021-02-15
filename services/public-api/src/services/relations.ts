@@ -1,10 +1,10 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
-import { Relationship } from '../api/relations';
 import { relsApi } from '../config';
 import { buildIdHandler, buildSortingHandler, errorIfIdNotValid, handlePagination } from '../middleware';
 import { requireToken } from '../token';
 import { fetchUsersById } from '../providers/users';
+import { fetchFollowerIdsByUserId, fetchFollowingIdsByUserId } from '../providers/relations';
 
 const router = express.Router({ mergeParams: true });
 const handleSorting = buildSortingHandler(['created']);
@@ -66,10 +66,8 @@ router.get("/followers", errorIfIdNotValid);
 router.get("/followers", handlePagination);
 router.get("/followers", handleSorting);
 router.get("/followers", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    // TODO(biesiadm): Sorting
     const user_id: string = req.params.id;
-    const relsResp = await relsApi.readUserFollowersApiRelationshipsFollowingUserIdGet(user_id);
-    const follower_ids = relsResp.data.map((r: Relationship) => r.user_id);
+    const follower_ids = await fetchFollowerIdsByUserId(user_id, req.pagination, req.sorting);
     const users = await fetchUsersById(follower_ids);
 
     // TODO(biesiadm): Pass info from the service
@@ -80,7 +78,7 @@ router.get("/followers", asyncHandler(async (req: express.Request, res: express.
             totalCount: Math.max(2, users.length)
         }
     };
-    res.status(relsResp.status).json(responseBody);
+    res.status(200).json(responseBody);
     return next();
 }));
 
@@ -191,10 +189,8 @@ router.get("/follows", errorIfIdNotValid);
 router.get("/follows", handlePagination);
 router.get("/follows", handleSorting);
 router.get("/follows", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    // TODO(biesiadm): Sorting
     const user_id: string = req.params.id;
-    const relsResp = await relsApi.readFollowingByUserApiRelationshipsFollowedByUserIdGet(user_id);
-    const followed_ids = relsResp.data.map((r: Relationship) => r.followed_user_id);
+    const followed_ids = await fetchFollowingIdsByUserId(user_id, req.pagination, req.sorting);
     const users = await fetchUsersById(followed_ids);
 
     // TODO(biesiadm): Pass info from the service
@@ -205,7 +201,7 @@ router.get("/follows", asyncHandler(async (req: express.Request, res: express.Re
             totalCount: Math.max(2, users.length)
         }
     };
-    res.status(relsResp.status).json(responseBody);
+    res.status(200).json(responseBody);
     return next();
 }));
 

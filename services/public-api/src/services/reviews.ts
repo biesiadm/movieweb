@@ -1,6 +1,7 @@
 import bodyParser from 'body-parser';
 import express from 'express';
 import asyncHandler from 'express-async-handler';
+import { validate as validateUuid } from 'uuid';
 import { HTTPValidationError, ReviewCreate } from '../api/reviews/api';
 import { PublicReview } from '../openapi';
 import { buildSortingHandler, errorIfIdNotValid, handlePagination } from '../middleware';
@@ -86,6 +87,22 @@ const addOptionalUsersToReviews = async (reviews: PublicReview[]): Promise<void>
  *         required: false
  *         description: Sorting criteria.
  *       - $ref: '#/components/parameters/sort_dir'
+ *       - in: query
+ *         name: created_gte
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         required: false
+ *         description: Limits to reviews created at given time or later.
+ *       - in: query
+ *         name: user_id
+ *         schema:
+ *           type: array
+ *           items:
+ *             type: string
+ *             format: uuid
+ *         required: false
+ *         description: Limits to reviews created by users. Maximum 50 IDs.
  *     responses:
  *       200:
  *         $ref: '#/components/responses/ReviewListResponse'
@@ -96,14 +113,52 @@ const addOptionalUsersToReviews = async (reviews: PublicReview[]): Promise<void>
 router.get("/", handlePagination);
 router.get("/", handleReviewSorting);
 router.get("/", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+
+    // Validate parameters
+    let created_gte: Date | null = null;
+    if (req.query.created_gte) {
+        created_gte = new Date(req.params.created_gte);
+        if (!created_gte || !created_gte.getTime || isNaN(created_gte.getTime())) {
+            throw <HTTPValidationError>{
+                detail: [
+                    {
+                        loc: ['query', 'created_gte'],
+                        msg: 'Parameter created_gte not valid.',
+                        type: 'param'
+                    }
+                ]
+            };
+        }
+    }
+
+    let user_ids = <string[] | null>req.query.user_id;
+    if (user_ids) {
+        if (typeof user_ids === 'string') {
+            user_ids = [user_ids];
+        }
+        if (!Array.isArray(user_ids) ||
+            user_ids.length > 50 ||
+            !(user_ids.every((id: any) => (typeof id === 'string' && validateUuid(id))))) {
+            throw <HTTPValidationError>{
+                detail: [
+                    {
+                        loc: ['query', 'user_id'],
+                        msg: 'Parameter user_id not valid.',
+                        type: 'param'
+                    }
+                ]
+            };
+        }
+    }
+
     // Fetch all reviews
-    const reviews = await fetchReviews(req.pagination!, req.sorting);
+    const reviews = await fetchReviews(req.pagination!, req.sorting, created_gte || undefined, user_ids || undefined);
     await addOptionalMoviesToReviews(reviews);
     await addOptionalUsersToReviews(reviews);
 
     // TODO(biesiadm): Pass info from the service
     const responseBody = {
-        movies: reviews,
+        reviews: reviews,
         info: {
             count: reviews.length,
             totalCount: 16
@@ -166,7 +221,7 @@ router.post("/", asyncHandler(async (req: express.Request, res: express.Response
         };
     }
 
-    const review = createReview(<ReviewCreate>req.body);
+    const review = await createReview(<ReviewCreate>req.body);
     res.status(200).json(review);
     return next();
 }));
@@ -247,7 +302,7 @@ movieRouter.get("/", asyncHandler(async (req: express.Request, res: express.Resp
 
     // TODO(biesiadm): Pass info from the service
     const responseBody = {
-        movies: reviews,
+        reviews: reviews,
         info: {
             count: reviews.length,
             totalCount: 16
@@ -296,7 +351,7 @@ userRouter.get("/", asyncHandler(async (req: express.Request, res: express.Respo
 
     // TODO(biesiadm): Pass info from the service
     const responseBody = {
-        movies: reviews,
+        reviews: reviews,
         info: {
             count: reviews.length,
             totalCount: 16

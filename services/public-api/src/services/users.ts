@@ -1,9 +1,10 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
-import { errorIfIdNotValid, handlePagination } from '../middleware';
-import { optionalToken, requireToken } from '../token';
-import { fetchNullableUserById, fetchUserById, fetchUsers } from '../providers/users';
+import { errorIfIdNotValid, handlePagination, Pagination } from '../middleware';
+import { optionalToken } from '../token';
+import { fetchNullableUserById, fetchUserById, fetchUsers, fetchUsersByLogin } from '../providers/users';
 import { isFollowing } from '../providers/relations';
+import { HTTPValidationError } from '../api/movies';
 
 const router = express.Router();
 
@@ -46,7 +47,7 @@ const router = express.Router();
  *           items:
  *             type: "string"
  *         required: false
- *         description: Limits results to provided login or logins.
+ *         description: Limits results to provided login or logins. Max 50 entries.
  *     responses:
  *       200:
  *         $ref: '#/components/responses/UserListResponse'
@@ -56,7 +57,41 @@ const router = express.Router();
 router.get("/", handlePagination);
 router.get("/", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
 
-    // TODO(biesiadm): Fetch users by login
+    if (req.query?.login) {
+        // Validate logins
+        let logins = <string[] | null>req.query.login;
+        if (typeof logins === 'string') {
+            logins = [logins];
+        }
+        if (!Array.isArray(logins) ||
+            logins.length > 50 ||
+            !(logins.every((login: any) => (typeof login === 'string')))) {
+            throw <HTTPValidationError>{
+                detail: [
+                    {
+                        loc: ['query', 'login'],
+                        msg: 'Parameter login not valid.',
+                        type: 'param'
+                    }
+                ]
+            };
+        }
+
+        // Manual pagination
+        const paging: Pagination = req.pagination!;
+        const pageLogins = logins.slice(paging.skip, paging.skip + paging.limit);
+
+        const users = await fetchUsersByLogin(pageLogins);
+        const responseBody = {
+            users: users,
+            info: {
+                count: users.length,
+                totalCount: logins.length
+            }
+        };
+        res.status(200).json(responseBody);
+        return next();
+    }
 
     // Fetch all users
     const users = await fetchUsers(req.pagination!);

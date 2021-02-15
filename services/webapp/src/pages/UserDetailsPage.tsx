@@ -59,13 +59,14 @@ class UserDetailsPage extends Component<Props, State> {
     this.addEventListeners();
 
     try {
-      const userResp = await usersApi.getUserById(login);
+      const usersResp = await usersApi.getUsers(1, 0, [login]);
+      const userId = usersResp.data.users?.shift()?.id;
+      const userResp = await usersApi.getUserById(userId);
       const user = userResp.data;
       const followersPromise = () => usersApi.getFollowers(user.id, 8, 0, 'created', SortDir.Desc);
       const followsPromise = () => usersApi.getFollowedBy(user.id, 8, 0, 'created', SortDir.Desc);
       const topReviewsPromise = () => usersApi.getUserReviews(user.id, 8, 0, 'rating', SortDir.Desc);
       const recentReviewsPromise = () => usersApi.getUserReviews(user.id, 8, 0, 'created', SortDir.Desc);
-      // TODO(kantoniak): set initial follow button state
       this.setState({
         user: user,
         loading: false,
