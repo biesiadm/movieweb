@@ -16,12 +16,15 @@ def read_user_followers(
         db: Session = Depends(deps.get_db),
         skip: int = 0,
         limit: int = 100,
+        sort_settings: schemas.SortingRelationships = Depends(deps.check_relationships_sorting)
 ) -> Any:
     """
-    Retrieve reviews by movie.
+    Retrieve users following user_id.
     """
-    reviews = crud.relationship.get_user_followers(db, user_id=user_id, skip=skip, limit=limit)
-    return reviews
+    relationships = crud.relationship.get_user_followers(db=db, user_id=user_id, skip=skip, limit=limit,
+                                                         sort=sort_settings.sort, sort_dir=sort_settings.sort_dir)
+
+    return relationships
 
 
 @router.get("/followed-by/{user_id}", response_model=List[schemas.Relationship])
@@ -30,12 +33,15 @@ def read_following_by_user(
         db: Session = Depends(deps.get_db),
         skip: int = 0,
         limit: int = 100,
+        sort_settings: schemas.SortingRelationships = Depends(deps.check_relationships_sorting)
 ) -> Any:
     """
-    Retrieve reviews by movie.
+    Retrieve following by user_id.
     """
-    reviews = crud.relationship.get_following_by_user(db, user_id=user_id, skip=skip, limit=limit)
-    return reviews
+    relationships = crud.relationship.get_following_by_user(db=db, user_id=user_id, skip=skip, limit=limit,
+                                                            sort=sort_settings.sort, sort_dir=sort_settings.sort_dir)
+
+    return relationships
 
 
 @router.post("/follow", response_model=schemas.Relationship)
