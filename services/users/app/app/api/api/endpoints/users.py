@@ -10,7 +10,11 @@ from sqlalchemy.orm import Session
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas.UserWeb])
+# TODO(kantoniak) after changing users.ts uncomment lines 16, 33 and remove lines 15, 32
+@router.get("/",
+            response_model=List[schemas.UserWeb]
+            # response_model=schemas.UsersWebInfo
+            )
 def read_users(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
@@ -21,7 +25,12 @@ def read_users(
     Retrieve users.
     """
     users = crud.user.get_multi_filter(db, skip=skip, limit=limit, user_id=user_id)
+
+    total_count = crud.user.count(db)
+    info = schemas.Info(count=len(users), totalCount=total_count)
+
     return users
+    # return schemas.UsersWebInfo(users=users, info=info)
 
 
 @router.get("/me", response_model=schemas.User)

@@ -1,7 +1,12 @@
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, EmailStr
 from uuid import UUID
+
+
+class Info(BaseModel):
+    count: int
+    totalCount: int
 
 
 class UserBase(BaseModel):
@@ -33,6 +38,14 @@ class UserWeb(BaseModel):
     name: str
     login: str
     avatar_url: str
+
+    class Config:
+        orm_mode = True
+
+
+class UsersWebInfo(BaseModel):
+    users: List[UserWeb]
+    info: Info
 
     class Config:
         orm_mode = True

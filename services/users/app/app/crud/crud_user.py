@@ -4,6 +4,7 @@ from uuid import UUID
 from app.crud.base import CRUDBase
 from app.db.models import User
 from app.schemas import UserCreate, UserUpdate
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from app.core.security import get_password_hash, verify_password
 
@@ -50,6 +51,9 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
                 .offset(skip).limit(limit).all()
         else:
             return db.query(self.model).offset(skip).limit(limit).all()
+        
+    def count(self, db: Session) -> int:
+        return db.query(func.count(User.id)).first()[0]
 
 
 user = CRUDUser(User)
