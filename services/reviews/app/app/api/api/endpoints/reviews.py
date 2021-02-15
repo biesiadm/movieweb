@@ -17,7 +17,7 @@ def read_all_reviews(
         *,
         skip: int = 0,
         limit: int = 100,
-        sort_settings: schemas.SortingSettings = Depends(deps.check_sorting),
+        sort_settings: schemas.SortingReviews = Depends(deps.check_reviews_sorting),
         created_gte: Optional[datetime] = None,
         user_id: Optional[List[UUID]] = Query(None)
 ) -> Any:
@@ -25,6 +25,20 @@ def read_all_reviews(
                                          sort=sort_settings.sort, sort_dir=sort_settings.sort_dir,
                                          created_gte=created_gte, user_id=user_id)
     return reviews
+
+
+@router.get("/movies", response_model=List[UUID])
+def read_movies(
+        db: Session = Depends(deps.get_db),
+        *,
+        skip: int = 0,
+        limit: int = 100,
+        sort_settings: schemas.SortingMovies = Depends(deps.check_movies_sorting)
+) -> Any:
+    movies = crud.review.get_movies_sort(db=db, skip=skip, limit=limit,
+                                         sort=sort_settings.sort, sort_dir=sort_settings.sort_dir)
+
+    return [movie_id for movie_id_list in movies for movie_id in movie_id_list]
 
 
 @router.get("/movie/{movie_id}/avg", response_model=Optional[float])
@@ -77,7 +91,7 @@ def read_movie_reviews(
         db: Session = Depends(deps.get_db),
         skip: int = 0,
         limit: int = 100,
-        sort_settings: schemas.SortingSettings = Depends(deps.check_sorting)
+        sort_settings: schemas.ReviewsSortingModel = Depends(deps.check_reviews_sorting)
 ) -> Any:
     """
     Retrieve reviews by movie.
@@ -93,7 +107,7 @@ def read_user_reviews(
         db: Session = Depends(deps.get_db),
         skip: int = 0,
         limit: int = 100,
-        sort_settings: schemas.SortingSettings = Depends(deps.check_sorting)
+        sort_settings: schemas.ReviewsSortingModel = Depends(deps.check_reviews_sorting)
 ) -> Any:
     """
     Retrieve reviews by movie.
