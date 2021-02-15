@@ -14,6 +14,3 @@ class SortingDir(str, Enum):
     asc = "asc"
 
 
-class SortingSettings(BaseModel):
-    sort: Optional[SortingModel]
-    sort_dir: Optional[SortingDir]
