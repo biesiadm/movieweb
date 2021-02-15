@@ -58,11 +58,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "title": "Response Read Movies Api Movies  Get",
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Movie"
-                  }
+                  "$ref": "#/components/schemas/MoviesInfo"
                 }
               }
             }
@@ -364,6 +360,24 @@
           }
         }
       },
+      "Info": {
+        "title": "Info",
+        "required": [
+          "count",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "totalCount": {
+            "title": "Totalcount",
+            "type": "integer"
+          }
+        }
+      },
       "Movie": {
         "title": "Movie",
         "required": [
@@ -471,6 +485,26 @@
           "slug": {
             "title": "Slug",
             "type": "string"
+          }
+        }
+      },
+      "MoviesInfo": {
+        "title": "MoviesInfo",
+        "required": [
+          "movies",
+          "info"
+        ],
+        "type": "object",
+        "properties": {
+          "movies": {
+            "title": "Movies",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Movie"
+            }
+          },
+          "info": {
+            "$ref": "#/components/schemas/Info"
           }
         }
       },

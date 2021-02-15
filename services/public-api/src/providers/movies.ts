@@ -3,23 +3,27 @@ import { Movie } from '../api/movies';
 import * as cache from '../cache';
 import { moviesApi } from '../config';
 import { Pagination, Sorting } from '../middleware';
-import { PublicMovie } from '../openapi';
+import { PaginatedMovies, PublicMovie } from '../openapi';
 import { throwOnInvalidUuid } from '../utils';
 
 const convertToPublic = (movies: Movie[]): PublicMovie[] => {
     return movies.map(m => <PublicMovie>m);
 }
 
-const fetchMovies = async (paging?: Pagination, sorting?: Sorting): Promise<PublicMovie[]> => {
+const fetchMovies = async (paging?: Pagination, sorting?: Sorting): Promise<PaginatedMovies> => {
     const skip = paging?.skip;
     const limit = paging?.limit;
     const sort = sorting?.by;
     const sortDir = <string>(sorting?.dir);
 
     const resp = await moviesApi.readMoviesApiMoviesGet(skip, limit, sort, sortDir);
-    const movies =  convertToPublic(resp.data);
+    const movies =  convertToPublic(resp.data.movies);
     movies.forEach(cache.setMovie);
-    return movies;
+
+    return {
+        movies: movies,
+        info: resp.data.info
+    }
 }
 
 const fetchMoviesById = async (ids: string[]): Promise<PublicMovie[]> => {

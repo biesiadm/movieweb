@@ -3,7 +3,8 @@ import asyncHandler from 'express-async-handler';
 import { buildSortingHandler, errorIfIdNotValid, handlePagination } from '../middleware';
 import { optionalToken } from '../token';
 import { fetchNullableReviewByMovieIdUserId } from '../providers/reviews';
-import { fetchMovieById, fetchMovies } from '../providers/movies';
+import { fetchMovieById, fetchMovies, fetchMoviesById } from '../providers/movies';
+import { reviewsApi } from '../config';
 
 const router = express.Router();
 
@@ -60,24 +61,30 @@ router.get("/", asyncHandler(async (req: express.Request, res: express.Response,
 
     const ratingBasedSorts = ['avg_rating', 'rating_count'];
     if (req.sorting?.by && ratingBasedSorts.includes(req.sorting.by)) {
-        // TODO(kantoniak): /api/reviews/movies?sort=avg_rating&sort_dir=desc, zwraca listę [movie_id]       [zrobione po stronie reviews]
-        // TODO(kantoniak): /api/reviews/movies?sort=rating_count&sort_dir=desc, zwraca listę [movie_id]     [zrobione po stronie reviews]
-        // TODO(kantoniak): Fetch ids from movie service and then get movie details
+        const skip = <number>req.pagination?.skip;
+        const limit = req.pagination?.limit;
+        const sort = req.sorting?.by;
+        const sortDir = <string>(req.sorting?.dir);
+
+        const idsResp = await reviewsApi.readMoviesApiReviewsMoviesGet(skip, limit, sort, sortDir);
+        const ids: string[] = idsResp.data;
+        const movies = await fetchMoviesById(ids);
+
+        const responseBody = {
+            movies: movies,
+            info: {
+                count: movies.length,
+                totalCount: skip + movies.length
+            }
+        };
+
+        res.status(200).json(responseBody);
+        return next();
     }
 
     // Fetch all movies
-    const movies = await fetchMovies(req.pagination!);
-
-    // TODO(kantoniak): Pass info from the service  [done in movie service, instruction in movies/app/app/api/api/endpoints/movies]
-    const responseBody = {
-        movies: movies,
-        info: {
-            count: movies.length,
-            totalCount: 16
-        }
-    };
-
-    res.status(200).json(responseBody);
+    const body = await fetchMovies(req.pagination!, req.sorting);
+    res.status(200).json(body);
     return next();
 }));
 
