@@ -14,3 +14,4 @@ class Movie(Base):
     year = Column(Integer, index=True, nullable=False)
     country = Column(String, index=True, nullable=False)
     category = Column(String, index=True, nullable=False)
+    slug = Column(String, index=True, nullable=False)

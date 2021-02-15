@@ -1,7 +1,12 @@
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, AnyUrl
 from uuid import UUID
+
+
+class Info(BaseModel):
+    count: int
+    totalCount: int
 
 
 class MovieBase(BaseModel):
@@ -12,6 +17,7 @@ class MovieBase(BaseModel):
     year: int
     country: str
     category: str
+    slug: Optional[str] = None
 
 
 class MovieCreate(MovieBase):
@@ -24,6 +30,14 @@ class MovieUpdate(MovieBase):
 
 class Movie(MovieBase):
     id: UUID
+
+    class Config:
+        orm_mode = True
+
+
+class MoviesInfo(BaseModel):
+    movies: List[Movie]
+    info: Info
 
     class Config:
         orm_mode = True

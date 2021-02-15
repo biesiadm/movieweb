@@ -5,11 +5,16 @@ from app import schemas, crud
 from app.api import deps
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from slugify import slugify
 
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas.Movie])
+# TODO(kantoniak) after resolving problem in movies.ts, uncomment lines 14 and 30 and remove lines 15 and 29.
+@router.get("/",
+            # response_model=schemas.MoviesInfo
+            response_model=List[schemas.Movie]
+            )
 def read_movies(
         db: Session = Depends(deps.get_db),
         skip: int = 0,
@@ -19,7 +24,11 @@ def read_movies(
     movies = crud.movie.get_multi_sort(db, skip=skip, limit=limit,
                                        sort=sort_settings.sort, sort_dir=sort_settings.sort_dir)
 
+    total_count = crud.movie.count(db)
+    info = schemas.Info(count=min(limit, total_count - skip), totalCount=total_count)
+
     return movies
+    # return schemas.MoviesInfo(movies=movies, info=info)
 
 
 @router.get("/{movie_id}", response_model=schemas.Movie)
