@@ -49,10 +49,6 @@ const OpenapiSpec = swaggerJSDoc({
  *           $ref: "#/components/schemas/Review"
  */
 interface PublicMovie extends Movie {
-
-    // TODO(kantoniak): Move to user API    [done in movie service]
-    slug: string;
-
     review?: PublicReview;
 }
 

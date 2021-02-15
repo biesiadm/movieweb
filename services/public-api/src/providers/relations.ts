@@ -7,9 +7,10 @@ const fetchFollowerIdsByUserId = async (user_id: string, paging?: Pagination, so
     throwOnInvalidUuid(user_id);
     const skip = paging?.skip;
     const limit = paging?.limit;
+    const sort = sorting?.by;
+    const sortDir = <string>(sorting?.dir);
 
-    // TODO(kantoniak): /api/relationships/following/{user_id}?sort=created&sort_dir=desc        [zrobione po stronie serwisu]
-    const resp = await relsApi.readUserFollowersApiRelationshipsFollowingUserIdGet(user_id, skip, limit);
+    const resp = await relsApi.readUserFollowersApiRelationshipsFollowingUserIdGet(user_id, skip, limit, sort, sortDir);
     return resp.data.map((r: Relationship) => r.user_id);
 }
 
@@ -18,9 +19,10 @@ const fetchFollowingIdsByUserId = async (user_id: string, paging?: Pagination, s
     throwOnInvalidUuid(user_id);
     const skip = paging?.skip;
     const limit = paging?.limit;
+    const sort = sorting?.by;
+    const sortDir = <string>(sorting?.dir);
 
-    // TODO(kantoniak): /api/relationships/followed-by/{user_id}?sort=created&sort_dir=desc      [zrobione po stronie serwisu]
-    const resp = await relsApi.readFollowingByUserApiRelationshipsFollowedByUserIdGet(user_id, skip, limit);
+    const resp = await relsApi.readFollowingByUserApiRelationshipsFollowedByUserIdGet(user_id, skip, limit, sort, sortDir);
     return resp.data.map((r: Relationship) => r.followed_user_id);
 }
 
