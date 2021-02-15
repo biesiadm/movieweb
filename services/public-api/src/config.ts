@@ -22,7 +22,9 @@ const tokenConfig = {
 
 const redisConfig = {
   port: 6379,
-  host: "redis"
+  host: "redis",
+  // FIXME(kantoniak): Hardcoded secret
+  password: "redis-password"
 };
 
 const axiosInstance: AxiosInstance = axios.create({

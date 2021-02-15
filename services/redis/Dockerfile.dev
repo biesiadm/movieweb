@@ -1,8 +1,5 @@
 FROM redis:6-alpine
 
-# Environment variables
-ENV ALLOW_EMPTY_PASSWORD=yes
-
 # Files
 ADD redis.dev.conf /usr/local/etc/redis/redis.dev.conf
 
