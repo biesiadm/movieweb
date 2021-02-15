@@ -61,6 +61,9 @@ class UserDetailsPage extends Component<Props, State> {
     try {
       const usersResp = await usersApi.getUsers(1, 0, [login]);
       const userId = usersResp.data.users?.shift()?.id;
+      if (!userId) {
+        throw {};
+      }
       const userResp = await usersApi.getUserById(userId);
       const user = userResp.data;
       const followersPromise = () => usersApi.getFollowers(user.id, 8, 0, 'created', SortDir.Desc);
