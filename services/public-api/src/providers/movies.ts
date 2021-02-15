@@ -1,6 +1,7 @@
 import { AxiosResponse } from 'axios';
 import slugify from 'slugify';
 import { Movie } from '../api/movies';
+import * as cache from '../cache';
 import { moviesApi } from '../config';
 import { Pagination, Sorting } from '../middleware';
 import { PublicMovie } from '../openapi';
@@ -28,14 +29,36 @@ const fetchMovies = async (paging?: Pagination, sorting?: Sorting): Promise<Publ
 
     // TODO(biesiadm): /api/movies?sort=year&sort_dir=desc
     const resp = await moviesApi.readMoviesApiMoviesGet(skip, limit);
-    return fillInGaps(resp.data);
+    const movies =  fillInGaps(resp.data);
+    movies.forEach(cache.setMovie);
+    return movies;
 }
 
 const fetchMoviesById = async (ids: string[]): Promise<PublicMovie[]> => {
     ids.forEach(throwOnInvalidUuid);
-    const movieResps = await Promise.all(ids.map(moviesApi.readMovieByIdApiMoviesMovieIdGet))
-    const movies = movieResps.map((r: AxiosResponse<Movie>) => r.data);
-    return fillInGaps(movies);
+
+    // Fetch cached
+    const cacheResp = await Promise.all(ids.map(cache.getMovie));
+    const cachedMovies: PublicMovie[] = <PublicMovie[]>(cacheResp.filter(m => m != null));
+    const cachedIds = cachedMovies.map(m => m.id);
+
+    // Fetch others
+    let movies: PublicMovie[] = [];
+    const missingIds = ids.filter((id) => !cachedIds.includes(id));
+    if (missingIds.length > 0) {
+        const movieResps = await Promise.all(missingIds.map(moviesApi.readMovieByIdApiMoviesMovieIdGet))
+        movies = fillInGaps(movieResps.map((r: AxiosResponse<Movie>) => r.data));
+        movies.forEach(cache.setMovie);
+    }
+
+    // Merge and reorder
+    movies = movies.concat(cachedMovies);
+    let orderedMovies: PublicMovie[] = [];
+    ids.forEach((id, i) => {
+        orderedMovies[i] = <PublicMovie>movies.find(movie => movie.id == id);
+    });
+
+    return orderedMovies;
 }
 
 const fetchMovieById = async (id: string): Promise<PublicMovie> => {
