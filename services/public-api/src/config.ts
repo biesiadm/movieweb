@@ -20,6 +20,13 @@ const tokenConfig = {
   algorithms: [<Algorithm>"HS256"]
 };
 
+const redisConfig = {
+  port: 6379,
+  host: "redis",
+  // FIXME(kantoniak): Hardcoded secret
+  password: "redis-password"
+};
+
 const axiosInstance: AxiosInstance = axios.create({
   responseType: "json"
 });
@@ -55,4 +62,4 @@ const loginApi = LoginApiFactory(
   axiosInstance
 );
 
-export { loginApi, moviesApi, relsApi, reviewsApi, usersApi, corsConfig, tokenConfig };
+export { loginApi, moviesApi, relsApi, reviewsApi, usersApi, corsConfig, tokenConfig, redisConfig };
