@@ -8,7 +8,7 @@ const fetchFollowerIdsByUserId = async (user_id: string, paging?: Pagination, so
     const skip = paging?.skip;
     const limit = paging?.limit;
 
-    // TODO(biesiadm): /api/relationships/following/{user_id}?sort=created&sort_dir=desc        [zrobione po stronie serwisu]
+    // TODO(kantoniak): /api/relationships/following/{user_id}?sort=created&sort_dir=desc        [zrobione po stronie serwisu]
     const resp = await relsApi.readUserFollowersApiRelationshipsFollowingUserIdGet(user_id, skip, limit);
     return resp.data.map((r: Relationship) => r.user_id);
 }
@@ -19,7 +19,7 @@ const fetchFollowingIdsByUserId = async (user_id: string, paging?: Pagination, s
     const skip = paging?.skip;
     const limit = paging?.limit;
 
-    // TODO(biesiadm): /api/relationships/followed-by/{user_id}?sort=created&sort_dir=desc      [zrobione po stronie serwisu]
+    // TODO(kantoniak): /api/relationships/followed-by/{user_id}?sort=created&sort_dir=desc      [zrobione po stronie serwisu]
     const resp = await relsApi.readFollowingByUserApiRelationshipsFollowedByUserIdGet(user_id, skip, limit);
     return resp.data.map((r: Relationship) => r.followed_user_id);
 }

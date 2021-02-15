@@ -20,7 +20,7 @@ const fetchMovies = async (paging?: Pagination, sorting?: Sorting): Promise<Publ
     const sort = sorting?.by;
     const sortDir = <string>(sorting?.dir);
 
-    // TODO(biesiadm): /api/movies?sort=year&sort_dir=desc      [zrobione po stronie serwisu]
+    // TODO(kantoniak): /api/movies?sort=year&sort_dir=desc      [zrobione po stronie serwisu]
     const resp = await moviesApi.readMoviesApiMoviesGet(skip, limit);
     const movies =  fillInGaps(resp.data);
     movies.forEach(cache.setMovie);

@@ -60,15 +60,15 @@ router.get("/", asyncHandler(async (req: express.Request, res: express.Response,
 
     const ratingBasedSorts = ['avg_rating', 'rating_count'];
     if (req.sorting?.by && ratingBasedSorts.includes(req.sorting.by)) {
-        // TODO(biesiadm): /api/reviews/movies?sort=avg_rating&sort_dir=desc, zwraca listę [movie_id]       [zrobione po stronie reviews]
-        // TODO(biesiadm): /api/reviews/movies?sort=rating_count&sort_dir=desc, zwraca listę [movie_id]     [zrobione po stronie reviews]
+        // TODO(kantoniak): /api/reviews/movies?sort=avg_rating&sort_dir=desc, zwraca listę [movie_id]       [zrobione po stronie reviews]
+        // TODO(kantoniak): /api/reviews/movies?sort=rating_count&sort_dir=desc, zwraca listę [movie_id]     [zrobione po stronie reviews]
         // TODO(kantoniak): Fetch ids from movie service and then get movie details
     }
 
     // Fetch all movies
     const movies = await fetchMovies(req.pagination!);
 
-    // TODO(biesiadm): Pass info from the service
+    // TODO(kantoniak): Pass info from the service  [done in movie service, instruction in movies/app/app/api/api/endpoints/movies]
     const responseBody = {
         movies: movies,
         info: {
