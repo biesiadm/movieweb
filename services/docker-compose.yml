@@ -79,14 +79,15 @@ services:
       - public-api
     build: webapp/
     environment:
-      - REACT_APP_WEBAPP_URL=${PUBLIC_SCHEME}://${PUBLIC_DOMAIN}:${PUBLIC_PORT}
-      - REACT_APP_API_URL=${PUBLIC_SCHEME}://api.${PUBLIC_DOMAIN}:${PUBLIC_PORT}
+      - REACT_APP_WEBAPP_URL=${PUBLIC_SCHEME}://${PUBLIC_DOMAIN}
+      - REACT_APP_API_URL=${PUBLIC_SCHEME}://api.${PUBLIC_DOMAIN}
 
   load-balancer:
     build: load-balancer/
     env_file: .env
     ports:
-      - ${PUBLIC_PORT}:80
+      - 80:80
+      - 443:443
 
 volumes:
   movies-db-data:

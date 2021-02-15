@@ -1,0 +1,8 @@
+# Docker files
+.dockerignore
+Dockerfile
+Dockerfile.dev
+
+# .git files
+docker-files/etc/nginx/certs/.gitkeep
+

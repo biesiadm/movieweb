@@ -1,0 +1,48 @@
+upstream api-gateway {
+    server public-api:8080 weight=1;
+}
+
+upstream webapp {
+    server webapp:8080 weight=1;
+}
+
+# Redirect to HTTPS
+server {
+    listen 80;
+    server_name ${PUBLIC_DOMAIN};
+    return 301 https://${PUBLIC_DOMAIN}$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name ${PUBLIC_DOMAIN};
+
+    ssl_password_file /etc/nginx/certs/${PUBLIC_DOMAIN}.pass;
+    ssl_certificate /etc/nginx/certs/${PUBLIC_DOMAIN}.crt;
+    ssl_certificate_key /etc/nginx/certs/${PUBLIC_DOMAIN}.key;
+
+    location / {
+        proxy_pass http://webapp/;
+    }
+}
+
+# Redirect to HTTPS
+server {
+    listen 80;
+    server_name api.${PUBLIC_DOMAIN};
+    return 301 https://api.${PUBLIC_DOMAIN}$request_uri;
+}
+
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name api.${PUBLIC_DOMAIN};
+
+    ssl_password_file /etc/nginx/certs/${PUBLIC_DOMAIN}.pass;
+    ssl_certificate /etc/nginx/certs/${PUBLIC_DOMAIN}.crt;
+    ssl_certificate_key /etc/nginx/certs/${PUBLIC_DOMAIN}.key;
+
+    location / {
+        proxy_pass http://api-gateway/;
+    }
+}

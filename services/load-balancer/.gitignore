@@ -1,0 +1,3 @@
+# Certificates
+docker-files/etc/nginx/certs/*
+!docker-files/etc/nginx/certs/.gitkeep
