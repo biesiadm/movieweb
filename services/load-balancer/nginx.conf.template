@@ -1,0 +1,23 @@
+upstream api-gateway {
+    server public-api:8080 weight=1;
+}
+
+upstream webapp {
+    server webapp:8080 weight=1;
+}
+
+server {
+    server_name ${PUBLIC_DOMAIN};
+
+    location / {
+        proxy_pass http://webapp/;
+    }
+}
+
+server {
+    server_name api.${PUBLIC_DOMAIN};
+
+    location / {
+        proxy_pass http://api-gateway/;
+    }
+}

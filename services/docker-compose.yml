@@ -73,16 +73,20 @@ services:
       - users
     build: public-api/
     env_file: .env
-    ports:
-      - ${PUBLIC_API_PORT}:8080
 
   webapp:
     depends_on:
       - public-api
     build: webapp/
+    environment:
+      - REACT_APP_WEBAPP_URL=${PUBLIC_SCHEME}://${PUBLIC_DOMAIN}:${PUBLIC_PORT}
+      - REACT_APP_API_URL=${PUBLIC_SCHEME}://api.${PUBLIC_DOMAIN}:${PUBLIC_PORT}
+
+  load-balancer:
+    build: load-balancer/
     env_file: .env
     ports:
-      - ${WEBAPP_PORT}:8080
+      - ${PUBLIC_PORT}:80
 
 volumes:
   movies-db-data:
