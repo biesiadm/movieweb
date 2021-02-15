@@ -5,7 +5,6 @@ from app import schemas, crud
 from app.api import deps
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from slugify import slugify
 
 router = APIRouter()
 
