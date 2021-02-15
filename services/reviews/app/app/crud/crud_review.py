@@ -108,7 +108,7 @@ class CRUDReview(CRUDBase[Review, ReviewCreate, ReviewUpdate]):
         return db.query(self.model).with_entities(func.count(Review.rating)).filter(Review.user_id == user_id).first()
 
     def get_movies_sort(self, db: Session, *, skip: int = 0, limit: int = 100,
-                        sort: ReviewsSortingModel, sort_dir: SortingDir) -> List[UUID]:
+                        sort: MoviesSortingModel, sort_dir: SortingDir) -> List[UUID]:
         return db.query(self.model.movie_id).group_by(Review.movie_id) \
             .order_by(determine_movies_sorting_type(sort, sort_dir)).offset(skip).limit(limit).all()
 

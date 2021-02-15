@@ -13,9 +13,11 @@ router = APIRouter()
 def read_movies(
         db: Session = Depends(deps.get_db),
         skip: int = 0,
-        limit: int = 100
+        limit: int = 100,
+        sort_settings: schemas.SortingMovies = Depends(deps.check_movies_sorting)
 ) -> Any:
-    movies = crud.movie.get_multi(db, skip=skip, limit=limit)
+    movies = crud.movie.get_multi_sort(db, skip=skip, limit=limit,
+                                       sort=sort_settings.sort, sort_dir=sort_settings.sort_dir)
 
     return movies
 
