@@ -1,6 +1,6 @@
 import swaggerJSDoc from 'swagger-jsdoc';
 import OpenapiDef from '../openapi-definition.json';
-import { Movie } from './api/movies';
+import { Info, Movie } from './api/movies';
 import { Review } from './api/reviews';
 import { UserWeb } from './api/users';
 
@@ -49,10 +49,6 @@ const OpenapiSpec = swaggerJSDoc({
  *           $ref: "#/components/schemas/Review"
  */
 interface PublicMovie extends Movie {
-
-    // TODO(kantoniak): Move to user API    [done in movie service]
-    slug: string;
-
     review?: PublicReview;
 }
 
@@ -175,5 +171,11 @@ interface PublicUser extends UserWeb {
  *           type: "string"
  */
 
+type PaginatedList<T, PropName extends string> = {
+    info: Info
+} & {[P in PropName]: T[]};
+
+type PaginatedMovies = PaginatedList<PublicMovie, 'movies'>;
+
 export default OpenapiSpec;
-export type { PublicMovie, PublicReview, PublicUser };
+export type { PublicMovie, PublicReview, PublicUser, PaginatedMovies };

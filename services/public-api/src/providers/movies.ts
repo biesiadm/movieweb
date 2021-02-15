@@ -1,30 +1,29 @@
 import { AxiosResponse } from 'axios';
-import slugify from 'slugify';
 import { Movie } from '../api/movies';
 import * as cache from '../cache';
 import { moviesApi } from '../config';
 import { Pagination, Sorting } from '../middleware';
-import { PublicMovie } from '../openapi';
+import { PaginatedMovies, PublicMovie } from '../openapi';
 import { throwOnInvalidUuid } from '../utils';
 
-const fillInGaps = (movies: Movie[]): PublicMovie[] => {
-    return movies.map((m: Movie) => {
-        let movie: Partial<PublicMovie> = m;
-        return <PublicMovie>movie;
-    });
+const convertToPublic = (movies: Movie[]): PublicMovie[] => {
+    return movies.map(m => <PublicMovie>m);
 }
 
-const fetchMovies = async (paging?: Pagination, sorting?: Sorting): Promise<PublicMovie[]> => {
+const fetchMovies = async (paging?: Pagination, sorting?: Sorting): Promise<PaginatedMovies> => {
     const skip = paging?.skip;
     const limit = paging?.limit;
     const sort = sorting?.by;
     const sortDir = <string>(sorting?.dir);
 
-    // TODO(kantoniak): /api/movies?sort=year&sort_dir=desc      [zrobione po stronie serwisu]
-    const resp = await moviesApi.readMoviesApiMoviesGet(skip, limit);
-    const movies =  fillInGaps(resp.data);
+    const resp = await moviesApi.readMoviesApiMoviesGet(skip, limit, sort, sortDir);
+    const movies =  convertToPublic(resp.data.movies);
     movies.forEach(cache.setMovie);
-    return movies;
+
+    return {
+        movies: movies,
+        info: resp.data.info
+    }
 }
 
 const fetchMoviesById = async (ids: string[]): Promise<PublicMovie[]> => {
@@ -40,7 +39,7 @@ const fetchMoviesById = async (ids: string[]): Promise<PublicMovie[]> => {
     const missingIds = ids.filter((id) => !cachedIds.includes(id));
     if (missingIds.length > 0) {
         const movieResps = await Promise.all(missingIds.map(moviesApi.readMovieByIdApiMoviesMovieIdGet))
-        movies = fillInGaps(movieResps.map((r: AxiosResponse<Movie>) => r.data));
+        movies = convertToPublic(movieResps.map((r: AxiosResponse<Movie>) => r.data));
         movies.forEach(cache.setMovie);
     }
 
