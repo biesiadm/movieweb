@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { Algorithm } from 'jsonwebtoken';
+import qs from 'qs';
 import { MoviesApiFactory } from './api/movies/api';
 import { Configuration as MoviesApiConfiguration } from './api/movies/configuration';
 import { RelationshipsApiFactory as RelationsApiFactory } from './api/relations/api';
@@ -35,7 +36,7 @@ const redisConfig = {
 };
 
 const axiosInstance: AxiosInstance = axios.create({
-  responseType: "json"
+  responseType: "json",
 });
 
 const moviesApi = MoviesApiFactory(

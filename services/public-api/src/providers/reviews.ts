@@ -1,3 +1,4 @@
+import qs from 'qs';
 import { AxiosResponse } from 'axios';
 import { validate as validateUuid } from 'uuid';
 import { Review, ReviewCreate } from '../api/reviews';

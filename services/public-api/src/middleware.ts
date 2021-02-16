@@ -169,6 +169,7 @@ function buildSortingHandler(sortBy: string[], defaultCriteria?: string) {
 
 const handleValidationErrors = (error: any, req: Request, res: Response, next: NextFunction) => {
     if (error.detail) {
+        console.log(error);
         res.status(422).json(error).send();
         return;
     } else {
@@ -181,6 +182,7 @@ const sendBackHttp4xxOr500 = (error: any, req: Request, res: Response, next: Nex
     if (status && Number.isInteger(status) && 400 <= status && status < 500) {
         res.status(status).json(error.response.data);
     } else {
+        console.log(error);
         res.status(500).send();
     }
 }
@@ -193,4 +195,6 @@ export {
     handleValidationErrors,
     sendBackHttp4xxOr500
 };
+
+export { SortDir };
 export type { Pagination, Sorting };

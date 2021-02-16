@@ -15,6 +15,7 @@ import UserListPage from './pages/UserListPage';
 import UserDetailsPage from './pages/UserDetailsPage';
 import { usersApi } from './config';
 import AddMoviePage from './pages/AddMoviePage';
+import FeedPage from './pages/FeedPage';
 
 enum StartupState {
   Loading = "LOADING",
@@ -94,8 +95,12 @@ class App extends Component<EmptyProps, State> {
   renderApp(): React.ReactNode {
     const user = this.state.user;
 
+    let feedLink = null;
     let addMovieLink = null;
     if (user) {
+      feedLink = <li className="nav-item">
+                      <NavLink to='/feed' className="nav-link" aria-current="page">Feed</NavLink>
+                    </li>;
       addMovieLink = <li className="nav-item">
                       <NavLink to='/add-movie' className="nav-link" aria-current="page">Add movie</NavLink>
                     </li>;
@@ -116,6 +121,7 @@ class App extends Component<EmptyProps, State> {
                       <li className="nav-item">
                         <NavLink to='/users' className="nav-link" aria-current="page">Users</NavLink>
                       </li>
+                      {feedLink}
                       {addMovieLink}
                     </ul>
                     <CurrentUserBlock user={user} />
@@ -125,6 +131,9 @@ class App extends Component<EmptyProps, State> {
               <main className="pb-5 bg-light col">
               <Switch>
                 <Route exact path='/' component={PublicHomepage} />
+                <Route exact
+                  path='/feed'
+                  render={(props: RouteComponentProps) => <FeedPage {...props} user={user}/>} />
                 <Route exact
                   path='/add-movie'
                   render={(props: RouteComponentProps) => <AddMoviePage {...props} user={user}/>} />

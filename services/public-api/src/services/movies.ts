@@ -121,8 +121,6 @@ router.post("/", requireToken);
 router.post("/", bodyParser.json());
 router.post("/", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
 
-    console.log(req.body);
-
     // Validate year
     if (req.body?.year) {
         const year = Number(req.body?.year);
