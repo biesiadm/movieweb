@@ -9,10 +9,8 @@ from sqlalchemy.orm import Session
 
 router = APIRouter()
 
-# TODO(kantoniak) after fixing relations.ts change as previous ones
 @router.get("/following/{user_id}",
-            response_model=List[schemas.Relationship]
-            # response_model=schemas.RelationshipsInfo
+            response_model=schemas.RelationshipsInfo
             )
 def read_user_followers(
         user_id: UUID,
@@ -30,14 +28,11 @@ def read_user_followers(
     total_count = crud.relationship.count_user_followers(db=db, user_id=user_id)
     info = schemas.Info(count=len(relationships), totalCount=total_count)
 
-    return relationships
-    # return schemas.RelationshipsInfo(relationships=relationships, info=info)
+    return schemas.RelationshipsInfo(relationships=relationships, info=info)
 
 
-# TODO(kantoniak) after fixing relations.ts change as previous ones
 @router.get("/followed-by/{user_id}",
-            response_model=List[schemas.Relationship]
-            # response_model=schemas.RelationshipsInfo
+            response_model=schemas.RelationshipsInfo
             )
 def read_following_by_user(
         user_id: UUID,
@@ -55,8 +50,7 @@ def read_following_by_user(
     total_count = crud.relationship.count_following_by_user(db=db, user_id=user_id)
     info = schemas.Info(count=len(relationships), totalCount=total_count)
 
-    return relationships
-    # return schemas.RelationshipsInfo(relationships=relationships, info=info)
+    return schemas.RelationshipsInfo(relationships=relationships, info=info)
 
 
 @router.post("/follow", response_model=schemas.Relationship)

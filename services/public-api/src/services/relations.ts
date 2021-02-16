@@ -67,16 +67,12 @@ router.get("/followers", handlePagination);
 router.get("/followers", handleSorting);
 router.get("/followers", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     const user_id: string = req.params.id;
-    const follower_ids = await fetchFollowerIdsByUserId(user_id, req.pagination, req.sorting);
-    const users = await fetchUsersById(follower_ids);
+    const follower_id_list = await fetchFollowerIdsByUserId(user_id, req.pagination, req.sorting);
+    const users = await fetchUsersById(follower_id_list.strings);
 
-    // TODO(kantoniak): Pass info from the service       [relations - done]
     const responseBody = {
         users: users,
-        info: {
-            count: users.length,
-            totalCount: Math.max(2, users.length)
-        }
+        info: follower_id_list.info
     };
     res.status(200).json(responseBody);
     return next();
@@ -190,16 +186,12 @@ router.get("/follows", handlePagination);
 router.get("/follows", handleSorting);
 router.get("/follows", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     const user_id: string = req.params.id;
-    const followed_ids = await fetchFollowingIdsByUserId(user_id, req.pagination, req.sorting);
-    const users = await fetchUsersById(followed_ids);
+    const follower_id_list = await fetchFollowingIdsByUserId(user_id, req.pagination, req.sorting);
+    const users = await fetchUsersById(follower_id_list.strings);
 
-    // TODO(kantoniak): Pass info from the service       [relations - done]
     const responseBody = {
         users: users,
-        info: {
-            count: users.length,
-            totalCount: Math.max(2, users.length)
-        }
+        info: follower_id_list.info
     };
     res.status(200).json(responseBody);
     return next();
