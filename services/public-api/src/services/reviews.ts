@@ -4,11 +4,12 @@ import asyncHandler from 'express-async-handler';
 import { validate as validateUuid } from 'uuid';
 import { HTTPValidationError, ReviewCreate } from '../api/reviews/api';
 import { PublicReview } from '../openapi';
-import { buildSortingHandler, errorIfIdNotValid, handlePagination } from '../middleware';
+import { buildSortingHandler, errorIfIdNotValid, handlePagination, Sorting, SortDir } from '../middleware';
 import { requireToken } from '../token';
 import { fetchUserById, fetchUsersById } from '../providers/users';
 import { fetchMoviesById } from '../providers/movies';
 import { createReview, deleteReview, fetchReviewById, fetchReviews, fetchReviewsByMovieId, fetchReviewsByUserId } from '../providers/reviews';
+import { fetchFollowingIdsByUserId } from '../providers/relations';
 
 const router = express.Router();
 const handleReviewSorting = buildSortingHandler(['created', 'rating']);
@@ -321,16 +322,85 @@ movieRouter.get("/", asyncHandler(async (req: express.Request, res: express.Resp
  *
  */
 const userRouter = express.Router({ mergeParams: true });
-userRouter.get("/", errorIfIdNotValid);
-userRouter.get("/", handlePagination);
-userRouter.get("/", handleReviewSorting);
-userRouter.get("/", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+userRouter.get("/reviews", errorIfIdNotValid);
+userRouter.get("/reviews", handlePagination);
+userRouter.get("/reviews", handleReviewSorting);
+userRouter.get("/reviews", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     // Fetch all reviews
     const user_id = req.params.id;
     const body = await fetchReviewsByUserId(user_id, req.pagination!, req.sorting);
     await addOptionalMoviesToReviews(body.reviews);
     res.status(200).json(body);
     return next();
+}));
+
+/**
+ * @swagger
+ * /users/{id}/review-feed:
+ *   get:
+ *     operationId: getUserReviewFeed
+ *     summary: Retrieve a list of reviews by followed users
+ *     tags: [users, reviews]
+ *     parameters:
+ *       - $ref: '#/components/parameters/id'
+ *       - $ref: '#/components/parameters/limit'
+ *       - $ref: '#/components/parameters/skip'
+ *       - in: query
+ *         name: created_gte
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         required: false
+ *         description: Limits to reviews created at given time or later.
+ *     responses:
+ *       200:
+ *         $ref: '#/components/responses/ReviewListResponse'
+ *       422:
+ *         $ref: '#/components/responses/ValidationError'
+ */
+userRouter.get("/review-feed", requireToken);
+userRouter.get("/review-feed", errorIfIdNotValid);
+userRouter.get("/review-feed", handlePagination);
+userRouter.get("/review-feed", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+
+    // Check if asking for themselves
+    const tokenOwnerId = req.token_payload?.sub;
+    const userId = req.params.id;
+    if (tokenOwnerId !== userId) {
+        res.status(401).send();
+        return;
+    }
+
+    // Validate parameters
+    let created_gte: Date | null = null;
+    if (req.query.created_gte) {
+        created_gte = new Date(req.params.created_gte);
+        if (!created_gte || !created_gte.getTime || isNaN(created_gte.getTime())) {
+            throw <HTTPValidationError>{
+                detail: [
+                    {
+                        loc: ['query', 'created_gte'],
+                        msg: 'Parameter created_gte not valid.',
+                        type: 'param'
+                    }
+                ]
+            };
+        }
+    }
+
+    // Fetch friend IDs
+    const sorting: Sorting = {
+        by: 'created',
+        dir: SortDir.Descending
+    }
+    const friend_id_list = await fetchFollowingIdsByUserId(tokenOwnerId, req.pagination, sorting);
+    const friend_ids = friend_id_list.strings;
+
+    // Fetch all reviews
+    const body = await fetchReviews(req.pagination!, undefined, created_gte || undefined, friend_ids);
+    await addOptionalMoviesToReviews(body.reviews);
+    await addOptionalUsersToReviews(body.reviews);
+    res.status(200).json(body);
 }));
 
 export { movieRouter as MovieReviewsRouter, userRouter as UserReviewsRouter };

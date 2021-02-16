@@ -28,7 +28,7 @@ apiRouter.use('/movies/:id/reviews', MovieReviewsRouter);
 apiRouter.use('/movies', MoviesRouter);
 apiRouter.use('/reviews', ReviewsRouter);
 apiRouter.use('/users/:id', RelationsRouter);
-apiRouter.use('/users/:id/reviews', UserReviewsRouter);
+apiRouter.use('/users/:id', UserReviewsRouter);
 apiRouter.use('/users', UsersRouter);
 app.use('/v1', apiRouter);
 
