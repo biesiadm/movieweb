@@ -253,7 +253,7 @@ html, body, body>div {
     text-decoration: none;
 }
 
-.login-screen .spinner-border {
+.login-screen .spinner-border, .addmovie-form .spinner-border {
     width: 1em;
     height: 1em;
     border-width: 0.17em;

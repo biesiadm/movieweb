@@ -121,18 +121,22 @@ router.post("/", requireToken);
 router.post("/", bodyParser.json());
 router.post("/", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
 
+    console.log(req.body);
+
     // Validate year
-    const year = Number(req.body?.year);
-    if (isNaN(year) || !Number.isInteger(year) || year < 1000) {
-        throw <HTTPValidationError>{
-            detail: [
-                {
-                    loc: ['body', 'year'],
-                    msg: 'Parameter year not valid.',
-                    type: 'param'
-                }
-            ]
-        };
+    if (req.body?.year) {
+        const year = Number(req.body?.year);
+        if (isNaN(year) || !Number.isInteger(year) || year < 1) {
+            throw <HTTPValidationError>{
+                detail: [
+                    {
+                        loc: ['body', 'year'],
+                        msg: 'Parameter year not valid.',
+                        type: 'param'
+                    }
+                ]
+            };
+        }
     }
 
     // Validate poster URL

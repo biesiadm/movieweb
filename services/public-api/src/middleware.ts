@@ -168,7 +168,7 @@ function buildSortingHandler(sortBy: string[], defaultCriteria?: string) {
 }
 
 const handleValidationErrors = (error: any, req: Request, res: Response, next: NextFunction) => {
-    if (error.detail?.msg) {
+    if (error.detail) {
         res.status(422).json(error).send();
         return;
     } else {
