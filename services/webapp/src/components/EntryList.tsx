@@ -11,6 +11,7 @@ type Props<RespT> = {
   className?: string,
   loadingMessage: string,
   errorMessage: string,
+  emptyMessage: string,
   retryButtonLabel: string,
   promise: () => AxiosPromise<RespT>
 }
@@ -31,6 +32,7 @@ class EntryList<T, RespT> extends Component<Props<RespT>, State<T>> {
   public static defaultProps = {
     loadingMessage: "Loading...",
     errorMessage: "Could not fetch entries.",
+    emptyMessage: "No entries",
     retryButtonLabel: "Retry"
   };
 
@@ -107,9 +109,15 @@ class EntryList<T, RespT> extends Component<Props<RespT>, State<T>> {
     }
 
     const entries = this.state.entries;
-    return <div className={outerClasses}>
-            {entries.map(this.renderEntry)}
-          </div>;
+    if (entries.length) {
+      return <div className={outerClasses}>
+              {entries.map(this.renderEntry)}
+            </div>;
+    } else {
+      return <div className={outerClasses}>
+              <p>{this.props.emptyMessage}</p>
+            </div>;
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -123,6 +131,7 @@ class MovieList extends EntryList<Movie, MovieListResponse> {
   public static defaultProps = {
     loadingMessage: "Loading...",
     errorMessage: "Could not fetch movies.",
+    emptyMessage: "No movies",
     retryButtonLabel: "Retry"
   };
 
@@ -142,6 +151,7 @@ class ReviewList extends EntryList<Review, ReviewListResponse> {
   public static defaultProps = {
     loadingMessage: "Loading...",
     errorMessage: "Could not fetch reviews.",
+    emptyMessage: "No reviews",
     retryButtonLabel: "Retry"
   };
 
@@ -161,6 +171,7 @@ class UserList extends EntryList<User, UserListResponse> {
   public static defaultProps = {
     loadingMessage: "Loading...",
     errorMessage: "Could not fetch users.",
+    emptyMessage: "No users",
     retryButtonLabel: "Retry"
   };
 
