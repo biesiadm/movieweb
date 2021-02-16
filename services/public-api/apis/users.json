@@ -54,11 +54,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "title": "Response Read Users Api Users  Get",
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UserWeb"
-                  }
+                  "$ref": "#/components/schemas/UsersWebInfo"
                 }
               }
             }
@@ -311,6 +307,24 @@
           }
         }
       },
+      "Info": {
+        "title": "Info",
+        "required": [
+          "count",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "totalCount": {
+            "title": "Totalcount",
+            "type": "integer"
+          }
+        }
+      },
       "Token": {
         "title": "Token",
         "required": [
@@ -399,6 +413,26 @@
           "avatar_url": {
             "title": "Avatar Url",
             "type": "string"
+          }
+        }
+      },
+      "UsersWebInfo": {
+        "title": "UsersWebInfo",
+        "required": [
+          "users",
+          "info"
+        ],
+        "type": "object",
+        "properties": {
+          "users": {
+            "title": "Users",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserWeb"
+            }
+          },
+          "info": {
+            "$ref": "#/components/schemas/Info"
           }
         }
       },

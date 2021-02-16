@@ -94,18 +94,8 @@ router.get("/", asyncHandler(async (req: express.Request, res: express.Response,
     }
 
     // Fetch all users
-    const users = await fetchUsers(req.pagination!);
-
-    // TODO(kantoniak): Pass info from the service   [done]
-    const responseBody = {
-        users: users,
-        info: {
-            count: users.length,
-            totalCount: req.pagination!.skip + users.length
-        }
-    };
-
-    res.status(200).json(responseBody);
+    const body = await fetchUsers(req.pagination!);
+    res.status(200).json(body);
     return next();
 }));
 
