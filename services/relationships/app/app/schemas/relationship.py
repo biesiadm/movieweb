@@ -1,7 +1,13 @@
 from datetime import datetime
+from typing import List
 from uuid import UUID
 
 from pydantic import BaseModel
+
+
+class Info(BaseModel):
+    count: int
+    totalCount: int
 
 
 class RelationshipBase(BaseModel):
@@ -21,5 +27,13 @@ class Relationship(RelationshipBase):
     id: UUID
     created: datetime
 
+    class Config:
+        orm_mode = True
+
+
+class RelationshipsInfo(BaseModel):
+    relationships: List[Relationship]
+    info: Info
+    
     class Config:
         orm_mode = True

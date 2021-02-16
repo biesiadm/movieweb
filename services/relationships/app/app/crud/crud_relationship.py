@@ -5,6 +5,7 @@ from uuid import UUID
 from app.crud.base import CRUDBase
 from app.db.models import Relationship
 from app.schemas import RelationshipCreate, RelationshipUpdate, SortingDir, RelationshipsSortingModel
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone
 
@@ -23,6 +24,15 @@ def sort_relationships_manually(query_result, sort: RelationshipsSortingModel, s
         query_result = sorted(query_result, key=attrgetter('created'), reverse=(sort_dir == SortingDir.desc))
 
     return query_result
+
+
+def calculate_total_counts(counts) -> int:
+    total_counts = 0
+
+    for c in counts:
+        total_counts += c[0]
+
+    return total_counts
 
 
 class CRUDReview(CRUDBase[Relationship, RelationshipCreate, RelationshipUpdate]):
@@ -54,6 +64,14 @@ class CRUDReview(CRUDBase[Relationship, RelationshipCreate, RelationshipUpdate])
     def get_relationship(self, db: Session, *, user_id: UUID, followed_user_id: UUID):
         return db.query(self.model).filter(Relationship.user_id == user_id,
                                            Relationship.followed_user_id == followed_user_id).first()
+
+    def count_following_by_user(self, db: Session, *, user_id: UUID):
+        counts = db.query(func.count(Relationship.id)).filter(Relationship.user_id == user_id).all()
+        return calculate_total_counts(counts)
+
+    def count_user_followers(self, db: Session, *, user_id: UUID) -> int:
+        counts = db.query(func.count(Relationship.id)).filter(Relationship.followed_user_id == user_id).all()
+        return calculate_total_counts(counts)
 
 
 relationship = CRUDReview(Relationship)

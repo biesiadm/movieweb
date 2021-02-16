@@ -96,7 +96,7 @@ router.get("/", asyncHandler(async (req: express.Request, res: express.Response,
     // Fetch all users
     const users = await fetchUsers(req.pagination!);
 
-    // TODO(biesiadm): Pass info from the service
+    // TODO(kantoniak): Pass info from the service   [done]
     const responseBody = {
         users: users,
         info: {
