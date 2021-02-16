@@ -152,20 +152,11 @@ router.get("/", asyncHandler(async (req: express.Request, res: express.Response,
     }
 
     // Fetch all reviews
-    const reviews = await fetchReviews(req.pagination!, req.sorting, created_gte || undefined, user_ids || undefined);
-    await addOptionalMoviesToReviews(reviews);
-    await addOptionalUsersToReviews(reviews);
+    const body = await fetchReviews(req.pagination!, req.sorting, created_gte || undefined, user_ids || undefined);
+    await addOptionalMoviesToReviews(body.reviews);
+    await addOptionalUsersToReviews(body.reviews);
 
-    // TODO(kantoniak): Pass info from the service      [done in reviews service]
-    const responseBody = {
-        reviews: reviews,
-        info: {
-            count: reviews.length,
-            totalCount: 16
-        }
-    };
-
-    res.status(200).json(responseBody);
+    res.status(200).json(body);
     return next();
 }));
 
@@ -297,19 +288,9 @@ movieRouter.get("/", handleReviewSorting);
 movieRouter.get("/", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     // Fetch all reviews
     const movie_id = req.params.id;
-    const reviews = await fetchReviewsByMovieId(movie_id, req.pagination!, req.sorting);
-    await addOptionalUsersToReviews(reviews);
-
-    // TODO(kantoniak): Pass info from the service      [done in reviews service]
-    const responseBody = {
-        reviews: reviews,
-        info: {
-            count: reviews.length,
-            totalCount: 16
-        }
-    };
-
-    res.status(200).json(responseBody);
+    const body = await fetchReviewsByMovieId(movie_id, req.pagination!, req.sorting);
+    await addOptionalUsersToReviews(body.reviews);
+    res.status(200).json(body);
     return next();
 }));
 
@@ -346,19 +327,9 @@ userRouter.get("/", handleReviewSorting);
 userRouter.get("/", asyncHandler(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     // Fetch all reviews
     const user_id = req.params.id;
-    const reviews = await fetchReviewsByUserId(user_id, req.pagination!, req.sorting);
-    await addOptionalMoviesToReviews(reviews);
-
-    // TODO(kantoniak): Pass info from the service      [done in reviews service]
-    const responseBody = {
-        reviews: reviews,
-        info: {
-            count: reviews.length,
-            totalCount: 16
-        }
-    };
-
-    res.status(200).json(responseBody);
+    const body = await fetchReviewsByUserId(user_id, req.pagination!, req.sorting);
+    await addOptionalMoviesToReviews(body.reviews);
+    res.status(200).json(body);
     return next();
 }));
 

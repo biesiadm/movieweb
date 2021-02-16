@@ -192,7 +192,8 @@ type PaginatedList<T, PropName extends string> = {
 } & {[P in PropName]: T[]};
 
 type PaginatedMovies = PaginatedList<PublicMovie, 'movies'>;
+type PaginatedReviews = PaginatedList<PublicReview, 'reviews'>;
 type PaginatedUsers = PaginatedList<PublicUser, 'users'>;
 
 export default OpenApiSpec;
-export type { PublicMovie, PublicReview, PublicUser, PaginatedMovies, PaginatedUsers };
+export type { PublicMovie, PublicReview, PublicUser, PaginatedMovies, PaginatedReviews, PaginatedUsers };

@@ -11,10 +11,8 @@ from sqlalchemy.orm import Session
 router = APIRouter()
 
 
-# TODO(kantoniak) uncomment lines 17, 36 and delete lines 16, 35 after changes in reviews.ts
 @router.get("/reviews",
-            response_model=List[schemas.Review]
-            # response_model=schemas.ReviewsInfo
+            response_model=schemas.ReviewsInfo
             )
 def read_all_reviews(
         db: Session = Depends(deps.get_db),
@@ -32,8 +30,7 @@ def read_all_reviews(
     total_count = crud.review.count_all(db=db, created_gte=created_gte, user_id=user_id)
     info = schemas.Info(count=len(reviews), totalCount=total_count)
 
-    return reviews
-    # return schemas.ReviewsInfo(reviews=reviews, info=info)
+    return schemas.ReviewsInfo(reviews=reviews, info=info)
 
 
 @router.get("/movies", response_model=List[UUID])
@@ -94,10 +91,8 @@ def read_count_by_user(
     return rating_count[0]
 
 
-# TODO(kantoniak) after changes in reviews.ts uncomment lines 100, 119 and remove lines 99, 118
 @router.get("/movie/{movie_id}/reviews",
-            response_model=List[schemas.Review]
-            # response_model=schemas.ReviewsInfo
+            response_model=schemas.ReviewsInfo
             )
 def read_movie_reviews(
         movie_id: UUID,
@@ -115,14 +110,11 @@ def read_movie_reviews(
     total_count = crud.review.get_count_by_movie(db=db, movie_id=movie_id)[0]
     info = schemas.Info(count=len(reviews), totalCount=total_count)
 
-    return reviews
-    # return schemas.ReviewsInfo(reviews=reviews, info=info)
+    return schemas.ReviewsInfo(reviews=reviews, info=info)
 
 
-# TODO(kantoniak) after changes in reviews.ts uncomment lines 125, 144 and delete lines 124, 143
 @router.get("/user/{user_id}/reviews",
-            response_model=List[schemas.Review]
-            # response_model=schemas.ReviewsInfo
+            response_model=schemas.ReviewsInfo
             )
 def read_user_reviews(
         user_id: UUID,
@@ -140,8 +132,7 @@ def read_user_reviews(
     total_count = crud.review.get_count_by_user(db=db, user_id=user_id)[0]
     info = schemas.Info(count=len(reviews), totalCount=total_count)
 
-    return reviews
-    # return schemas.ReviewsInfo(reviews=reviews, info=info)
+    return schemas.ReviewsInfo(reviews=reviews, info=info)
 
 
 @router.post("/new", response_model=schemas.Review)
