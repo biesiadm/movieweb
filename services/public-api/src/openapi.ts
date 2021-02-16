@@ -1,11 +1,27 @@
 import swaggerJSDoc from 'swagger-jsdoc';
-import OpenapiDef from '../openapi-definition.json';
+import OpenApiDef from '../openapi-definition.json';
 import { Info, Movie } from './api/movies';
 import { Review } from './api/reviews';
 import { UserWeb } from './api/users';
+import { NODE_ENV, PUBLIC_DOMAIN, PUBLIC_SCHEME } from './config';
 
-const OpenapiSpec = swaggerJSDoc({
-    swaggerDefinition: OpenapiDef,
+function buildServerInfo(): any {
+    let apiDescription = 'Development server';
+    if (NODE_ENV === 'production') {
+        apiDescription = 'API server';
+    }
+
+    return {
+        url: `${PUBLIC_SCHEME}://api.${PUBLIC_DOMAIN}/v1/`,
+        description: apiDescription
+    };
+}
+
+let openApiHeader = OpenApiDef;
+openApiHeader.servers = [ buildServerInfo() ];
+
+const OpenApiSpec = swaggerJSDoc({
+    swaggerDefinition: openApiHeader,
     apis: [
         "src/*.{js,ts}",
         "src/services/*.{js,ts}"
@@ -177,5 +193,5 @@ type PaginatedList<T, PropName extends string> = {
 
 type PaginatedMovies = PaginatedList<PublicMovie, 'movies'>;
 
-export default OpenapiSpec;
+export default OpenApiSpec;
 export type { PublicMovie, PublicReview, PublicUser, PaginatedMovies };

@@ -9,20 +9,29 @@ import { Configuration as ReviewsApiConfiguration } from './api/reviews/configur
 import { LoginApiFactory, UsersApiFactory } from './api/users/api';
 import { Configuration as UsersApiConfiguration } from './api/users/configuration';
 
+const NODE_ENV = <string>process.env.NODE_ENV;
+const PUBLIC_DOMAIN = <string>process.env.PUBLIC_DOMAIN;
+const PUBLIC_SCHEME = <string>process.env.PUBLIC_SCHEME;
+const REDIS_HOST = <string>process.env.REDIS_HOST;
+const REDIS_PORT = parseInt(<string>process.env.REDIS_PORT);
+const REDIS_SECRET = <string>process.env.REDIS_SECRET;
+const SECRET_KEY = <string>process.env.SECRET_KEY;
+export { NODE_ENV, PUBLIC_DOMAIN, PUBLIC_SCHEME };
+
 const corsConfig = {
-  origin: new RegExp(<string>process.env.PUBLIC_DOMAIN),
+  origin: new RegExp(PUBLIC_DOMAIN),
   credentials: true
 };
 
 const tokenConfig = {
-  secret: <string>process.env.SECRET_KEY,
+  secret: SECRET_KEY,
   algorithms: [<Algorithm>"HS256"]
 };
 
 const redisConfig = {
-  host: <string>process.env.REDIS_HOST,
-  port: parseInt(<string>process.env.REDIS_PORT),
-  password: <string>process.env.REDIS_SECRET
+  host: REDIS_HOST,
+  port: REDIS_PORT,
+  password: REDIS_SECRET
 };
 
 const axiosInstance: AxiosInstance = axios.create({
