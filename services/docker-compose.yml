@@ -15,87 +15,120 @@ services:
     volumes:
       - movies-db-data:/var/lib/postgresql/data/
 
-  users:
+#  users:
+#    depends_on:
+#      - users-db
+#    build: users/
+#    env_file:
+#      - .env
+#      - users.env
+#
+#  users-db:
+#    image: postgres:13-alpine
+#    env_file: users.env
+#    volumes:
+#      - users-db-data:/var/lib/postgresql/data/
+#
+#  reviews:
+#    depends_on:
+#      - reviews-db
+#    build: reviews/
+#    env_file:
+#      - .env
+#      - reviews.env
+#
+#  reviews-db:
+#    image: postgres:13-alpine
+#    env_file: reviews.env
+#    volumes:
+#      - reviews-db-data:/var/lib/postgresql/data/
+#
+#  relationships:
+#    depends_on:
+#      - relationships-db1
+#      - relationships-db2
+#    build: relationships/
+#    env_file:
+#      - .env
+#      - relationships.env
+#
+#  relationships-db1:
+#    image: postgres:13-alpine
+#    env_file: relationships-db1.env
+#    volumes:
+#      - relationships-db1-data:/var/lib/postgresql/data/
+#
+#  relationships-db2:
+#    image: postgres:13-alpine
+#    env_file: relationships-db2.env
+#    volumes:
+#      - relationships-db2-data:/var/lib/postgresql/data/
+#
+#  redis:
+#    build: redis/
+#
+#  public-api-a:
+#    build: public-api/
+#    env_file: .env
+#
+#  public-api-b:
+#    build: public-api/
+#    env_file: .env
+#
+#  public-api-c:
+#    build: public-api/
+#    env_file: .env
+#
+#  webapp-a:
+#    build: webapp/
+#    environment:
+#      - REACT_APP_WEBAPP_URL=${PUBLIC_SCHEME}://${PUBLIC_DOMAIN}
+#      - REACT_APP_API_URL=${PUBLIC_SCHEME}://api.${PUBLIC_DOMAIN}/v1
+#
+#  webapp-b:
+#    build: webapp/
+#    environment:
+#      - REACT_APP_WEBAPP_URL=${PUBLIC_SCHEME}://${PUBLIC_DOMAIN}
+#      - REACT_APP_API_URL=${PUBLIC_SCHEME}://api.${PUBLIC_DOMAIN}/v1
+#
+#  load-balancer:
+#    build: load-balancer/
+#    env_file: .env
+#    ports:
+#      - 443:443
+
+  queue:
+    image: rabbitmq:latest
+    # Using the below image instead is required to enable the "Broker" tab in the flower UI:
+    # image: rabbitmq:3-management
+    #
+    # You also have to change the flower command
+
+#  flower:
+#    image: mher/flower
+#    networks:
+#      - ${TRAEFIK_PUBLIC_NETWORK?Variable not set}
+#      - default
+#    env_file:
+#      - .env
+#    command:
+#      - "--broker=amqp://guest@queue:5672//"
+#      # For the "Broker" tab to work in the flower UI, uncomment the following command argument,
+#      # and change the queue service's image as well
+#      # - "--broker_api=http://guest:guest@queue:15672/api//"
+
+  celeryworker:
     depends_on:
-      - users-db
-    build: users/
+      - movies-db
+      - queue
     env_file:
       - .env
-      - users.env
+      - movies.env
+    build:
+      context: ./movies
+      dockerfile: celeryworker.dockerfile
 
-  users-db:
-    image: postgres:13-alpine
-    env_file: users.env
-    volumes:
-      - users-db-data:/var/lib/postgresql/data/
 
-  reviews:
-    depends_on:
-      - reviews-db
-    build: reviews/
-    env_file:
-      - .env
-      - reviews.env
-
-  reviews-db:
-    image: postgres:13-alpine
-    env_file: reviews.env
-    volumes:
-      - reviews-db-data:/var/lib/postgresql/data/
-
-  relationships:
-    depends_on:
-      - relationships-db1
-      - relationships-db2
-    build: relationships/
-    env_file:
-      - .env
-      - relationships.env
-
-  relationships-db1:
-    image: postgres:13-alpine
-    env_file: relationships-db1.env
-    volumes:
-      - relationships-db1-data:/var/lib/postgresql/data/
-
-  relationships-db2:
-    image: postgres:13-alpine
-    env_file: relationships-db2.env
-    volumes:
-      - relationships-db2-data:/var/lib/postgresql/data/
-
-  redis:
-    build: redis/
-
-  public-api-a:
-    build: public-api/
-    env_file: .env
-
-  public-api-b:
-    build: public-api/
-    env_file: .env
-
-  public-api-c:
-    build: public-api/
-    env_file: .env
-
-  webapp-a:
-    build: webapp/
-    environment:
-      - REACT_APP_WEBAPP_URL=${PUBLIC_SCHEME}://${PUBLIC_DOMAIN}
-      - REACT_APP_API_URL=${PUBLIC_SCHEME}://api.${PUBLIC_DOMAIN}/v1
-
-  webapp-b:
-    build: webapp/
-    environment:
-      - REACT_APP_WEBAPP_URL=${PUBLIC_SCHEME}://${PUBLIC_DOMAIN}
-      - REACT_APP_API_URL=${PUBLIC_SCHEME}://api.${PUBLIC_DOMAIN}/v1
-
-  load-balancer:
-    build: load-balancer/
-    env_file: .env
-    ports:
-      - 443:443
 
 volumes:
   movies-db-data:

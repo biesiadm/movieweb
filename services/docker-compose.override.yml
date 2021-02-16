@@ -9,92 +9,92 @@ services:
     volumes:
       - ./movies/app:/app
 
-  users:
-    ports:
-      - ${USERS_PORT}:80
-    command:
-      - /start-reload.sh
-    volumes:
-      - ./users/app:/app
-
-  reviews:
-    depends_on:
-      - movies
-      - users
-      - reviews-db
-    ports:
-      - ${REVIEWS_PORT}:80
-    command:
-      - /start-reload.sh
-    volumes:
-      - ./reviews/app:/app
-
-  relationships:
-    ports:
-      - ${RELATIONSHIPS_PORT}:80
-    command:
-      - /start-reload.sh
-    volumes:
-      - ./relationships/app:/app
-
-  redis:
-    build:
-      context: redis/
-      dockerfile: Dockerfile.dev
-    ports:
-      - ${REDIS_PORT}:6379
-    volumes:
-      - ./redis/redis.dev.conf:/usr/local/etc/redis/redis.dev.conf
-
-  public-api-a:
-    build:
-      context: public-api/
-      dockerfile: Dockerfile.dev
-    ports:
-      - ${PUBLIC_API_PORT}:8080
-    volumes:
-      - ./public-api/apis:/usr/src/app/apis
-      - ./public-api/generated:/usr/src/app/generated
-      - ./public-api/src:/usr/src/app/src
-
-  public-api-b:
-    build:
-      context: public-api/
-      dockerfile: Dockerfile.dev
-    volumes:
-      - ./public-api/apis:/usr/src/app/apis
-      - ./public-api/generated:/usr/src/app/generated
-      - ./public-api/src:/usr/src/app/src
-
-  public-api-c:
-    build:
-      context: public-api/
-      dockerfile: Dockerfile.dev
-    volumes:
-      - ./public-api/apis:/usr/src/app/apis
-      - ./public-api/generated:/usr/src/app/generated
-      - ./public-api/src:/usr/src/app/src
-
-  webapp-a:
-    build:
-      context: webapp/
-      dockerfile: Dockerfile.dev
-    ports:
-      - ${WEBAPP_PORT}:8080
-    volumes:
-      - ./webapp/apis:/usr/src/app/apis
-      - ./webapp/public:/usr/src/app/public
-      - ./webapp/src:/usr/src/app/src
-
-  webapp-b:
-    build:
-      context: webapp/
-      dockerfile: Dockerfile.dev
-    volumes:
-      - ./webapp/apis:/usr/src/app/apis
-      - ./webapp/public:/usr/src/app/public
-      - ./webapp/src:/usr/src/app/src
-
-  load-balancer:
-    volumes:
-      - ./load-balancer/docker-files/etc/nginx/conf.d/nginx.conf.template:/etc/nginx/conf.d/default.conf.template
+#  users:
+#    ports:
+#      - ${USERS_PORT}:80
+#    command:
+#      - /start-reload.sh
+#    volumes:
+#      - ./users/app:/app
+#
+#  reviews:
+#    depends_on:
+#      - movies
+#      - users
+#      - reviews-db
+#    ports:
+#      - ${REVIEWS_PORT}:80
+#    command:
+#      - /start-reload.sh
+#    volumes:
+#      - ./reviews/app:/app
+#
+#  relationships:
+#    ports:
+#      - ${RELATIONSHIPS_PORT}:80
+#    command:
+#      - /start-reload.sh
+#    volumes:
+#      - ./relationships/app:/app
+#
+#  redis:
+#    build:
+#      context: redis/
+#      dockerfile: Dockerfile.dev
+#    ports:
+#      - ${REDIS_PORT}:6379
+#    volumes:
+#      - ./redis/redis.dev.conf:/usr/local/etc/redis/redis.dev.conf
+#
+#  public-api-a:
+#    build:
+#      context: public-api/
+#      dockerfile: Dockerfile.dev
+#    ports:
+#      - ${PUBLIC_API_PORT}:8080
+#    volumes:
+#      - ./public-api/apis:/usr/src/app/apis
+#      - ./public-api/generated:/usr/src/app/generated
+#      - ./public-api/src:/usr/src/app/src
+#
+#  public-api-b:
+#    build:
+#      context: public-api/
+#      dockerfile: Dockerfile.dev
+#    volumes:
+#      - ./public-api/apis:/usr/src/app/apis
+#      - ./public-api/generated:/usr/src/app/generated
+#      - ./public-api/src:/usr/src/app/src
+#
+#  public-api-c:
+#    build:
+#      context: public-api/
+#      dockerfile: Dockerfile.dev
+#    volumes:
+#      - ./public-api/apis:/usr/src/app/apis
+#      - ./public-api/generated:/usr/src/app/generated
+#      - ./public-api/src:/usr/src/app/src
+#
+#  webapp-a:
+#    build:
+#      context: webapp/
+#      dockerfile: Dockerfile.dev
+#    ports:
+#      - ${WEBAPP_PORT}:8080
+#    volumes:
+#      - ./webapp/apis:/usr/src/app/apis
+#      - ./webapp/public:/usr/src/app/public
+#      - ./webapp/src:/usr/src/app/src
+#
+#  webapp-b:
+#    build:
+#      context: webapp/
+#      dockerfile: Dockerfile.dev
+#    volumes:
+#      - ./webapp/apis:/usr/src/app/apis
+#      - ./webapp/public:/usr/src/app/public
+#      - ./webapp/src:/usr/src/app/src
+#
+#  load-balancer:
+#    volumes:
+#      - ./load-balancer/docker-files/etc/nginx/conf.d/nginx.conf.template:/etc/nginx/conf.d/default.conf.template

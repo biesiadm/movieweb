@@ -1,17 +1,74 @@
-from typing import List, Any
+from typing import List, Any, Union
 from uuid import UUID
+
+from app.core.config import settings
+from celery.result import AsyncResult
+from fastapi import APIRouter, Depends, HTTPException, status, Response
+from fastapi.encoders import jsonable_encoder
+from sqlalchemy.orm import Session
 
 from app import schemas, crud
 from app.api import deps
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from app.core.celery_app import celery_app
 
 router = APIRouter()
 
 
-@router.get("/",
-            response_model=schemas.MoviesInfo
+@router.post("/add-async", response_model=schemas.MovieStatus, status_code=status.HTTP_202_ACCEPTED)
+def add_movie_async(
+        *,
+        movie_in: schemas.MovieCreate
+) -> Any:
+    """
+    Add movie asynchronously.
+    """
+    r = celery_app.send_task("app.worker.test_celery", args=[jsonable_encoder(movie_in)])
+    location = f"{settings.API_MOVIES}/status/{r.task_id}"
+
+    return schemas.MovieStatus(status=location)
+
+
+@router.get("/check-status/{task_id}", response_model=schemas.MovieStatus)
+def check_movie_staus(
+        task_id: str,
+        response: Response
+) -> Any:
+    res = celery_app.AsyncResult(task_id)
+
+    if res.status == "PENDING":
+        response.status_code = status.HTTP_202_ACCEPTED
+        location = f"{settings.API_MOVIES}/status/{task_id}"
+        return schemas.MovieStatus(status=location)
+    elif res.status == "ACCEPTED":
+        response.status_code = status.HTTP_303_SEE_OTHER
+        location = f"{settings.API_MOVIES}/movie/{res.result}"
+        return schemas.MovieStatus(status=location)
+
+    return schemas.MovieStatus(status="Check available movies.")
+
+
+@router.post("/test-celery/", response_model=schemas.Msg, status_code=202)
+def test_celery(
+        msg: schemas.Msg,
+) -> Any:
+    """
+    Test Celery worker.
+    """
+    x = celery_app.send_task("app.worker.test_celery", args=[msg.msg])
+    return {"proc_id": x.task_id}
+
+
+@router.get("/check-celery/{celery_id}",
+            # response_model=bool
             )
+def check_celery(
+        celery_id: str
+) -> Any:
+    res = celery_app.AsyncResult(celery_id)
+    return res.status
+
+
+@router.get("/", response_model=schemas.MoviesInfo)
 def read_movies(
         db: Session = Depends(deps.get_db),
         skip: int = 0,

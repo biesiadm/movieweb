@@ -15,6 +15,7 @@ psycopg2-binary = "^2.8.6"
 alembic = "^1.4.3"
 tenacity = "^6.3.1"
 python-slugify = "^4.0.1"
+celery = "^4.4.6"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
