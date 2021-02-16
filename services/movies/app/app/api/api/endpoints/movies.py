@@ -18,11 +18,14 @@ def read_movies(
         limit: int = 100,
         sort_settings: schemas.SortingMovies = Depends(deps.check_movies_sorting)
 ) -> Any:
+    """
+    Retrieve movies.
+    """
     movies = crud.movie.get_multi_sort(db, skip=skip, limit=limit,
                                        sort=sort_settings.sort, sort_dir=sort_settings.sort_dir)
 
     total_count = crud.movie.count(db)
-    info = schemas.Info(count=min(limit, total_count - skip), totalCount=total_count)
+    info = schemas.Info(count=len(movies), totalCount=total_count)
 
     return schemas.MoviesInfo(movies=movies, info=info)
 

@@ -156,7 +156,7 @@ router.get("/", asyncHandler(async (req: express.Request, res: express.Response,
     await addOptionalMoviesToReviews(reviews);
     await addOptionalUsersToReviews(reviews);
 
-    // TODO(biesiadm): Pass info from the service
+    // TODO(kantoniak): Pass info from the service      [done in reviews service]
     const responseBody = {
         reviews: reviews,
         info: {
@@ -300,7 +300,7 @@ movieRouter.get("/", asyncHandler(async (req: express.Request, res: express.Resp
     const reviews = await fetchReviewsByMovieId(movie_id, req.pagination!, req.sorting);
     await addOptionalUsersToReviews(reviews);
 
-    // TODO(biesiadm): Pass info from the service
+    // TODO(kantoniak): Pass info from the service      [done in reviews service]
     const responseBody = {
         reviews: reviews,
         info: {
@@ -349,7 +349,7 @@ userRouter.get("/", asyncHandler(async (req: express.Request, res: express.Respo
     const reviews = await fetchReviewsByUserId(user_id, req.pagination!, req.sorting);
     await addOptionalMoviesToReviews(reviews);
 
-    // TODO(biesiadm): Pass info from the service
+    // TODO(kantoniak): Pass info from the service      [done in reviews service]
     const responseBody = {
         reviews: reviews,
         info: {

@@ -70,7 +70,7 @@ router.get("/followers", asyncHandler(async (req: express.Request, res: express.
     const follower_ids = await fetchFollowerIdsByUserId(user_id, req.pagination, req.sorting);
     const users = await fetchUsersById(follower_ids);
 
-    // TODO(biesiadm): Pass info from the service
+    // TODO(kantoniak): Pass info from the service       [relations - done]
     const responseBody = {
         users: users,
         info: {
@@ -193,7 +193,7 @@ router.get("/follows", asyncHandler(async (req: express.Request, res: express.Re
     const followed_ids = await fetchFollowingIdsByUserId(user_id, req.pagination, req.sorting);
     const users = await fetchUsersById(followed_ids);
 
-    // TODO(biesiadm): Pass info from the service
+    // TODO(kantoniak): Pass info from the service       [relations - done]
     const responseBody = {
         users: users,
         info: {

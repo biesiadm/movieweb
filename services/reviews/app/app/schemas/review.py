@@ -1,8 +1,13 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from uuid import UUID
 
 from pydantic import BaseModel
+
+
+class Info(BaseModel):
+    count: int
+    totalCount: int
 
 
 class ReviewBase(BaseModel):
@@ -24,5 +29,13 @@ class Review(ReviewBase):
     id: UUID
     created: datetime
 
+    class Config:
+        orm_mode = True
+
+
+class ReviewsInfo(BaseModel):
+    reviews: List[Review]
+    info: Info
+    
     class Config:
         orm_mode = True
