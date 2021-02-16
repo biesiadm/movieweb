@@ -24,7 +24,7 @@ def init_db(db: Session) -> None:
 
     movie_ids = list(map(
         lambda m: UUID(m['id']),
-        json.loads(movies_resp.read().decode('utf-8')).movies
+        json.loads(movies_resp.read().decode('utf-8'))['movies']
     ))
     user_ids = list(map(
         lambda u: u['id'],
