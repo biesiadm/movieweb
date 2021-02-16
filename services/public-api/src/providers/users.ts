@@ -4,20 +4,25 @@ import { UserWeb } from '../api/users';
 import * as cache from '../cache';
 import { usersApi } from '../config';
 import { Pagination } from '../middleware';
-import { PublicUser } from '../openapi';
+import { PaginatedUsers, PublicUser } from '../openapi';
 import { throwOnInvalidUuid } from '../utils';
 
 const convertToPublic = (users: UserWeb[]): PublicUser[] => {
     return users.map(u => <PublicUser>u);
 }
 
-const fetchUsers = async (paging?: Pagination): Promise<PublicUser[]> => {
+const fetchUsers = async (paging?: Pagination): Promise<PaginatedUsers> => {
     const skip = paging?.skip;
     const limit = paging?.limit;
+
     const resp = await usersApi.readUsersApiUsersGet(skip, limit);
-    const users = convertToPublic(resp.data);
+    const users = convertToPublic(resp.data.users);
     users.forEach(cache.setUser);
-    return users;
+
+    return {
+        users: users,
+        info: resp.data.info
+    }
 }
 
 const fetchUsersById = async (ids: string[]): Promise<PublicUser[]> => {

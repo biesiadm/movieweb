@@ -3,6 +3,7 @@ import OpenApiDef from '../openapi-definition.json';
 import { Info, Movie } from './api/movies';
 import { Review } from './api/reviews';
 import { UserWeb } from './api/users';
+import { Relationship as Relation } from './api/relations';
 import { NODE_ENV, PUBLIC_DOMAIN, PUBLIC_SCHEME } from './config';
 
 function buildServerInfo(): any {
@@ -192,6 +193,9 @@ type PaginatedList<T, PropName extends string> = {
 } & {[P in PropName]: T[]};
 
 type PaginatedMovies = PaginatedList<PublicMovie, 'movies'>;
+type PaginatedReviews = PaginatedList<PublicReview, 'reviews'>;
+type PaginatedStrings = PaginatedList<string, 'strings'>;
+type PaginatedUsers = PaginatedList<PublicUser, 'users'>;
 
 export default OpenApiSpec;
-export type { PublicMovie, PublicReview, PublicUser, PaginatedMovies };
+export type { PublicMovie, PublicReview, PublicUser, PaginatedMovies, PaginatedReviews, PaginatedStrings, PaginatedUsers };

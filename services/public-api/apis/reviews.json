@@ -81,11 +81,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "title": "Response Read All Reviews Api Reviews Reviews Get",
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Review"
-                  }
+                  "$ref": "#/components/schemas/ReviewsInfo"
                 }
               }
             }
@@ -419,11 +415,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "title": "Response Read Movie Reviews Api Reviews Movie  Movie Id  Reviews Get",
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Review"
-                  }
+                  "$ref": "#/components/schemas/ReviewsInfo"
                 }
               }
             }
@@ -505,11 +497,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "title": "Response Read User Reviews Api Reviews User  User Id  Reviews Get",
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Review"
-                  }
+                  "$ref": "#/components/schemas/ReviewsInfo"
                 }
               }
             }
@@ -723,6 +711,24 @@
           }
         }
       },
+      "Info": {
+        "title": "Info",
+        "required": [
+          "count",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "totalCount": {
+            "title": "Totalcount",
+            "type": "integer"
+          }
+        }
+      },
       "Review": {
         "title": "Review",
         "required": [
@@ -790,6 +796,26 @@
           "comment": {
             "title": "Comment",
             "type": "string"
+          }
+        }
+      },
+      "ReviewsInfo": {
+        "title": "ReviewsInfo",
+        "required": [
+          "reviews",
+          "info"
+        ],
+        "type": "object",
+        "properties": {
+          "reviews": {
+            "title": "Reviews",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Review"
+            }
+          },
+          "info": {
+            "$ref": "#/components/schemas/Info"
           }
         }
       },

@@ -69,11 +69,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "title": "Response Read User Followers Api Relationships Following  User Id  Get",
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Relationship"
-                  }
+                  "$ref": "#/components/schemas/RelationshipsInfo"
                 }
               }
             }
@@ -155,11 +151,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "title": "Response Read Following By User Api Relationships Followed By  User Id  Get",
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Relationship"
-                  }
+                  "$ref": "#/components/schemas/RelationshipsInfo"
                 }
               }
             }
@@ -329,6 +321,24 @@
           }
         }
       },
+      "Info": {
+        "title": "Info",
+        "required": [
+          "count",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "totalCount": {
+            "title": "Totalcount",
+            "type": "integer"
+          }
+        }
+      },
       "Relationship": {
         "title": "Relationship",
         "required": [
@@ -378,6 +388,26 @@
             "title": "Followed User Id",
             "type": "string",
             "format": "uuid"
+          }
+        }
+      },
+      "RelationshipsInfo": {
+        "title": "RelationshipsInfo",
+        "required": [
+          "relationships",
+          "info"
+        ],
+        "type": "object",
+        "properties": {
+          "relationships": {
+            "title": "Relationships",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Relationship"
+            }
+          },
+          "info": {
+            "$ref": "#/components/schemas/Info"
           }
         }
       },

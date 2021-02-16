@@ -3,7 +3,7 @@ import { validate as validateUuid } from 'uuid';
 import { Review, ReviewCreate } from '../api/reviews';
 import { reviewsApi } from '../config';
 import { Pagination, Sorting } from '../middleware';
-import { PublicReview } from '../openapi';
+import { PaginatedReviews, PublicReview } from '../openapi';
 import { throwOnInvalidUuid } from '../utils';
 
 const convertToPublic = (review: Review): PublicReview => {
@@ -30,7 +30,7 @@ const deleteReview = async (id: string): Promise<void> => {
     await reviewsApi.deleteReviewApiReviewsReviewReviewIdDeleteDelete(id);
 }
 
-const fetchReviews = async (paging?: Pagination, sorting?: Sorting, createdGte?: Date, userIds?: string[]): Promise<PublicReview[]> => {
+const fetchReviews = async (paging?: Pagination, sorting?: Sorting, createdGte?: Date, userIds?: string[]): Promise<PaginatedReviews> => {
     const skip = paging?.skip;
     const limit = paging?.limit;
     const sort = sorting?.by;
@@ -40,7 +40,11 @@ const fetchReviews = async (paging?: Pagination, sorting?: Sorting, createdGte?:
         userIds.forEach(throwOnInvalidUuid);
     }
     const resp = await reviewsApi.readAllReviewsApiReviewsReviewsGet(skip, limit, created_gte, userIds, sort, <any>sortDir);
-    return resp.data.map(convertToPublic);
+    const reviews = resp.data.reviews.map(convertToPublic);
+    return {
+        reviews: reviews,
+        info: resp.data.info
+    }
 }
 
 const fetchReviewsById = async (ids: string[]): Promise<PublicReview[]> => {
@@ -50,7 +54,7 @@ const fetchReviewsById = async (ids: string[]): Promise<PublicReview[]> => {
     return reviews.map(convertToPublic);
 }
 
-const fetchReviewsByMovieId = async (movie_id: string, paging?: Pagination, sorting?: Sorting): Promise<PublicReview[]> => {
+const fetchReviewsByMovieId = async (movie_id: string, paging?: Pagination, sorting?: Sorting): Promise<PaginatedReviews> => {
     throwOnInvalidUuid(movie_id);
 
     const skip = paging?.skip;
@@ -59,10 +63,14 @@ const fetchReviewsByMovieId = async (movie_id: string, paging?: Pagination, sort
     const sortDir = <string>(sorting?.dir);
 
     const resp = await reviewsApi.readMovieReviewsApiReviewsMovieMovieIdReviewsGet(movie_id, skip, limit, sort, sortDir);
-    return resp.data.map(convertToPublic);
+    const reviews = resp.data.reviews.map(convertToPublic);
+    return {
+        reviews: reviews,
+        info: resp.data.info
+    }
 }
 
-const fetchReviewsByUserId = async (user_id: string, paging?: Pagination, sorting?: Sorting): Promise<PublicReview[]> => {
+const fetchReviewsByUserId = async (user_id: string, paging?: Pagination, sorting?: Sorting): Promise<PaginatedReviews> => {
     throwOnInvalidUuid(user_id);
 
     const skip = paging?.skip;
@@ -71,7 +79,11 @@ const fetchReviewsByUserId = async (user_id: string, paging?: Pagination, sortin
     const sortDir = <string>(sorting?.dir);
 
     const resp = await reviewsApi.readUserReviewsApiReviewsUserUserIdReviewsGet(user_id, skip, limit, sort, sortDir);
-    return resp.data.map(convertToPublic);
+    const reviews = resp.data.reviews.map(convertToPublic);
+    return {
+        reviews: reviews,
+        info: resp.data.info
+    }
 }
 
 const fetchReviewById = async (id: string): Promise<Review> => {
