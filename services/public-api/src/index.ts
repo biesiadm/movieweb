@@ -52,7 +52,7 @@ app.use(handleValidationErrors);
 app.use(sendBackHttp4xxOr500);
 
 // Redirect from homepage to docs
-app.use('/', redirectToDocs);
+app.use('/$', redirectToDocs);
 
 app.listen(8080, () => {
     console.log(`public-api started on port 8080!`);
