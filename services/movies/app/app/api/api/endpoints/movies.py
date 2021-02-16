@@ -9,9 +9,7 @@ from sqlalchemy.orm import Session
 router = APIRouter()
 
 
-@router.get("/",
-            response_model=schemas.MoviesInfo
-            )
+@router.get("/", response_model=schemas.MoviesInfo)
 def read_movies(
         db: Session = Depends(deps.get_db),
         skip: int = 0,

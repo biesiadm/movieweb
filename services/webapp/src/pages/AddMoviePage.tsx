@@ -72,49 +72,49 @@ class AddMoviePage extends Component<Props, State> {
 
   handlePosterUrlChange(event: React.ChangeEvent<HTMLInputElement>): void {
     event.preventDefault();
-    let movie = { ...this.state.movie };
+    const movie = { ...this.state.movie };
     movie.poster_url = event.target.value;
     this.setState({ movie: movie });
   }
 
   handleBackgroundUrlChange(event: React.ChangeEvent<HTMLInputElement>): void {
     event.preventDefault();
-    let movie = { ...this.state.movie };
+    const movie = { ...this.state.movie };
     movie.background_url = event.target.value;
     this.setState({ movie: movie });
   }
 
   handleTitleChange(event: React.ChangeEvent<HTMLInputElement>): void {
     event.preventDefault();
-    let movie = { ...this.state.movie };
+    const movie = { ...this.state.movie };
     movie.title = event.target.value;
     this.setState({ movie: movie });
   }
 
   handleDirectorChange(event: React.ChangeEvent<HTMLInputElement>): void {
     event.preventDefault();
-    let movie = { ...this.state.movie };
+    const movie = { ...this.state.movie };
     movie.director = event.target.value;
     this.setState({ movie: movie });
   }
 
   handleCategoryChange(event: React.ChangeEvent<HTMLInputElement>): void {
     event.preventDefault();
-    let movie = { ...this.state.movie };
+    const movie = { ...this.state.movie };
     movie.category = event.target.value;
     this.setState({ movie: movie });
   }
 
   handleCountryChange(event: React.ChangeEvent<HTMLInputElement>): void {
     event.preventDefault();
-    let movie = { ...this.state.movie };
+    const movie = { ...this.state.movie };
     movie.country = event.target.value;
     this.setState({ movie: movie });
   }
 
   handleYearChange(event: React.ChangeEvent<HTMLInputElement>): void {
     event.preventDefault();
-    let movie = { ...this.state.movie };
+    const movie = { ...this.state.movie };
     movie.year = event.target.value;
     this.setState({ movie: movie });
   }

@@ -10,9 +10,7 @@ from sqlalchemy.orm import Session
 router = APIRouter()
 
 
-@router.get("/",
-            response_model=schemas.UsersWebInfo
-            )
+@router.get("/", response_model=schemas.UsersWebInfo)
 def read_users(
     db: Session = Depends(deps.get_db),
     skip: int = 0,

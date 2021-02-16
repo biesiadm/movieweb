@@ -19,14 +19,31 @@ def generate_user():
     )
 
 
-admin = [schemas.UserCreate(
+pre_made = [
+    schemas.UserCreate(
         email=settings.ADMIN_EMAIL,
         name=settings.ADMIN_NAME,
         password=settings.ADMIN_PASSWORD,
-        login='admin',
+        login=settings.ADMIN_LOGIN,
         avatar_url=f'https://www.gravatar.com/avatar/{random.randint(0, 100000000000)}?d=identicon&s=512&r=g',
         is_superuser=True
-    )]
+    ),
+    schemas.UserCreate(
+        email=settings.USER1_EMAIL,
+        name=settings.USER1_NAME,
+        password=settings.USER1_PASSWORD,
+        login=settings.USER1_LOGIN,
+        avatar_url=f'https://www.gravatar.com/avatar/{random.randint(0, 100000000000)}?d=identicon&s=512&r=g',
+        is_superuser=False
+    ),
+    schemas.UserCreate(
+        email=settings.USER2_EMAIL,
+        name=settings.USER2_NAME,
+        password=settings.USER2_PASSWORD,
+        login=settings.USER2_LOGIN,
+        avatar_url=f'https://www.gravatar.com/avatar/{random.randint(0, 100000000000)}?d=identicon&s=512&r=g',
+        is_superuser=False
+    )
+]
 
-
-users = admin + [generate_user() for i in range(settings.NUMBER_OF_USERS)]
+users = pre_made + [generate_user() for i in range(settings.NUMBER_OF_USERS)]

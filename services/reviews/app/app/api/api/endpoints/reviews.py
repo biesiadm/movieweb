@@ -11,9 +11,7 @@ from sqlalchemy.orm import Session
 router = APIRouter()
 
 
-@router.get("/reviews",
-            response_model=schemas.ReviewsInfo
-            )
+@router.get("/reviews", response_model=schemas.ReviewsInfo)
 def read_all_reviews(
         db: Session = Depends(deps.get_db),
         *,
@@ -91,9 +89,7 @@ def read_count_by_user(
     return rating_count[0]
 
 
-@router.get("/movie/{movie_id}/reviews",
-            response_model=schemas.ReviewsInfo
-            )
+@router.get("/movie/{movie_id}/reviews", response_model=schemas.ReviewsInfo)
 def read_movie_reviews(
         movie_id: UUID,
         db: Session = Depends(deps.get_db),
@@ -113,9 +109,7 @@ def read_movie_reviews(
     return schemas.ReviewsInfo(reviews=reviews, info=info)
 
 
-@router.get("/user/{user_id}/reviews",
-            response_model=schemas.ReviewsInfo
-            )
+@router.get("/user/{user_id}/reviews", response_model=schemas.ReviewsInfo)
 def read_user_reviews(
         user_id: UUID,
         db: Session = Depends(deps.get_db),

@@ -9,9 +9,8 @@ from sqlalchemy.orm import Session
 
 router = APIRouter()
 
-@router.get("/following/{user_id}",
-            response_model=schemas.RelationshipsInfo
-            )
+
+@router.get("/following/{user_id}", response_model=schemas.RelationshipsInfo)
 def read_user_followers(
         user_id: UUID,
         db: Session = Depends(deps.get_db),
@@ -31,9 +30,7 @@ def read_user_followers(
     return schemas.RelationshipsInfo(relationships=relationships, info=info)
 
 
-@router.get("/followed-by/{user_id}",
-            response_model=schemas.RelationshipsInfo
-            )
+@router.get("/followed-by/{user_id}", response_model=schemas.RelationshipsInfo)
 def read_following_by_user(
         user_id: UUID,
         db: Session = Depends(deps.get_db),
