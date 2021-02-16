@@ -28,7 +28,7 @@ def init_db(db: Session) -> None:
     ))
     user_ids = list(map(
         lambda u: u['id'],
-        json.loads(users_resp.read().decode('utf-8'))
+        json.loads(users_resp.read().decode('utf-8'))['users']
     ))
 
     user_count = len(user_ids)
