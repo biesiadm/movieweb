@@ -1,6 +1,6 @@
 import Redis from 'ioredis';
 import { redisConfig } from './config';
-import { PublicMovie } from './openapi';
+import { PublicMovie, PublicUser } from './openapi';
 
 const redis = new Redis(redisConfig);
 
@@ -29,6 +29,29 @@ const getMovie = async (id: string): Promise<PublicMovie | null> => {
     }
 }
 
-// TODO(kantoniak): Cache users
+const setUser = async (user: PublicUser): Promise<void> => {
+    try {
+        const key = 'usr:' + user.id;
+        const value = JSON.stringify(user);
+        await redis.set(key, value);
+    } catch (error) {
+        // Do nothing
+        console.log(error);
+    }
+}
 
-export { getMovie, setMovie };
+const getUser = async (id: string): Promise<PublicUser | null> => {
+    try {
+        const key = 'usr:' + id;
+        const resp = await redis.get(key);
+        if (!resp) {
+            return null;
+        }
+        return JSON.parse(resp) as PublicUser;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
+export { getMovie, setMovie, getUser, setUser };

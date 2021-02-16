@@ -1,22 +1,50 @@
 import { AxiosResponse } from 'axios';
 import { validate as validateUuid } from 'uuid';
 import { UserWeb } from '../api/users';
+import * as cache from '../cache';
 import { usersApi } from '../config';
 import { Pagination } from '../middleware';
 import { PublicUser } from '../openapi';
 import { throwOnInvalidUuid } from '../utils';
 
+const convertToPublic = (users: UserWeb[]): PublicUser[] => {
+    return users.map(u => <PublicUser>u);
+}
+
 const fetchUsers = async (paging?: Pagination): Promise<PublicUser[]> => {
     const skip = paging?.skip;
     const limit = paging?.limit;
-    const usersResp = await usersApi.readUsersApiUsersGet(skip, limit);
-    return usersResp.data.map((u: UserWeb) => <PublicUser>u);
+    const resp = await usersApi.readUsersApiUsersGet(skip, limit);
+    const users = convertToPublic(resp.data);
+    users.forEach(cache.setUser);
+    return users;
 }
 
-const fetchUsersById = async (user_ids: string[]): Promise<PublicUser[]> => {
-    user_ids.forEach(throwOnInvalidUuid);
-    const userResps = await Promise.all(user_ids.map(usersApi.readUserByIdApiUsersUserIdGet));
-    return userResps.map((r: AxiosResponse<UserWeb>) => <PublicUser>(r.data));
+const fetchUsersById = async (ids: string[]): Promise<PublicUser[]> => {
+    ids.forEach(throwOnInvalidUuid);
+
+    // Fetch cached
+    const cacheResp = await Promise.all(ids.map(cache.getUser));
+    const cachedUsers: PublicUser[] = <PublicUser[]>(cacheResp.filter(u => u != null));
+    const cachedIds = cachedUsers.map(u => u.id);
+
+    // Fetch others
+    let users: PublicUser[] = [];
+    const missingIds = ids.filter((id) => !cachedIds.includes(id));
+    if (missingIds.length > 0) {
+        const userResps = await Promise.all(missingIds.map(usersApi.readUserByIdApiUsersUserIdGet))
+        users = convertToPublic(userResps.map((r: AxiosResponse<UserWeb>) => r.data));
+        users.forEach(cache.setUser);
+    }
+
+    // Merge and reorder
+    users = users.concat(cachedUsers);
+    let orderedUsers: PublicUser[] = [];
+    ids.forEach((id, i) => {
+        orderedUsers[i] = <PublicUser>users.find(user => user.id == id);
+    });
+
+    return orderedUsers;
 }
 
 const fetchUsersByLogin = async (logins: string[]): Promise<PublicUser[]> => {
