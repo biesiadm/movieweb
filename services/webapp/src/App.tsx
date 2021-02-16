@@ -14,6 +14,7 @@ import PublicHomepage from './pages/PublicHomepage';
 import UserListPage from './pages/UserListPage';
 import UserDetailsPage from './pages/UserDetailsPage';
 import { usersApi } from './config';
+import AddMoviePage from './pages/AddMoviePage';
 
 enum StartupState {
   Loading = "LOADING",
@@ -92,6 +93,14 @@ class App extends Component<EmptyProps, State> {
 
   renderApp(): React.ReactNode {
     const user = this.state.user;
+
+    let addMovieLink = null;
+    if (user) {
+      addMovieLink = <li className="nav-item">
+                      <NavLink to='/add-movie' className="nav-link" aria-current="page">Add movie</NavLink>
+                    </li>;
+    }
+
     return  <div className="d-flex flex-column">
               <header id="main-menu" className="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div className="container">
@@ -107,6 +116,7 @@ class App extends Component<EmptyProps, State> {
                       <li className="nav-item">
                         <NavLink to='/users' className="nav-link" aria-current="page">Users</NavLink>
                       </li>
+                      {addMovieLink}
                     </ul>
                     <CurrentUserBlock user={user} />
                   </nav>
@@ -115,6 +125,9 @@ class App extends Component<EmptyProps, State> {
               <main className="pb-5 bg-light col">
               <Switch>
                 <Route exact path='/' component={PublicHomepage} />
+                <Route exact
+                  path='/add-movie'
+                  render={(props: RouteComponentProps) => <AddMoviePage {...props} user={user}/>} />
                 <Route exact path='/movies' component={MovieListPage} />
                 <Route exact
                   key={location.pathname}

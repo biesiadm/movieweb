@@ -5,12 +5,6 @@
     "description": "Public REST API",
     "version": "1.0.0"
   },
-  "servers": [
-    {
-      "url": "https://api.movieweb.local/v1/",
-      "description": "Development server"
-    }
-  ],
   "paths": {
     "/auth/authorize": {
       "post": {
@@ -129,6 +123,45 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/MovieListResponse"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      },
+      "post": {
+        "operationId": "addMovie",
+        "summary": "Add movie",
+        "tags": [
+          "movies"
+        ],
+        "security": [
+          {
+            "JwtBearerAuth": []
+          },
+          {
+            "JwtCookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMovie"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Movie created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Movie"
+                }
+              }
+            }
           },
           "422": {
             "$ref": "#/components/responses/ValidationError"
@@ -710,23 +743,14 @@
         ],
         "default": "asc"
       },
-      "Movie": {
+      "CreateMovie": {
         "type": "object",
         "required": [
-          "id",
           "title",
-          "slug",
           "poster_url"
         ],
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
           "title": {
-            "type": "string"
-          },
-          "slug": {
             "type": "string"
           },
           "poster_url": {
@@ -748,11 +772,33 @@
           },
           "category": {
             "type": "string"
-          },
-          "review": {
-            "$ref": "#/components/schemas/Review"
           }
         }
+      },
+      "Movie": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CreateMovie"
+          },
+          {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "slug": {
+                "type": "string"
+              },
+              "review": {
+                "$ref": "#/components/schemas/Review"
+              }
+            }
+          }
+        ]
       },
       "CreateReview": {
         "type": "object",
