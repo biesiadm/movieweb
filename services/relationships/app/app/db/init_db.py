@@ -24,7 +24,7 @@ def init_db(db: Session) -> None:
     users_resp = urllib.request.urlopen(generate_base_url(settings.USERS_SERVICE_NAME, settings.API_USERS))
     user_ids = list(map(
         lambda u: u['id'],
-        json.loads(users_resp.read().decode('utf-8'))
+        json.loads(users_resp.read().decode('utf-8'))['users']
     ))
 
     user_count = len(user_ids)
