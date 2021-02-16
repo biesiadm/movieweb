@@ -1,6 +1,9 @@
 FROM node:14-alpine
 WORKDIR /usr/src/app
 
+# Environment variables
+ENV NODE_ENV=development
+
 # NPM
 ADD package*.json ./
 RUN npm install --silent

@@ -83,13 +83,13 @@ services:
     build: webapp/
     environment:
       - REACT_APP_WEBAPP_URL=${PUBLIC_SCHEME}://${PUBLIC_DOMAIN}
-      - REACT_APP_API_URL=${PUBLIC_SCHEME}://api.${PUBLIC_DOMAIN}
+      - REACT_APP_API_URL=${PUBLIC_SCHEME}://api.${PUBLIC_DOMAIN}/v1
 
   webapp-b:
     build: webapp/
     environment:
       - REACT_APP_WEBAPP_URL=${PUBLIC_SCHEME}://${PUBLIC_DOMAIN}
-      - REACT_APP_API_URL=${PUBLIC_SCHEME}://api.${PUBLIC_DOMAIN}
+      - REACT_APP_API_URL=${PUBLIC_SCHEME}://api.${PUBLIC_DOMAIN}/v1
 
   load-balancer:
     build: load-balancer/
