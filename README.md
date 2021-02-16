@@ -1,4 +1,30 @@
-# movieweb
+# Movieweb
+
+Movieweb is an IMDB-like website utilizing microservices architecture.
+
+## Architecture
+
+There are five types of services inside a network built by `docker-compose`:
+
+* `webapp`: serves precompiled React SPA
+* `public-api`: API gateway (Node.js, express)
+* `load-balancer`: `nginx` edge router, proxies traffic to webapp and the API endpoint
+* `movies`: handles movie information (FastAPI)
+* `users`: handles user information and authentication (FastAPI)
+* `reviews`: handles reviews (FastAPI)
+* `relations`: handles followers (FastAPI)
+* `redis`: caching storage for `public-api`
+
+Endpoints communicate using REST API. All endpoints provide OpenAPI 3 schemes. API endpoints and the webapp use clients generated from the spec.
+
+Authentication uses JWT tokens signed by `users` service. `public-api` saves `httpOnly` cookies to store token with the user.
+
+#### Public endpoints
+
+* `https://movieweb.local/`: website
+* `https://api.movieweb.local/`: API entry
+* `https://api.movieweb.local/docs`: Swagger docs
+* `https://api.movieweb.local/openapi.json`: API schema
 
 ## Development
 
@@ -20,19 +46,3 @@
 
 Browser will display a security warning later, because it doesn't know root CA you just created. You can safely add an exception. Still seeing errors? Visit `https://api.movieweb.local/docs` and whitelist `api` subdomain too.
 
-## Basic setup
-### build
-```
-docker-compose build
-```
-### run migration
-```
-docker-compose run movies alembic revision --autogenerate
-```
-
-### run
-```
-docker-compose up
-```
-## Usage
-Homepage of movie service ("Hello world") is currently avaliable at `localhost:5000`
