@@ -112,5 +112,11 @@ class CRUDReview(CRUDBase[Review, ReviewCreate, ReviewUpdate]):
         return db.query(self.model.movie_id).group_by(Review.movie_id) \
             .order_by(determine_movies_sorting_type(sort, sort_dir)).offset(skip).limit(limit).all()
 
+    def count_all(self, db: Session, *, created_gte: Optional[datetime], user_id: Optional[List[UUID]]) -> int:
+        if not user_id and not created_gte:
+            return db.query(func.count(Review.id)).first()[0]
+        else:
+            return db.query(func.count(Review.id)).filter(*determine_filter_type(created_gte, user_id)).first()[0]
+
 
 review = CRUDReview(Review)
