@@ -182,19 +182,19 @@ class UserDetailsPage extends Component<Props, State> {
                   <ul className="col-lg-9 col-xxl-10 fs-5 text-muted pt-3 list-inline user-details-page-summary">
                     <li className="list-inline-item me-5"><StarFill color="#F0A96E" className="mb-1" /> {this.state.totalRatings} ratings</li>
                     <li className="list-inline-item me-5"><PeopleFill color="#F0A96E" className="mb-1" /> {this.state.totalFollowers} followers</li>
-                    <li className="list-inline-item"><PeopleFill color="#F0A96E" className="mb-1" /> {this.state.totalFollowed} followed</li>
+                    <li className="list-inline-item"><PeopleFill color="#F0A96E" className="mb-1" /> following {this.state.totalFollowed} users</li>
                   </ul>
                 </div>
               </section>
               <section className="container">
                 <h2 className="my-3">Top rated movies</h2>
-                <ReviewList promise={topReviewsPromise} className="preview-grid" />
+                <ReviewList promise={topReviewsPromise} className="preview-grid" emptyMessage={`${user.name} hasn't rated any movies yet.`} />
                 <h2 className="my-3 pt-4">Recent reviews</h2>
-                <ReviewList promise={recentReviewsPromise} className="preview-grid" />
+                <ReviewList promise={recentReviewsPromise} className="preview-grid" emptyMessage={`${user.name} hasn't rated any movies yet.`} />
                 <h2 className="my-3 pt-4">Followers</h2>
-                <UserList promise={followersPromise} className="promo-grid" />
+                <UserList promise={followersPromise} className="promo-grid" emptyMessage={`${user.name} doesn't have any followers.`} />
                 <h2 className="my-3 pt-4">{user.name} follows</h2>
-                <UserList promise={followsPromise} className="promo-grid" />
+                <UserList promise={followsPromise} className="promo-grid" emptyMessage={`${user.name} doesn't follow anyone.`} />
               </section>
             </div>;
 
