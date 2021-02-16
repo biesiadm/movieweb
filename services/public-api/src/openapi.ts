@@ -3,7 +3,6 @@ import OpenApiDef from '../openapi-definition.json';
 import { Info, Movie } from './api/movies';
 import { Review } from './api/reviews';
 import { UserWeb } from './api/users';
-import { Relationship as Relation } from './api/relations';
 import { NODE_ENV, PUBLIC_DOMAIN, PUBLIC_SCHEME } from './config';
 
 function buildServerInfo(): any {
@@ -18,8 +17,12 @@ function buildServerInfo(): any {
     };
 }
 
-let openApiHeader = OpenApiDef;
-openApiHeader.servers = [ buildServerInfo() ];
+let openApiHeader = {
+    ...OpenApiDef,
+    servers: [
+        buildServerInfo()
+    ]
+};
 
 const OpenApiSpec = swaggerJSDoc({
     swaggerDefinition: openApiHeader,
@@ -33,20 +36,13 @@ const OpenApiSpec = swaggerJSDoc({
  * @swagger
  * components:
  *   schemas:
- *     Movie:
+ *     CreateMovie:
  *       type: "object"
  *       required:
- *         - id
  *         - title
- *         - slug
  *         - poster_url
  *       properties:
- *         id:
- *           type: "string"
- *           format: "uuid"
  *         title:
- *           type: "string"
- *         slug:
  *           type: "string"
  *         poster_url:
  *           type: "string"
@@ -62,8 +58,20 @@ const OpenApiSpec = swaggerJSDoc({
  *           type: "string"
  *         category:
  *           type: "string"
- *         review:
- *           $ref: "#/components/schemas/Review"
+ *     Movie:
+ *       allOf:
+ *         - $ref: '#/components/schemas/CreateMovie'
+ *         - type: "object"
+ *           required:
+ *             - id
+ *           properties:
+ *             id:
+ *               type: "string"
+ *               format: "uuid"
+ *             slug:
+ *               type: "string"
+ *             review:
+ *               $ref: "#/components/schemas/Review"
  */
 interface PublicMovie extends Movie {
     review?: PublicReview;
