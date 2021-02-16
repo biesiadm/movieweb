@@ -11,7 +11,7 @@
           "relationships"
         ],
         "summary": "Read User Followers",
-        "description": "Retrieve reviews by movie.",
+        "description": "Retrieve users following user_id.",
         "operationId": "read_user_followers_api_relationships_following__user_id__get",
         "parameters": [
           {
@@ -42,6 +42,24 @@
               "default": 100
             },
             "name": "limit",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Sort",
+              "type": "string"
+            },
+            "name": "sort",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Sort Dir",
+              "type": "string"
+            },
+            "name": "sort_dir",
             "in": "query"
           }
         ],
@@ -79,7 +97,7 @@
           "relationships"
         ],
         "summary": "Read Following By User",
-        "description": "Retrieve reviews by movie.",
+        "description": "Retrieve following by user_id.",
         "operationId": "read_following_by_user_api_relationships_followed_by__user_id__get",
         "parameters": [
           {
@@ -110,6 +128,24 @@
               "default": 100
             },
             "name": "limit",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Sort",
+              "type": "string"
+            },
+            "name": "sort",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Sort Dir",
+              "type": "string"
+            },
+            "name": "sort_dir",
             "in": "query"
           }
         ],

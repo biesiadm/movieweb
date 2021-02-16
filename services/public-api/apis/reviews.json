@@ -103,6 +103,82 @@
         }
       }
     },
+    "/api/reviews/movies": {
+      "get": {
+        "tags": [
+          "reviews"
+        ],
+        "summary": "Read Movies",
+        "operationId": "read_movies_api_reviews_movies_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Sort",
+              "type": "string"
+            },
+            "name": "sort",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Sort Dir",
+              "type": "string"
+            },
+            "name": "sort_dir",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Read Movies Api Reviews Movies Get",
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/reviews/movie/{movie_id}/avg": {
       "get": {
         "tags": [

@@ -1,11 +1,27 @@
 import swaggerJSDoc from 'swagger-jsdoc';
-import OpenapiDef from '../openapi-definition.json';
-import { Movie } from './api/movies';
+import OpenApiDef from '../openapi-definition.json';
+import { Info, Movie } from './api/movies';
 import { Review } from './api/reviews';
 import { UserWeb } from './api/users';
+import { NODE_ENV, PUBLIC_DOMAIN, PUBLIC_SCHEME } from './config';
 
-const OpenapiSpec = swaggerJSDoc({
-    swaggerDefinition: OpenapiDef,
+function buildServerInfo(): any {
+    let apiDescription = 'Development server';
+    if (NODE_ENV === 'production') {
+        apiDescription = 'API server';
+    }
+
+    return {
+        url: `${PUBLIC_SCHEME}://api.${PUBLIC_DOMAIN}/v1/`,
+        description: apiDescription
+    };
+}
+
+let openApiHeader = OpenApiDef;
+openApiHeader.servers = [ buildServerInfo() ];
+
+const OpenApiSpec = swaggerJSDoc({
+    swaggerDefinition: openApiHeader,
     apis: [
         "src/*.{js,ts}",
         "src/services/*.{js,ts}"
@@ -49,10 +65,6 @@ const OpenapiSpec = swaggerJSDoc({
  *           $ref: "#/components/schemas/Review"
  */
 interface PublicMovie extends Movie {
-
-    // TODO(kantoniak): Move to user API    [done in movie service]
-    slug: string;
-
     review?: PublicReview;
 }
 
@@ -175,5 +187,11 @@ interface PublicUser extends UserWeb {
  *           type: "string"
  */
 
-export default OpenapiSpec;
-export type { PublicMovie, PublicReview, PublicUser };
+type PaginatedList<T, PropName extends string> = {
+    info: Info
+} & {[P in PropName]: T[]};
+
+type PaginatedMovies = PaginatedList<PublicMovie, 'movies'>;
+
+export default OpenApiSpec;
+export type { PublicMovie, PublicReview, PublicUser, PaginatedMovies };

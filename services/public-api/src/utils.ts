@@ -1,5 +1,10 @@
+import { Request, Response } from 'express';
 import { validate as validateUuid } from 'uuid';
 import { HTTPValidationError } from './api/reviews';
+
+const redirectToDocs = (req: Request, res: Response) => {
+    res.redirect('/docs');
+}
 
 const throwOnInvalidUuid = (identifier: string): void => {
     if (validateUuid(identifier)) {
@@ -17,4 +22,4 @@ const throwOnInvalidUuid = (identifier: string): void => {
     };
 }
 
-export { throwOnInvalidUuid };
+export { redirectToDocs, throwOnInvalidUuid };
