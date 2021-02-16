@@ -37,9 +37,6 @@ const redisConfig = {
 
 const axiosInstance: AxiosInstance = axios.create({
   responseType: "json",
-  paramsSerializer: (params) => {
-    return qs.stringify(params, { arrayFormat: 'repeat' })
-  },
 });
 
 const moviesApi = MoviesApiFactory(

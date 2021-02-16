@@ -144,7 +144,6 @@ router.post("/log-in", asyncHandler(async (req: express.Request, res: express.Re
 
     const token = tokenResp.data.access_token;
     const payload: TokenPayload = <any>jwt.decode(token);
-    console.log(payload.exp);
     res.cookie(
         'token',
         token,

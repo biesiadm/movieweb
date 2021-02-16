@@ -396,6 +396,16 @@ userRouter.get("/review-feed", asyncHandler(async (req: express.Request, res: ex
     const friend_id_list = await fetchFollowingIdsByUserId(tokenOwnerId, req.pagination, sorting);
     const friend_ids = friend_id_list.strings;
 
+    if (friend_ids.length == 0) {
+        res.status(200).json({
+            reviews: [],
+            info: {
+                count: 0,
+                totalCount: 0
+            }
+        });
+    }
+
     // Fetch all reviews
     const body = await fetchReviews(req.pagination!, undefined, created_gte || undefined, friend_ids);
     await addOptionalMoviesToReviews(body.reviews);
