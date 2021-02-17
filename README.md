@@ -1,6 +1,17 @@
-# Movieweb
-
-Movieweb is an IMDB-like website utilizing microservices architecture.
+<h1 align="center">
+    <img src="services/webapp/public/favicon.svg" width="128" />
+    <br />
+    Movieweb
+</h1>
+<p align="center">
+    Movieweb is an IMDB-like website utilizing microservices architecture.
+</p>
+<p align="center">
+    <a href="readme/screen-homepage.png"><img src="readme/thumb-homepage.png" width="300" /></a>
+    <a href="readme/screen-api.png"><img src="readme/thumb-api.png" width="300" /></a>
+    <a href="readme/screen-movie.png"><img src="readme/thumb-movie.png" width="300" /></a>
+    <a href="readme/screen-user.png"><img src="readme/thumb-user.png" width="300" /></a>
+</p>
 
 ## Architecture
 
